@@ -2,6 +2,9 @@
 
 namespace PMRAtk\Data\Traits;
 
+/*
+ * TODO: See if rand() is good to use for creating truly random stuff
+ */
 trait CryptIdTrait {
 
     use \PMRAtk\Data\Traits\UniqueFieldTrait;
