@@ -10,8 +10,8 @@ class API extends \atk4\api\Api {
     /*
      *
      */
-    public function __construct(\atk4\ui\App $app) {
-        parent::__construct();
+    public function __construct(\atk4\ui\App $app, $request = null) {
+        parent::__construct($request);
         $this->app = $app;
         $this->tokenLogin('token');
         $this->_removeURLParamsFromPath();
