@@ -1,5 +1,5 @@
 <?php
-namespace PMRAtk\tests\selenium\Traits\;
+namespace PMRAtk\tests\selenium\Traits;
 
 use RemoteWebDriver;
 use WebDriverBy;
