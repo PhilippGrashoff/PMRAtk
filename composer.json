@@ -25,12 +25,8 @@
   },
   "autoload":{
     "psr-4":{
-      "PMRAtk\\":"src/"
-    }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "PMRAtk\\tests\\": "tests/"
+      "PMRAtk\\":"src/",
+      "PMRAtk\\tests\\":"tests/";
     }
   }
 }
