@@ -1,17 +1,18 @@
 <?php
-namespace PMRAtk\tests\selenium;
+namespace PMRAtk\tests\selenium\Traits\;
 
 use RemoteWebDriver;
 use WebDriverBy;
 use WebDriverKeys;
 
 /*
- * This class contains test functions which are abstract (usable in any test,
+ * This traits contains test functions which are abstract
+ * (usable in any atk selenium test),
  * not only for selenium tests for the current project.
  *
- * In this class no functions which are project related should be stored.
+ * In this trait no functions which are project related should be stored.
  */
-abstract class BaseSeleniumCase extends \PMRAtk\tests\phpunit\TestCase {
+trait class BaseFunctionsTrait {
 
     public static $windowWidth  = 1560;
     public static $windowHeight = 1080;
