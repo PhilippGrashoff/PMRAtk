@@ -12,7 +12,7 @@ use WebDriverKeys;
  *
  * In this trait no functions which are project related should be stored.
  */
-trait class BaseFunctionsTrait {
+trait BaseFunctionsTrait {
 
     public static $windowWidth  = 1560;
     public static $windowHeight = 1080;
