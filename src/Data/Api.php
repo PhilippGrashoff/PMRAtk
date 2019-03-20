@@ -47,9 +47,7 @@ class API extends \atk4\api\Api {
 
 
     /*
-     * extend standard functionality by 2 things:
-     * 1) export date and time fields as strings
-     * 2) use model id as array key
+     * export date and time fields as strings in ISO Code
      */
     protected function exportModel(\atk4\data\Model $m) {
         //scan for date and time fields
@@ -74,11 +72,11 @@ class API extends \atk4\api\Api {
 
         //no date and time fields? just export
         if(!$datetime_fields && !$date_fields && !$time_fields) {
-            return $m->export($this->getAllowedFields($m, 'read'), $m->id_field);
+            return $m->export($this->getAllowedFields($m, 'read'));
         }
         //else transform date and time fields
         else {
-            $export = $m->export($this->getAllowedFields($m, 'read'), $m->id_field);
+            $export = $m->export($this->getAllowedFields($m, 'read'));
             foreach($export as &$record) {
                 foreach($datetime_fields as $field_name) {
                     if(isset($record[$field_name]) && $record[$field_name] instanceOf \DateTimeInterFace) {
