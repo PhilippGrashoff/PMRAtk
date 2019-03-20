@@ -79,9 +79,9 @@ class ApiTest extends \PMRAtk\tests\phpunit\TestCase {
 
         $export = $this->callProtected($api, 'exportModel', [$a]);
         //date and time fields should been converted for export
-        $this->assertEquals($export[$a->get('id')]['created_date'], $a->get('created_date')->format(DATE_ATOM));
-        $this->assertEquals($export[$b->get('id')]['time_test'], '10:00:00');
-        $this->assertEquals($export[$b->get('id')]['date_test'], '2005-05-05');
+        $this->assertEquals($export[0]['created_date'], $a->get('created_date')->format(DATE_ATOM));
+        $this->assertEquals($export[1]['time_test'], '10:00:00');
+        $this->assertEquals($export[1]['date_test'], '2005-05-05');
     }
 
 
@@ -101,7 +101,7 @@ class ApiTest extends \PMRAtk\tests\phpunit\TestCase {
 
         $export = $this->callProtected($api, 'exportModel', [$a]);
 
-        $this->assertTrue(isset($export[$a->get('id')]));
+        $this->assertTrue(isset($export[0]));
     }
 
 
