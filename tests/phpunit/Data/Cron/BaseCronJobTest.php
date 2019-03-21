@@ -3,6 +3,7 @@
 class SampleCronJob extends \PMRAtk\Data\Cron\BaseCronJob {
 
     public function execute() {
+        $this->recipients[] = 'test2@easyoutdooroffice.com';
         $this->app->addUserMessage('Test Test');
     }
 }
@@ -11,6 +12,7 @@ class SampleCronJob extends \PMRAtk\Data\Cron\BaseCronJob {
 class SampleExceptionCronJob extends \PMRAtk\Data\Cron\BaseCronJob {
 
     public function execute() {
+        $this->recipients[] = 'test2@easyoutdooroffice.com';
         throw new \atk4\data\Exception('Some shit happened');
     }
 }
@@ -18,6 +20,13 @@ class SampleExceptionCronJob extends \PMRAtk\Data\Cron\BaseCronJob {
 
 class DoesNotImplementExecuteCronJob extends \PMRAtk\Data\Cron\BaseCronJob {
 
+}
+
+
+class NoMessageNoSuccessEmail extends \PMRAtk\Data\Cron\BaseCronJob {
+
+    public function execute() {
+    }
 }
 
 
@@ -53,5 +62,15 @@ class BaseCronJobTest extends \PMRAtk\tests\phpunit\TestCase {
     public function testExceptionNoExecuteImplemented() {
         $this->expectException(\atk4\data\Exception::class);
         $c = new DoesNotImplementExecuteCronJob(self::$app, ['addAdminToSuccessEmail' => true]);
+    }
+
+
+    /*
+     *
+     */
+    public function testNoEmailOnNoSuccessMessage() {
+        $c = new NoMessageNoSuccessEmail(self::$app);
+        $this->assertTrue($c->successful);
+        $this->assertTrue(empty($c->phpMailer->lastMessageID));
     }
 }
