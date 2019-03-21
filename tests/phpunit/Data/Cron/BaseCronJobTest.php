@@ -74,4 +74,15 @@ class BaseCronJobTest extends \PMRAtk\tests\phpunit\TestCase {
         $this->assertTrue($c->successful);
         $this->assertTrue(empty($c->phpMailer->lastMessageID));
     }
+
+
+    /*
+     *
+     */
+    public function testNoRecipientNoSuccessMessage() {
+        self::$app->userMessages[] = ['message' => 'Duggu', 'class' => 'error'];
+        $c = new NoMessageNoSuccessEmail(self::$app);
+        $this->assertTrue($c->successful);
+        $this->assertTrue(empty($c->phpMailer->lastMessageID));
+    }
 }
