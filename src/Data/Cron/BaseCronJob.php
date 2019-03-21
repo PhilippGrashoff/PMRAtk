@@ -55,7 +55,7 @@ abstract class BaseCronJob {
      */
     public function sendSuccessEmail() {
         //no messages to send?
-        if(!$this->app->getUserMessagesAsHTML()) {
+        if(empty($this->app->getUserMessagesAsHTML())) {
             return;
         }
         //no recipients?
