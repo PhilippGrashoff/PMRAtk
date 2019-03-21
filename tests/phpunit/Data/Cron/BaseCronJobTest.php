@@ -69,6 +69,7 @@ class BaseCronJobTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testNoEmailOnNoSuccessMessage() {
+        self::$app->userMessages = [];
         $c = new NoMessageNoSuccessEmail(self::$app);
         $this->assertTrue($c->successful);
         $this->assertTrue(empty($c->phpMailer->lastMessageID));
