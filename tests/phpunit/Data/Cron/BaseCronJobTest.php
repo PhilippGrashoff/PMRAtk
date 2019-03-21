@@ -37,8 +37,6 @@ class BaseCronJobTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function testSuccessfulCronJob() {
         $c = new SampleCronJob(self::$app, ['addAdminToSuccessEmail' => true]);
-        //an email was sent
-        $this->assertTrue(strlen($c->phpMailer->getSentMIMEMessage()) > 0);
         //App has a userMessage set
         $this->assertTrue($c->successful);
         $this->assertEquals(1, count($c->app->userMessages));
@@ -51,7 +49,6 @@ class BaseCronJobTest extends \PMRAtk\tests\phpunit\TestCase {
     public function testExceptionCronJob() {
         $c = new SampleExceptionCronJob(self::$app, ['addAdminToSuccessEmail' => true]);
         //an email was sent
-        $this->assertTrue(strlen($c->phpMailer->getSentMIMEMessage()) > 0);
         $this->assertFalse($c->successful);
     }
 
