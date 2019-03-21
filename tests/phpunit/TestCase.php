@@ -51,14 +51,6 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase {
     }
 
 
-    /*
-     * copies a test file to use with function
-     */
-    protected function _copyFile($filename) {
-        return copy(FILE_BASE_PATH.'output/image/demo-img.jpg', FILE_BASE_PATH.'output/image/'.$filename);
-    }
-
-
     /**
      * Calls protected method.
      *

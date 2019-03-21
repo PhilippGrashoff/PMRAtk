@@ -10,9 +10,10 @@ class API extends \atk4\api\Api {
     /*
      *
      */
-    public function __construct(\atk4\ui\App $app, $request = null) {
-        parent::__construct($request);
+    public function __construct(\PMRAtk\View\App $app) {
+        parent::__construct();
         $this->app = $app;
+        $app->isApiRequest = true;
         $this->tokenLogin('token');
         $this->_removeURLParamsFromPath();
         $this->setupApiEndPoints();

@@ -4,10 +4,17 @@ namespace PMRAtk\View;
 
 class App extends \atk4\ui\App {
 
+    use \PMRAtk\View\Traits\UserMessageTrait;
+
     public $deviceWidth;
+
     public $db;
+
     public $auth;
+
     public $userRolesMaySeeThisPage = [];
+
+    public $isApiRequest = false;
 
     public $emailTemplateDir = 'template/email';
 
