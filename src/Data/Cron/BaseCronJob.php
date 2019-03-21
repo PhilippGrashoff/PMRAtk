@@ -34,6 +34,11 @@ abstract class BaseCronJob {
         $this->setDefaults($defaults);
         $this->app = $app;
         $this->phpMailer = new \PMRAtk\Data\PHPMailer($this->app);
+        //make sure execute exists, otherwise throw exception
+        if(!method_exists($this, 'execute')) {
+            throw new \atk4\data\Exception(__FUNCTION__.' needs to ne implemented in descendants of '.__CLASS__);
+        }
+        //try complete cronjob logic, exception leads to fail email to admin
         try {
             $this->execute();
             $this->successful = true;
@@ -84,13 +89,5 @@ abstract class BaseCronJob {
         $this->phpMailer->setBody('Folgender Fehler ist aufgetreten: <br />'.
             ($e instanceOf \atk4\core\Exception ? $e->getHTML() : $e->getMessage()).'<br />Der Technische Administrator '.TECH_ADMIN_NAME.' wurde informiert.');
         $this->phpMailer->send();
-    }
-
-
-    /*
-     * implement this function in child classes, functionality goes in here
-     */
-    public function execute() {
-        throw new \atk4\data\Exception(__FUNCTION__.' needs to ne implemented in '.__CLASS__);
     }
 }

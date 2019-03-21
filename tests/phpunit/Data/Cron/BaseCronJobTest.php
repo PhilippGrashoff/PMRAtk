@@ -16,6 +16,11 @@ class SampleExceptionCronJob extends \PMRAtk\Data\Cron\BaseCronJob {
 }
 
 
+class DoesNotImplementExecuteCronJob extends \PMRAtk\Data\Cron\BaseCronJob {
+
+}
+
+
 class BaseCronJobTest extends \PMRAtk\tests\phpunit\TestCase {
 
     /*
@@ -39,5 +44,14 @@ class BaseCronJobTest extends \PMRAtk\tests\phpunit\TestCase {
         //an email was sent
         $this->assertTrue(strlen($c->phpMailer->getSentMIMEMessage()) > 0);
         $this->assertFalse($c->successful);
+    }
+
+
+    /*
+     *
+     */
+    public function testExceptionNoExecuteImplemented() {
+        $this->expectException(\atk4\data\Exception::class);
+        $c = new DoesNotImplementExecuteCronJob(self::$app, ['addAdminToSuccessEmail' => true]);
     }
 }
