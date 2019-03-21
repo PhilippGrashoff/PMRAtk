@@ -24,9 +24,6 @@ trait EncryptedFieldTrait {
             },
             function($value, $field, $persistence) use ($key) {
                 $decoded = base64_decode($value);
-                if ($decoded === false) {
-                    throw new \atk4\data\Exception('An error occured decrypting an encrypted field: '.$field->short_name);
-                }
                 if (mb_strlen($decoded, '8bit') < (SODIUM_CRYPTO_SECRETBOX_NONCEBYTES + SODIUM_CRYPTO_SECRETBOX_MACBYTES)) {
                     throw new \atk4\data\Exception('An error occured decrypting an encrypted field: '.$field->short_name);
                 }
