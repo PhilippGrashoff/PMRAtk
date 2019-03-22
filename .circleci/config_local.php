@@ -8,7 +8,7 @@ define('TECH_ADMIN_EMAIL',   'test1@easyoutdooroffice.com');
 define('TECH_ADMIN_NAME',    'Philipp Reisigl');
 
 //Database access
-define('DB_STRING',           'mysql:host=127.0.0.1;dbname=PMRAtk_test');
+define('DB_STRING',           'mysql:host=localhost;dbname=PMRAtk_test');
 define('DB_USER',             'root');
 define('DB_PASSWORD',         'test');
 
