@@ -104,7 +104,7 @@ class App extends \atk4\ui\App {
         $template = new \atk4\ui\Template();
         $template->app = $this;
 
-        if ($t = $template->tryLoad($this->emailTemplateDir.'/'.$name)) {
+        if ($t = $template->tryLoad(FILE_BASE_PATH.$this->emailTemplateDir.'/'.$name)) {
             return $t;
         }
 
