@@ -1,6 +1,6 @@
 <?php
 
-namespace PMRatk\Data\Cron;
+namespace PMRAtk\Data\Cron;
 
 class DBBackup extends BaseCronJob {
 
