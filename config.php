@@ -12,6 +12,8 @@ session_start();
 
 //Standard path to root dir
 define('FILE_BASE_PATH',        __DIR__.'/');
+//where cronjobs creating files should store them. Password protect that folder/disable http access
+define('CRON_FILE_PATH',        'cron/files/');
 
 //German Weekday names
 define('STD_GERMAN_WEEKDAYS',
