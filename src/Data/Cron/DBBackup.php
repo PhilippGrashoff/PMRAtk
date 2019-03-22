@@ -15,7 +15,7 @@ class DBBackup extends BaseCronJob {
         $return_var = null;
 
         //create dump
-        exec('mysqldump -u '.DB_USER.' -p\''.DB_PASSWORD.'\' --quick --allow-keywords --add-drop-table --complete-insert --quote-names '.substr(DB_STRING, strrpos(DB_STRING, '=') + 1).' > '.$sql_file, $output, $return_var);
+        exec('mysqldump -h '.substr(DB_STRING, strpos(DB_STRING, '=') + 1, (strpos(DB_STRING, ';') - (strpos(DB_STRING, '=') + 1))).' -u '.DB_USER.' -p\''.DB_PASSWORD.'\' --quick --allow-keywords --add-drop-table --complete-insert --quote-names '.substr(DB_STRING, strrpos(DB_STRING, '=') + 1).' > '.$sql_file, $output, $return_var);
         if($return_var !== 0) {
             throw new \atk4\data\Exception('The DB Backup could not be created (exit code '.$return_var.'): '.implode(PHP_EOL, $output));
         }
