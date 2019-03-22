@@ -377,7 +377,7 @@ trait BaseFunctionsTrait {
      *
      */
     public function toastVisible(string $additional_class = '') {
-        if(empty($additional_classes)) {
+        if(empty($additional_class)) {
             $this->isVisible('.ui.toast');
         }
         else {
