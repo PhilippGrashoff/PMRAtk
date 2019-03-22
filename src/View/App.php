@@ -108,7 +108,7 @@ class App extends \atk4\ui\App {
             return $t;
         }
 
-        throw new \atk4\data\Exception(['Can not find template file', 'name'=>$name, 'template_dir'=>$this->template_dir]);
+        throw new \atk4\data\Exception(['Can not find email template file', 'name' => $name, 'template_dir' => $this->emailTemplateDir]);
     }
 
 
