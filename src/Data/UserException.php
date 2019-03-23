@@ -2,6 +2,6 @@
 
 namespace PMRAtk\Data;
 
-class UserException extends \Exception {
+class UserException extends \atk4\core\Exception {
 
 }
