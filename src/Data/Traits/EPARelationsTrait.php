@@ -8,6 +8,9 @@ namespace PMRAtk\Data\Traits;
  */
 trait EPARelationsTrait {
 
+    use DeleteHasManyTrait;
+
+
     /*
      * use this in init() to quickly setup email, phone and address relations
      */
@@ -15,7 +18,14 @@ trait EPARelationsTrait {
         $this->hasMany('Phone',             [(new \PMRAtk\Data\Phone($this->persistence,   ['parentObject' => $this]))->addCondition('model_class', __CLASS__), 'their_field' => 'model_id']);
         $this->hasMany('Email',             [(new \PMRAtk\Data\Email($this->persistence,   ['parentObject' => $this]))->addCondition('model_class', __CLASS__), 'their_field' => 'model_id']);
         $this->hasMany('Address',           [(new \PMRAtk\Data\Address($this->persistence, ['parentObject' => $this]))->addCondition('model_class', __CLASS__), 'their_field' => 'model_id']);
+
+        $this->addHook('beforeDelete', function($m)  {
+            $m->deleteHasMany('Phone');
+            $m->deleteHasMany('Email');
+            $m->deleteHasMany('Address');
+        });
     }
+
 
     /*
      * Helper function for getFirstEmail, getFirstAddress, getFirstPhone

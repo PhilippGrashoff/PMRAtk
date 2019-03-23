@@ -226,6 +226,25 @@ class EPARelationsTraitTest extends \PMRAtk\tests\phpunit\TestCase {
 
 
     /*
+     * tests if EPAs get deleted when parent object is deleted
+     */
+    public function testdeleteEPAsOnParentDelete() {
+        $m = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
+        $m->save();
+        $initial_count = (new \PMRAtk\Data\Email(self::$app->db))->action('count')->getOne();
+        $m->addEmail('hansi@easyoutdooroffice.com');
+        $m->addEmail('gfgdgdgfd');
+
+        $this->assertEquals($initial_count + 2, (new \PMRAtk\Data\Email(self::$app->db))->action('count')->getOne());
+
+        $m->delete();
+
+        $this->assertEquals($initial_count, (new \PMRAtk\Data\Email(self::$app->db))->action('count')->getOne());
+
+    }
+
+
+    /*
      * test if _getEpaById throws an exception if record wasnt found
      */
     public function testGetEPAByIdExceptionIfRefNotFound() {
