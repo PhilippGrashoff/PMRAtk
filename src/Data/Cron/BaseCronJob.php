@@ -30,7 +30,7 @@ abstract class BaseCronJob {
     /*
      *
      */
-     public function __construct(\PMRAtk\View\App $app, array $defaults = []) {
+     public function __construct(\atk4\ui\App $app, array $defaults = []) {
         $this->setDefaults($defaults);
         $this->app = $app;
         $this->phpMailer = new \PMRAtk\Data\PHPMailer($this->app);
