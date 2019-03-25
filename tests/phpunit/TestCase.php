@@ -26,9 +26,11 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase {
     /*
      *
      */
-    function setUp() {
+    public function setUp() {
         // start transaction
         self::$app->db->connection->beginTransaction();
+        //add Headline to log to see which test function called which DB requests
+        self::$app->addLogHeadLine(__FUNCTION__);
     }
 
 
@@ -43,7 +45,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase {
     /*
      *
      */
-    function tearDown() {
+    public function tearDown() {
         // rollback after each test
         if(self::$app->db->connection->inTransaction()) {
             self::$app->db->connection->rollback();
