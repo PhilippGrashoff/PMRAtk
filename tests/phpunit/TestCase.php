@@ -30,7 +30,6 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase {
         // start transaction
         self::$app->db->connection->beginTransaction();
         //add Headline to log to see which test function called which DB requests
-        self::$app->addLogHeadLine(__FUNCTION__);
     }
 
 

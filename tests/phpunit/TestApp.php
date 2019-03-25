@@ -15,18 +15,4 @@ class TestApp extends \PMRAtk\View\App {
         parent::_addAuth();
         $this->auth->user->load(1);
     }
-
-
-    /*
-     *  dump DSQL query in console in debug mode
-     */
-    public function debug($expr, $took) {
-        if (!$this->debug) {
-            return;
-        }
-        $stderr = fopen('php://stderr', 'w');
-        $Message =  sprintf("[%02.6f] %s\n", $took, $expr->getDebugQuery());
-        fwrite($stderr,$Message);
-        fclose($stderr);
-    }
 }
