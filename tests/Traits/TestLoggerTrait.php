@@ -12,8 +12,16 @@ trait TestLoggerTrait {
     /*
      * adds a "headline" to sql log
      */
-    public function addLogHeadLine(string $function_name) {
-        $this->_getLogger()->log(\Psr\Log\LogLevel::DEBUG, PHP_EOL.PHP_EOL.$function_name.PHP_EOL);
+    public function addLogHeadLine(string $text) {
+        $this->_getLogger()->log(\Psr\Log\LogLevel::DEBUG, PHP_EOL.PHP_EOL.$text.PHP_EOL);
+    }
+
+
+    /*
+     *
+     */
+    public function addLogFootLine(string $text) {
+        $this->_getLogger()->log(\Psr\Log\LogLevel::DEBUG, PHP_EOL.$text.PHP_EOL);
     }
 
 

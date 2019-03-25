@@ -36,7 +36,7 @@ class FileLogger {
         if(false === file_put_contents(
         $this->fileName,
         //$message. PHP_EOL.'    '.$level.' '.implode(', ', $context).PHP_EOL,
-        $message. PHP_EOL,
+        $message,
         FILE_APPEND)) {
             throw new \atk4\data\Exception('Failed to write Logger info to file: '.$this->fileName. ' in '.__FUNCTION__);
         }

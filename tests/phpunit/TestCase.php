@@ -32,7 +32,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase {
         // start transaction
         self::$app->db->connection->beginTransaction();
         //add Headline to log to see which test function called which DB requests
-        self::$app->addLogHeadLine($this->getName());
+        self::$app->addLogHeadLine('Test: '.$this->getName());
     }
 
 
@@ -49,7 +49,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase {
      */
     public function tearDown() {
         //log query count
-        self::$app->addLogHeadLine('Total Queries in Test: '.self::$app->queryCount);
+        self::$app->addLogFootLine('Total Queries in '.$this->getName().': '.self::$app->queryCount);
         // rollback after each test
         if(self::$app->db->connection->inTransaction()) {
             self::$app->db->connection->rollback();
