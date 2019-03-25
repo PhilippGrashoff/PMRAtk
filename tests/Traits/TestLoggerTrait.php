@@ -6,6 +6,8 @@ trait TestLoggerTrait {
 
     public $logger;
 
+    public $queryCount = 0;
+
 
     /*
      * adds a "headline" to sql log
@@ -19,6 +21,7 @@ trait TestLoggerTrait {
      *
      */
     public function dblog($expr, $took) {
+        $this->queryCount++;
         $this->_getLogger()->log(\Psr\Log\LogLevel::DEBUG, sprintf("[%02.6f] %s\n", $took, $expr->getDebugQuery()));
     }
 
