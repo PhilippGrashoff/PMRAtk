@@ -5,7 +5,6 @@ namespace PMRAtk\tests\phpunit;
 abstract class TestCase extends \PHPUnit\Framework\TestCase {
 
     public static $app;
-    public $dbQueryCounter = 0;
 
 
     /*
@@ -13,7 +12,6 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase {
      */
     public static function setUpBeforeClass() {
         self::$app = new TestApp(['admin']);
-        self::$app->logger = new \PMRAtk\Data\FileLogger(FILE_BASE_PATH.'tests/logs/'.get_class($this).'.txt');
     }
 
 
