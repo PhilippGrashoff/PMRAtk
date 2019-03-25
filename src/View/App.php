@@ -5,9 +5,6 @@ namespace PMRAtk\View;
 class App extends \atk4\ui\App {
 
     use \PMRAtk\View\Traits\UserMessageTrait;
-    use \atk4\core\DebugTrait;
-
-    public $logger;
 
     public $deviceWidth;
 
@@ -26,7 +23,6 @@ class App extends \atk4\ui\App {
      *
      */
     public function __construct(array $user_roles_may_see = [], array $defaults = []) {
-        $this->logger = new \PMRAtk\Data\FileLogger();
         parent::__construct($defaults);
 
         //set user rights, only these roles may see this page
