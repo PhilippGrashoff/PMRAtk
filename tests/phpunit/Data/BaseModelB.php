@@ -6,6 +6,7 @@ class BaseModelB extends \PMRAtk\Data\BaseModel {
 
     use \PMRAtk\Data\Traits\EPARelationsTrait;
     use \PMRAtk\Data\Traits\MToMTrait;
+    use \PMRAtk\Data\Traits\AuditTrait;
 
     public $table = 'BaseModelB';
 

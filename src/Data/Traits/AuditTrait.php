@@ -113,12 +113,30 @@ trait AuditTrait {
         $data = [];
         //only save if some value is there or some change happened
         if($model->get('value') || isset($model->dirty['value'])) {
-            $data['value'] = ['old_value' => (isset($model->dirty['value']) ? $model->dirty['value'] : ''), 'new_value' => $model->get('value')];
+            $data = ['old_value' => (isset($model->dirty['value']) ? $model->dirty['value'] : ''), 'new_value' => $model->get('value')];
         }
         if($data) {
             $audit->set('data', $data);
             $audit->save();
         }
+    }
+
+
+    /*
+     * creates an Audit for adding/removing MToM Relations
+     */
+    public function addMToMAudit(string $type, \PMRAtk\Data\BaseModel $model) {
+        if(!$this->_auditEnabled()) {
+            return;
+        }
+
+        $audit = new \PMRAtk\Data\Audit($this->persistence, ['parentObject' => $this]);
+        $audit->set('value', $type.'_'.strtoupper((new \ReflectionClass($model))->getShortName()));
+
+        $data = ['id' => $model->get('id'), 'name' => $model->get('name')];
+
+        $audit->set('data', $data);
+        $audit->save();
     }
 
 

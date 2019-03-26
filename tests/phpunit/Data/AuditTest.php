@@ -121,4 +121,37 @@ class AuditTest extends \PMRAtk\tests\phpunit\TestCase {
         $this->assertTrue($delete_found);
     }
 
+
+    /*
+     * test MToM audit
+     */
+    public function testMToMAudit() {
+        $a = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
+        $b = new \PMRAtk\tests\phpunit\Data\BaseModelB(self::$app->db);
+        $a->save();
+        $b->save();
+
+        //MToM Adding should create an audit
+        $initial_audit_count = (new \PMRAtk\Data\Audit(self::$app->db))->action('count')->getOne();
+        $this->assertTrue($this->callProtected($a, '_addMToMRelation', [$b, new \PMRAtk\tests\phpunit\Data\MToMModel(self::$app->db), '\PMRAtk\tests\phpunit\Data\BaseModelB', 'BaseModelA_id', 'BaseModelB_id']));
+        $this->assertEquals($initial_audit_count + 2, (new \PMRAtk\Data\Audit(self::$app->db))->action('count')->getOne());
+
+        //MToM Removal too
+        $this->assertTrue($this->callProtected($a, '_removeMToMRelation', [$b, new \PMRAtk\tests\phpunit\Data\MToMModel(self::$app->db), '\PMRAtk\tests\phpunit\Data\BaseModelB', 'BaseModelA_id', 'BaseModelB_id']));
+        $this->assertEquals($initial_audit_count + 4, (new \PMRAtk\Data\Audit(self::$app->db))->action('count')->getOne());
+
+        //make sure ADD_BASEMODELB, AND REMOVE_BASEMODELB Audits are there
+        $create_found = false;
+        $delete_found = false;
+        foreach($a->getAuditViewModel() as $audit) {
+            if($audit->get('value') == 'ADD_BASEMODELB') {
+                $create_found = true;
+            }
+            if($audit->get('value') == 'REMOVE_BASEMODELB') {
+                $delete_found = true;
+            }
+        }
+        $this->assertTrue($create_found);
+        $this->assertTrue($delete_found);
+    }
 }
