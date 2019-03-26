@@ -81,6 +81,8 @@ CREATE TABLE IF NOT EXISTS `BaseModelA` (
   `last_updated` DATETIME NULL,
   `time` TIME NULL,
   `date` DATE NULL,
+  `dd_test` INT NULL,
+  `dd_test_2` VARCHAR(255) NULL,
   `BaseModelB_id` INT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `id_UNIQUE` (`id` ASC))

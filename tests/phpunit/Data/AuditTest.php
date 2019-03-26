@@ -47,6 +47,8 @@ class AuditTest extends \PMRAtk\tests\phpunit\TestCase {
         $this->assertEquals(3, $a->getAuditViewModel()->action('count')->getOne());
         $a->set('time', '10:00');
         $a->set('date', '2019-05-05');
+        $a->set('dd_test', 1);
+        $a->set('dd_test_2', 'bla');
         $a->save();
         $this->assertEquals(4, $a->getAuditViewModel()->action('count')->getOne());
         $a->addAdditionalAudit('SOMETYPE', []);
@@ -153,5 +155,24 @@ class AuditTest extends \PMRAtk\tests\phpunit\TestCase {
         }
         $this->assertTrue($create_found);
         $this->assertTrue($delete_found);
+    }
+
+
+    /*
+     * test if Audit is not created
+     */
+    public function testNoAuditCreatedOnSetting() {
+        $_ENV['CREATE_AUDIT'] = false;
+        $initial_audit_count = (new \PMRAtk\Data\Audit(self::$app->db))->action('count')->getOne();
+
+        $a = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
+        $a->save();
+        $a->addAdditionalAudit('bla', []);
+        $e = $a->addEmail('lala');
+        $a->updateEmail($e->id, 'fdgdfgdf');
+        $a->deleteEmail($e->id);
+
+        $this->assertEquals($initial_audit_count, (new \PMRAtk\Data\Audit(self::$app->db))->action('count')->getOne());
+        $_ENV['CREATE_AUDIT'] = true;
     }
 }

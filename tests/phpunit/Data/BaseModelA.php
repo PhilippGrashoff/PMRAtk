@@ -16,9 +16,12 @@ class BaseModelA extends \PMRAtk\Data\BaseModel {
         $this->_addAuditRef();
 
         $this->addFields([
-            ['name', 'type' => 'string'],
-            ['date', 'type' => 'date'],
-            ['time', 'type' => 'time'],
+            ['name',      'type' => 'string'],
+            ['date',      'type' => 'date'],
+            ['time',      'type' => 'time'],
+            ['dd_test',   'type' => 'string', 'ui' => ['form' => ['DropDown', 'values' => [0 => 'Nein', 1 => 'Ja']]]],
+            ['dd_test_2', 'type' => 'string', 'ui' => ['form' => ['DropDown', 'empty' => 'Hans']]],
+
         ]);
 
         $this->_addEPARefs();
