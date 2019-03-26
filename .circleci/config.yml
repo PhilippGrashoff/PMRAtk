@@ -61,6 +61,9 @@ jobs:
       #install composer dependecies
       - run: composer update
 
+      #make tests/logs/forbiddenlog.txt unwritable
+      - run: sudo chmod 444 tests/logs/forbiddenlog.txt
+
       #run tests
       - run:
           name: Run Unit tests
