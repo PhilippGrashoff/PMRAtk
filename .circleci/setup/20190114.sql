@@ -29,6 +29,22 @@ DEFAULT CHARACTER SET = latin1
 COLLATE = latin1_german1_ci;
 
 
+CREATE TABLE IF NOT EXISTS `audit` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `last_updated` DATETIME NULL,
+  `created_date` DATETIME NULL,
+  `created_by` INT NULL,
+  `created_by_name` VARCHAR(255) NULL,
+  `value` TEXT NULL,
+  `data`  TEXT NULL,
+  `model_class` VARCHAR(255) NULL,
+  `model_id` INT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_german1_ci;
+
+
 CREATE TABLE IF NOT EXISTS `address` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `last_updated` DATETIME NULL,
@@ -63,6 +79,8 @@ CREATE TABLE IF NOT EXISTS `BaseModelA` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `created_date` DATETIME NULL,
   `last_updated` DATETIME NULL,
+  `time` TIME NULL,
+  `date` DATE NULL,
   `BaseModelB_id` INT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `id_UNIQUE` (`id` ASC))

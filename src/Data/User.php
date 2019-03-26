@@ -19,11 +19,8 @@ class User extends BaseModel {
         $p = new \atk4\login\Field\Password();
         $this->addField('password', [$p, 'caption' => 'Passwort', 'system' => true]);
 
-        //User is some real life person/company with contact info
-        $this->hasMany('Phone',             [(new Phone($this->persistence,   ['parentObject' => $this]))->addCondition('model_class', __CLASS__), 'their_field' => 'model_id']);
-        $this->hasMany('Email',             [(new Email($this->persistence,   ['parentObject' => $this]))->addCondition('model_class', __CLASS__), 'their_field' => 'model_id']);
-        $this->hasMany('Address',           [(new Address($this->persistence, ['parentObject' => $this]))->addCondition('model_class', __CLASS__), 'their_field' => 'model_id']);
-    }
+        $this->_addEPARefs();
+     }
 
 
     /*

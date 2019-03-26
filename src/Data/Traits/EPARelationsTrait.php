@@ -8,16 +8,13 @@ namespace PMRAtk\Data\Traits;
  */
 trait EPARelationsTrait {
 
-    use DeleteHasManyTrait;
-
-
     /*
      * use this in init() to quickly setup email, phone and address relations
      */
     protected function _addEPARefs() {
-        $this->hasMany('Phone',             [(new \PMRAtk\Data\Phone($this->persistence,   ['parentObject' => $this]))->addCondition('model_class', __CLASS__), 'their_field' => 'model_id']);
-        $this->hasMany('Email',             [(new \PMRAtk\Data\Email($this->persistence,   ['parentObject' => $this]))->addCondition('model_class', __CLASS__), 'their_field' => 'model_id']);
-        $this->hasMany('Address',           [(new \PMRAtk\Data\Address($this->persistence, ['parentObject' => $this]))->addCondition('model_class', __CLASS__), 'their_field' => 'model_id']);
+        $this->hasMany('Phone',             [(new \PMRAtk\Data\Phone($this->persistence,   ['parentObject' => $this]))->addCondition('model_class', get_class($this)), 'their_field' => 'model_id']);
+        $this->hasMany('Email',             [(new \PMRAtk\Data\Email($this->persistence,   ['parentObject' => $this]))->addCondition('model_class', get_class($this)), 'their_field' => 'model_id']);
+        $this->hasMany('Address',           [(new \PMRAtk\Data\Address($this->persistence, ['parentObject' => $this]))->addCondition('model_class', get_class($this)), 'their_field' => 'model_id']);
 
         $this->addHook('beforeDelete', function($m)  {
             $m->deleteHasMany('Phone');
@@ -125,6 +122,7 @@ trait EPARelationsTrait {
                 $new_epa->set('model_id', $id);
                 $new_epa->set('value', $value);
                 $new_epa->save();
+                $m->addSecondaryAudit('CREATE', $new_epa);
             });
             return null;
         }
@@ -135,6 +133,7 @@ trait EPARelationsTrait {
             //create a new Instance, set value and reference field, save
             $new_epa->set('value', $value);
             $new_epa->save();
+            $this->addSecondaryAudit('CREATE', $new_epa);
 
             return clone $new_epa;
         }
@@ -168,6 +167,7 @@ trait EPARelationsTrait {
         if($value !== $epa->get('value')) {
             $epa->set('value', $value);
             $epa->save();
+            $this->addSecondaryAudit('CHANGE', $epa);
         }
         return true;
     }
@@ -195,6 +195,7 @@ trait EPARelationsTrait {
         }
 
         $epa->delete();
+        $this->addSecondaryAudit('REMOVE', $epa);
 
         return true;
     }
