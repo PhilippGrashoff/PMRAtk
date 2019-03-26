@@ -42,17 +42,30 @@ class AuditTest extends \PMRAtk\tests\phpunit\TestCase {
         $a->set('name', 'TEST');
         $a->save();
         $this->assertEquals(2, $a->getAuditViewModel()->action('count')->getOne());
-        $a->set('BaseModelB_id', '1');
+        $a->set('dd_test', 1);
         $a->save();
         $this->assertEquals(3, $a->getAuditViewModel()->action('count')->getOne());
         $a->set('time', '10:00');
         $a->set('date', '2019-05-05');
-        $a->set('dd_test', 1);
+        $a->set('dd_test', 2);
         $a->set('dd_test_2', 'bla');
         $a->save();
         $this->assertEquals(4, $a->getAuditViewModel()->action('count')->getOne());
         $a->addAdditionalAudit('SOMETYPE', []);
         $this->assertEquals(5, $a->getAuditViewModel()->action('count')->getOne());
+
+        //hasOne Audit field all possibilities
+        $b1 = new \PMRAtk\tests\phpunit\Data\BaseModelB(self::$app->db);
+        $b2 = new \PMRAtk\tests\phpunit\Data\BaseModelB(self::$app->db);
+        $b1->save();
+        $b2->save();
+
+        $a->set('BaseModelB_id', '1111');
+        $a->save();
+        $a->set('BaseModelB_id', $b1->get('id'));
+        $a->save();
+        $a->set('BaseModelB_id', $b2->get('id'));
+        $a->save();
 
 
         //make sure CREATE AND CHANGE Audits are there
