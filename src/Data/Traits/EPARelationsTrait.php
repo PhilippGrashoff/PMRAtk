@@ -122,7 +122,7 @@ trait EPARelationsTrait {
                 $new_epa->set('model_id', $id);
                 $new_epa->set('value', $value);
                 $new_epa->save();
-                $m->addSecondaryAudit('CREATE', $new_epa);
+                $m->addSecondaryAudit('ADD', $new_epa);
             });
             return null;
         }
@@ -133,7 +133,7 @@ trait EPARelationsTrait {
             //create a new Instance, set value and reference field, save
             $new_epa->set('value', $value);
             $new_epa->save();
-            $this->addSecondaryAudit('CREATE', $new_epa);
+            $this->addSecondaryAudit('ADD', $new_epa);
 
             return clone $new_epa;
         }
@@ -144,7 +144,7 @@ trait EPARelationsTrait {
      * Edits/Deletes referenced Emails, Phones, Addresses
      *
      * @param string type Either Email, Phone or Address
-     * @param mixel id The ID of the EPA record or 'create' if a new one should be created
+     * @param mixel id
      * @param string value the new value
      *
      * @return bool
@@ -194,8 +194,9 @@ trait EPARelationsTrait {
             return false;
         }
 
+        $clone = clone $epa;
         $epa->delete();
-        $this->addSecondaryAudit('REMOVE', $epa);
+        $this->addSecondaryAudit('REMOVE', $clone);
 
         return true;
     }

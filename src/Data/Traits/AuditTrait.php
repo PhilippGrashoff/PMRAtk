@@ -93,7 +93,7 @@ trait AuditTrait {
         if(!$this->_auditEnabled()) {
             return;
         }
-        $audit = new \EOO\Data\Audit($this->persistence, ['parentObject' => $this]);
+        $audit = new \PMRAtk\Data\Audit($this->persistence, ['parentObject' => $this]);
         $audit->set('value', 'DELETE');
         $audit->save();
     }

@@ -31,5 +31,9 @@ class BaseModelA extends \PMRAtk\Data\BaseModel {
         $this->addHook('afterSave', function($m, $is_update) {
             $m->createAudit($is_update ? 'CHANGE' : 'CREATE');
         });
+        //after delete, create Audit
+        $this->addHook('afterDelete', function($m) {
+            $m->createDeleteAudit();
+        });
     }
 }
