@@ -1,3 +1,4 @@
 /config_local.php
 /vendor/*
 /build/*
+/tests/logs/*
