@@ -133,7 +133,7 @@ trait AuditTrait {
         $audit = new \PMRAtk\Data\Audit($this->persistence, ['parentObject' => $this]);
         $audit->set('value', $type.'_'.strtoupper((new \ReflectionClass($model))->getShortName()));
 
-        $data = ['id' => $model->get('id'), 'name' => $model->get('name')];
+        $data = ['id' => $model->get('id'), 'name' => $model->get('name'), 'model' => get_class($model)];
 
         $audit->set('data', $data);
         $audit->save();
