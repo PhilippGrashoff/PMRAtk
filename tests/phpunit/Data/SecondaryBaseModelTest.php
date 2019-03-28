@@ -37,6 +37,18 @@ class SecondaryBaseModelTest extends \PMRAtk\tests\phpunit\TestCase {
 
 
     /*
+     *
+     */
+    public function testSetAndGetParentObject() {
+        $bm = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
+        $bm->save();
+        $e = new \PMRAtk\tests\phpunit\Data\SecondaryBaseModelA(self::$app->db, ['parentObject' => $bm]);
+        $g = $e->getParentObject();
+        $this->assertTrue($g instanceOf \PMRAtk\tests\phpunit\Data\BaseModelA);
+    }
+
+
+    /*
      * test if value gets trimmed when saving
      */
     public function testTrimValueOnSave() {

@@ -102,7 +102,7 @@ trait AuditTrait {
     /*
      * creates an Audit for secondary models like emails, if it was added, changed or removed
      */
-    public function addSecondaryAudit(string $type, \PMRAtk\Data\SecondaryBaseModel $model) {
+    public function addSecondaryAudit(string $type, \PMRAtk\Data\SecondaryBaseModel $model, string $field = 'value') {
         if(!$this->_auditEnabled()) {
             return;
         }
@@ -112,8 +112,8 @@ trait AuditTrait {
 
         $data = [];
         //only save if some value is there or some change happened
-        if($model->get('value') || isset($model->dirty['value'])) {
-            $data = ['old_value' => (isset($model->dirty['value']) ? $model->dirty['value'] : ''), 'new_value' => $model->get('value')];
+        if($model->get($field) || isset($model->dirty[$field])) {
+            $data = ['old_value' => (isset($model->dirty[$field]) ? $model->dirty[$field] : ''), 'new_value' => $model->get($field)];
         }
         if($data) {
             $audit->set('data', $data);
