@@ -33,7 +33,7 @@ abstract class BaseCronJob {
      public function __construct(\atk4\ui\App $app, array $defaults = []) {
         $this->setDefaults($defaults);
         $this->app = $app;
-        $this->phpMailer = new \PMRAtk\Data\PHPMailer($this->app);
+        $this->phpMailer = new \PMRAtk\Data\Email\PHPMailer($this->app);
         //make sure execute exists, otherwise throw exception
         if(!method_exists($this, 'execute')) {
             throw new \atk4\data\Exception(__FUNCTION__.' needs to ne implemented in descendants of '.__CLASS__);

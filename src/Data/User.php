@@ -64,7 +64,7 @@ class User extends BaseModel {
         $t->set('url',   URL_BASE_PATH);
         $t->set('token', $c->setNewToken());
 
-        $phpmailer = new \PMRAtk\Data\PHPMailer($this->app);
+        $phpmailer = new \PMRAtk\Data\Email\PHPMailer($this->app);
         $phpmailer->setBody($t->render());
         $phpmailer->Subject = $this->app->title.': Passwort zurücksetzen';
         $phpmailer->addAddress($c->getFirstEmail());
