@@ -89,8 +89,8 @@ class BaseEmail extends \atk4\data\Model {
         }
 
         //if its a file, load file, else treat as string
-        $template = new \PMRAtk\View\Template();
-        if(file_exists($this->template)) {
+        $template = new \atk4\ui\Template();
+        if(file_exists(FILE_BASE_PATH.$this->template)) {
             $template->load($this->template);
         }
         else {
@@ -114,7 +114,7 @@ class BaseEmail extends \atk4\data\Model {
     /*
      * replace signature from template with custom one from logged in user
      */
-    protected function _loadUserSignature(\PMRAtk\View\Template $template) {
+    protected function _loadUserSignature(\atk4\ui\Template $template) {
         if(!$template->hasTag('Signature')) {
             return;
         }
@@ -272,23 +272,6 @@ class BaseEmail extends \atk4\data\Model {
         }
 
         $this->set('attachments', $a);
-    }
-
-
-    /*
-     * returns an array with all email ids set in EmailRecipients ref
-     *
-     * @return array
-     */
-    public function getAllIds() {
-        $return = [];
-        foreach($this->ref('EmailRecipient') as  $r) {
-            if(!empty($r->get('model_class')) && !empty($r->get('model_id'))) {
-                $return[] = $r->get('model_class').'_'.$r->get('model_id');
-            }
-        }
-
-        return $return;
     }
 
 

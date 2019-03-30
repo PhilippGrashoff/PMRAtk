@@ -146,4 +146,15 @@ class BaseEmailTest extends \PMRAtk\tests\phpunit\TestCase {
         $this->assertTrue($base_email->addRecipient('test1@easyoutdooroffice.com'));
         $this->assertTrue($base_email->send());
     }
+
+
+    /*
+     *
+     */
+    public function testInitialTemplateLoading() {
+        $base_email = new \PMRAtk\Data\Email\BaseEmail(self::$app->db, ['template' => 'tests/testemailtemplate.html']);
+        $base_email->loadInitialValues();
+        $this->assertEquals($base_email->get('subject'), 'TestBetreff');
+        $this->assertTrue(strpos($base_email->get('message'), 'TestInhalt') !== false);
+    }
 }
