@@ -253,7 +253,7 @@ class BaseEmail extends \atk4\data\Model {
      *
      * @param object
      */
-    public function addAttachment($id) {
+    public function addAttachment(int $id) {
         $a = $this->get('attachments');
         $a[] = $id;
         $this->set('attachments', $a);
@@ -265,13 +265,12 @@ class BaseEmail extends \atk4\data\Model {
      *
      * @param int
      */
-    public function removeAttachment($id) {
-        $a = [];
-        foreach($this->get('attachments') as $file_id) {
-            if($id != $file_id) {
-                $a[] = $file_id;
-            }
+    public function removeAttachment(int $id) {
+        $a = $this->get('attachments');
+        if(in_array($id, $a)) {
+            unset($a[array_search($id, $a)]);
         }
+
         $this->set('attachments', $a);
     }
 
@@ -311,7 +310,7 @@ class BaseEmail extends \atk4\data\Model {
 
         //add Attachments
         if($this->get('attachments')) {
-            $a_files = new File($this->persistence);
+            $a_files = new \PMRAtk\Data\File($this->persistence);
             $a_files->addCondition('id', 'in', $this->get('attachments'));
             foreach($a_files as $a) {
                 $phpmailer->addAttachment($a->getFullFilePath());

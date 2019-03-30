@@ -127,10 +127,23 @@ class BaseEmailTest extends \PMRAtk\tests\phpunit\TestCase {
         $base_email = new \PMRAtk\Data\Email\BaseEmail(self::$app->db);
         $base_email->save();
         $file = $this->createTestFile('test.jpg');
-        $base_email->addAttachment($file);
+        $base_email->addAttachment($file->get('id'));
         $this->assertEquals(1, count($base_email->get('attachments')));
 
         $base_email->removeAttachment($file->get('id'));
-        $this->assertEquals(1, count($base_email->get('attachments')));
+        $this->assertEquals(0, count($base_email->get('attachments')));
+    }
+
+
+    /*
+     *
+     */
+    public function testSendAttachments() {
+        $base_email = new \PMRAtk\Data\Email\BaseEmail(self::$app->db);
+        $base_email->save();
+        $file = $this->createTestFile('test.jpg');
+        $base_email->addAttachment($file->get('id'));
+        $this->assertTrue($base_email->addRecipient('test1@easyoutdooroffice.com'));
+        $this->assertTrue($base_email->send());
     }
 }
