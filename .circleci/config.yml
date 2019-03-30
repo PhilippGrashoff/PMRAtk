@@ -64,6 +64,21 @@ jobs:
       #make tests/logs/forbiddenlog.txt unwritable
       - run: sudo chmod 444 tests/logs/forbiddenlog.txt
 
+        #open config_local.php and write the $_ENV vars there
+        #only this way selenium has them available too
+      - run:
+          name: Get Email credentials to config
+          command: |
+            sudo chmod 777 config_local.php
+            echo "\define('STD_EMAIL',           '$TEST_STD_EMAIL');" >> config_local.php
+            echo "\define('STD_EMAIL_NAME',      '$TEST_STD_EMAIL_NAME');" >> config_local.php
+            echo "\define('EMAIL_HOST',          '$TEST_EMAIL_HOST');" >> config_local.php
+            echo "\define('EMAIL_PORT',          '$TEST_EMAIL_PORT');" >> config_local.php
+            echo "\define('EMAIL_USERNAME',      '$TEST_EMAIL_USERNAME');" >> config_local.php
+            echo "\define('EMAIL_PASSWORD',      '$TEST_EMAIL_PASSWORD');" >> config_local.php
+            echo "\define('IMAP_PATH_SENT_MAIL', '$TEST_IMAP_PATH_SENT_MAIL');" >> config_local.php
+
+
       #run tests
       - run:
           name: Run Unit tests
