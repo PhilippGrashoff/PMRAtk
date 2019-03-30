@@ -40,8 +40,8 @@ class File extends SecondaryBaseModel {
      * returns bool
      */
     public function deleteFile() {
-        if(file_exists(FILE_BASE_PATH.$this->get('path').$this->get('filename'))) {
-            return unlink(FILE_BASE_PATH.$this->get('path').$this->get('filename'));
+        if(file_exists(FILE_BASE_PATH.$this->get('path').$this->get('value'))) {
+            return unlink(FILE_BASE_PATH.$this->get('path').$this->get('value'));
         }
         return false;
     }

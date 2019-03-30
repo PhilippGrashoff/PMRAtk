@@ -56,17 +56,8 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase {
     }
 
 
-    /**
+    /*
      * Calls protected method.
-     *
-     * NOTE: this method must only be used for low-level functionality, not
-     * for general test-scripts.
-     *
-     * @param object $obj
-     * @param string $name
-     * @param array  $args
-     *
-     * @return mixed
      */
     public function callProtected($obj, $name, array $args = []) {
         $class = new \ReflectionClass($obj);
@@ -74,5 +65,55 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase {
         $method->setAccessible(true);
 
         return $method->invokeArgs($obj, $args);
+    }
+
+
+
+    /*
+     * copies a test file to use with function
+     */
+    protected function _copyFile(string $filename, string $path = '') {
+        return copy(FILE_BASE_PATH.'tests/demo-img.jpg', FILE_BASE_PATH.$path.$filename);
+    }
+
+
+    /*
+     * counts the files in a dir with a certain extension
+     * useful for tests for custom RegisterForm, custom BC etc
+     */
+    public function countFilesInDirWithExtension(string $dir, string $extension):int {
+        $count = 0;
+        foreach(new \DirectoryIterator($dir) as $file) {
+            if(strtolower($file->getExtension()) === strtolower($extension)) {
+                $count++;
+            }
+        }
+        return $count;
+    }
+
+
+    /*
+     * see if object has an audit set, returns this audit entry for further testing
+     */
+    protected function _testAuditExists(\EOO\Data\BaseModel $m, string $type) {
+        $audit = $m->getAuditViewModel();
+        $audit->addCondition('value', $type);
+        $audit->tryLoadAny();
+        $this->assertTrue($audit->loaded());
+        return clone $audit;
+    }
+
+
+    /*
+     *
+     */
+    public function createTestFile(string $filename, string $path = '', \PMRAtk\Data\BaseModel $parent = null) {
+        $this->_copyFile($filename, $path);
+        $file = new \PMRAtk\Data\File(self::$app->db, ['parentObject' => $parent]);
+        $file->set('value', $filename);
+        $file->set('path', $path);
+        $file->save();
+
+        return clone $file;
     }
 }

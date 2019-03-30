@@ -69,20 +69,21 @@ class BaseEmail extends \atk4\data\Model {
 
 
     /*
-     *
+     * overload in child classes
      */
-    public function loadInitialTemplate() {
-        //if an initial template is set, try to load it and get Message and Subject from it
-        $this->_loadTemplate();
-    }
+    public function loadInitialRecipients() {}
 
 
     /*
-     * loads message and subject from the template file specified.
-     * then runs process...Template functions if specified.
+     * overload in child classes
      */
-    protected function _loadFromTemplate() {
-        //no template set? dont do anything
+    public function loadInitialAttachments() {}
+
+
+    /*
+     *
+     */
+    public function loadInitialTemplate() {
         if(!$this->template)  {
             return;
         }

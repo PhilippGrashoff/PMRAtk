@@ -192,3 +192,20 @@ ENGINE = InnoDB
 DEFAULT CHARACTER SET = latin1
 COLLATE = latin1_german1_ci;
 
+
+CREATE TABLE IF NOT EXISTS `file` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `value` TEXT NULL,
+  `model_id` INT NULL,
+  `model_class` VARCHAR(255) NULL,
+  `path` VARCHAR(255) NULL,
+  `type` VARCHAR(255) NULL,
+  `filetype` VARCHAR(255) NULL,
+  `auto_generated` TINYINT NULL,
+  `last_updated` DATETIME NULL,
+  `created_date` DATETIME NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_german1_ci;
+
