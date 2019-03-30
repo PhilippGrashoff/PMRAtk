@@ -14,6 +14,8 @@ class App extends \atk4\ui\App {
 
     public $userRolesMaySeeThisPage = [];
 
+    protected $settings = [];
+
     public $isApiRequest = false;
 
     public $emailTemplateDir = 'template/email';
@@ -134,6 +136,25 @@ class App extends \atk4\ui\App {
         }
         elseif(isset($_SESSION['device_width'])) {
             $this->deviceWidth = $_SESSION['device_width'];
+        }
+    }
+
+
+    /*
+     * Function to load a setting from App. App is the central point
+     * which both data and ui can access to get $_ENV etc settings
+     * Using this function makes definition of the settings independent from
+     * their definition, may it be $_ENV[], define() or stored in DB (preferred)
+     */
+    public function getSetting(string $ident) {
+        if(isset($this->settings[$ident])) {
+            return $this->settings[$ident];
+        }
+        elseif(isset($_ENV[$ident])) {
+            return $_ENV[$ident];
+        }
+        elseif(defined($ident)) {
+            return constant($ident);
         }
     }
 }

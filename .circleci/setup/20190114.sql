@@ -83,6 +83,8 @@ CREATE TABLE IF NOT EXISTS `BaseModelA` (
   `date` DATE NULL,
   `dd_test` INT NULL,
   `dd_test_2` VARCHAR(255) NULL,
+  `firstname` VARCHAR(255) NULL,
+  `lastname` VARCHAR(255) NULL,
   `BaseModelB_id` INT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `id_UNIQUE` (`id` ASC))
@@ -161,6 +163,31 @@ CREATE TABLE IF NOT EXISTS `User` (
   `password` VARCHAR(255) NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `id_UNIQUE` (`id` ASC))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_german1_ci;
+
+
+CREATE TABLE IF NOT EXISTS `base_email` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `subject` TEXT NULL,
+  `message` TEXT NULL,
+  `attachments` JSON NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_german1_ci;
+
+
+CREATE TABLE IF NOT EXISTS `email_recipient` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `base_email_id` INT NULL,
+  `model_id` INT NULL,
+  `model_class` VARCHAR(255) NULL,
+  `email` VARCHAR(255) NULL,
+  `firstname` VARCHAR(255) NULL,
+  `lastname` VARCHAR(255) NULL,
+  PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = latin1
 COLLATE = latin1_german1_ci;

@@ -21,6 +21,8 @@ class BaseModelA extends \PMRAtk\Data\BaseModel {
             ['time',      'type' => 'time'],
             ['dd_test',   'type' => 'string', 'ui' => ['form' => ['DropDown', 'values' => [0 => 'Nein', 1 => 'Ja']]]],
             ['dd_test_2', 'type' => 'string', 'ui' => ['form' => ['DropDown', 'empty' => 'Hans']]],
+            ['firstname', 'type' => 'string'],
+            ['lastname',  'type' => 'string'],
 
         ]);
 

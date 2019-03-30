@@ -159,4 +159,16 @@ class User extends BaseModel {
 
         return false;
     }
+
+
+    /*
+     * Overwrite in actual User Model implementation. Returns a signature like
+     * Best Regards
+     * Philipp
+     *
+     * which can be used to customize Emails etc.
+     */
+    public function getSignature() {
+        return '';
+    }
 }

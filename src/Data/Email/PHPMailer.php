@@ -1,5 +1,5 @@
 <?php
-namespace PMRAtk\Data;
+namespace PMRAtk\Data\Email;
 
 class PHPMailer extends \PHPMailer\PHPMailer\PHPMailer {
 
@@ -22,12 +22,12 @@ class PHPMailer extends \PHPMailer\PHPMailer\PHPMailer {
         //set SMTP sending
         $this->isSMTP();
         $this->SMTPDebug = 0;
-        $this->Host = EMAIL_HOST;
-        $this->Port = EMAIL_PORT;
+        $this->Host = $this->app->getSetting('EMAIL_HOST');
+        $this->Port = $this->app->getSetting('EMAIL_PORT');
         $this->SMTPAuth = true;
-        $this->Username = EMAIL_USERNAME;
-        $this->Password = EMAIL_PASSWORD;
-        $this->setFrom(STD_EMAIL, STD_EMAIL_NAME);
+        $this->Username = $this->app->getSetting('EMAIL_USERNAME');
+        $this->Password = $this->app->getSetting('EMAIL_PASSWORD');
+        $this->setFrom($this->app->getSetting('STD_EMAIL'), $this->app->getSetting('STD_EMAIL_NAME'));
 
         parent::__construct();
 
