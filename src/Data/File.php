@@ -94,7 +94,7 @@ class File extends SecondaryBaseModel {
      * @param  string  allowed characters
      * @return string
      */
-    public function webalize(string $s, string $charlist = '.'):string {
+    protected function _webalize(string $s, string $charlist = '.'):string {
         //replace common german Umlauts
         $search = array("ä", "ö", "ü", "ß", "Ä", "Ö", "Ü");
         $replace = array("ae", "oe", "ue", "ss", "Ae", "Oe", "Ue",);
@@ -117,7 +117,7 @@ class File extends SecondaryBaseModel {
      * @return void
      */
     public function createFileName(string $name, bool $unique_name = true) {
-        $this->set('value', $this->webalize($name));
+        $this->set('value', $this->_webalize($name));
         $this->set('path', $this->app->getSetting('FILE_PATH'));
 
         //can only check for existing file if path is set
@@ -130,6 +130,7 @@ class File extends SecondaryBaseModel {
             }
         }
     }
+
 
     /*
      * This function uses the standard $_FILES['userfile'] array to set
@@ -146,6 +147,7 @@ class File extends SecondaryBaseModel {
         return move_uploaded_file($f['tmp_name'], $this->getFullFilePath());
     }
 
+
     /*
      * Returns the full path to the file from the file system base dir
      *
@@ -154,6 +156,7 @@ class File extends SecondaryBaseModel {
     public function getFullFilePath():string {
         return FILE_BASE_PATH.$this->get('path').$this->get('value');
     }
+
 
     /*
      * checks if the file really exists

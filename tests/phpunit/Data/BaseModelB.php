@@ -7,6 +7,7 @@ class BaseModelB extends \PMRAtk\Data\BaseModel {
     use \PMRAtk\Data\Traits\EPARelationsTrait;
     use \PMRAtk\Data\Traits\MToMTrait;
     use \PMRAtk\Data\Traits\AuditTrait;
+    use \PMRAtk\Data\Traits\FileRelationTrait;
 
     public $table = 'BaseModelB';
 
@@ -20,6 +21,7 @@ class BaseModelB extends \PMRAtk\Data\BaseModel {
         ]);
 
         $this->_addEPARefs();
+        $this->_addFileRef();
 
         $this->hasMany('MToMModel', new MToMModel());
     }

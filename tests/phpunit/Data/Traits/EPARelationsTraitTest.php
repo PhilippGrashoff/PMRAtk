@@ -2,6 +2,7 @@
 
 class EPARelationsTraitTest extends \PMRAtk\tests\phpunit\TestCase {
 
+
     /*
      * Tests adding of new Email, Phone, Address, altering it and then deleting it
      */
