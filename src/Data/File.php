@@ -177,7 +177,7 @@ class File extends SecondaryBaseModel {
      */
     public function saveStringToFile(string $string):bool {
         $res = null;
-        if(!$this->get('filename')) {
+        if(!$this->get('value')) {
             $this->createFileName('UnnamedFile');
         }
         if($f = fopen($this->getFullFilePath(), 'w')) {
@@ -197,6 +197,6 @@ class File extends SecondaryBaseModel {
      * @return string
      */
     public function getLink() {
-        return $this->app->getSetting('URL_BASE_PATH').$this->get('path').$this->get('filename');
+        return $this->app->getSetting('URL_BASE_PATH').$this->get('path').$this->get('value');
     }
 }
