@@ -1,5 +1,20 @@
 <?php
 
+class Signature extends \PMRAtk\Data\User {
+    public function getSignature() {
+        return 'TestSignature';
+    }
+}
+
+
+class EditPerRecipient extends \PMRAtk\Data\Email\BaseEmail {
+    public function loadInitialTemplate() {
+        $this->set('subject', 'Bla{$testsubject}');
+        $this->set('message', 'Bla{$testbody}');
+    }
+}
+
+
 class BaseEmailTest extends \PMRAtk\tests\phpunit\TestCase {
 
     /*
@@ -40,6 +55,13 @@ class BaseEmailTest extends \PMRAtk\tests\phpunit\TestCase {
 
         //pass a non existing email id
         $this->assertFalse($base_email->addRecipient(111111));
+
+        //pass existing email id that does not belong to any parent model
+        $e = new \PMRAtk\Data\Email(self::$app->db);
+        $e->set('value', 'test1@easyoutdooroffice.com');
+        $e->save();
+        $this->assertFalse($base_email->addRecipient($e->get('id')));
+
 
         //pass a valid Email
         $this->assertTrue($base_email->addRecipient('philipp@spame.de'));
@@ -156,5 +178,72 @@ class BaseEmailTest extends \PMRAtk\tests\phpunit\TestCase {
         $base_email->loadInitialValues();
         $this->assertEquals($base_email->get('subject'), 'TestBetreff');
         $this->assertTrue(strpos($base_email->get('message'), 'TestInhalt') !== false);
+    }
+
+
+    /*
+     *
+     */
+    public function testInitialTemplateLoadingByString() {
+        $base_email = new \PMRAtk\Data\Email\BaseEmail(self::$app->db, ['template' => '{Subject}Hellow{/Subject}Magada']);
+        $base_email->loadInitialValues();
+        $this->assertEquals($base_email->get('subject'), 'Hellow');
+        $this->assertTrue(strpos($base_email->get('message'), 'Magada') !== false);
+    }
+
+
+    /*
+     *
+     */
+    public function testLoadSignatureByUserSignature() {
+        $initial = self::$app->auth->user;
+        self::$app->auth->user = new Signature(self::$app->db);
+        $base_email = new \PMRAtk\Data\Email\BaseEmail(self::$app->db, ['template' => '{Subject}Hellow{/Subject}Magada{Signature}{/Signature}']);
+        $base_email->loadInitialValues();
+        $this->assertTrue(strpos($base_email->get('message'), 'TestSignature') !== false);
+        self::$app->auth->user = $initial;
+    }
+
+
+    /*
+     *
+     */
+    public function testloadSignatureBySetting() {
+        $_ENV['STD_EMAIL_SIGNATURE'] = 'TestSigSetting';
+        $base_email = new \PMRAtk\Data\Email\BaseEmail(self::$app->db, ['template' => '{Subject}Hellow{/Subject}Magada{Signature}{/Signature}']);
+        $base_email->loadInitialValues();
+        $this->assertTrue(strpos($base_email->get('message'), 'TestSigSetting') !== false);
+    }
+
+
+    /*
+     *
+     */
+    public function testSMTPKeepAlive() {
+        $base_email = new \PMRAtk\Data\Email\BaseEmail(self::$app->db, ['template' => '{Subject}TestMoreThanOneRecipient{/Subject}TestMoreThanOneRecipient{Signature}{/Signature}']);
+        $base_email->loadInitialValues();
+        $base_email->save();
+        $this->assertTrue($base_email->addRecipient('test1@easyoutdooroffice.com'));
+        $this->assertTrue($base_email->addRecipient('test2@easyoutdooroffice.com'));
+        $base_email->send();
+    }
+
+
+    /*
+     *
+     */
+    public function testProcessSubjectAndMessage() {
+        $base_email = new EditPerRecipient(self::$app->db, ['template' => '{Subject}BlaDu{$testsubject}{/Subject}BlaDu{$testbody}']);
+        $base_email->loadInitialValues();
+        $base_email->processSubjectPerRecipient = function($recipient, $template) {
+            $template->set('testsubject', 'HARALD');
+        };
+        $base_email->processMessagePerRecipient = function($recipient, $template) {
+            $template->set('testbody', 'MARTOR');
+        };
+        $base_email->addRecipient('test1@easyoutdooroffice.com');
+        $this->assertTrue($base_email->send());
+        $this->assertTrue(strpos($base_email->phpMailer->getSentMIMEMessage(), 'HARALD') !== false);
+        $this->assertTrue(strpos($base_email->phpMailer->getSentMIMEMessage(), 'MARTOR') !== false);
     }
 }

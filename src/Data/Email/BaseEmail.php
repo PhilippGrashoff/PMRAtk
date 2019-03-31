@@ -9,6 +9,9 @@ class BaseEmail extends \atk4\data\Model {
     //the template to load to get initial subject and message
     public $template;
 
+    //PHPMailer instance which takes care of the actual sending
+    public $phpMailer;
+
     //HTML header
     public $header = '';
 
@@ -55,6 +58,9 @@ class BaseEmail extends \atk4\data\Model {
                 $this->footer = $t->render();
             }
         }
+
+
+        $this->phpMailer = new PHPMailer($this->app);
     }
 
 
@@ -289,20 +295,18 @@ class BaseEmail extends \atk4\data\Model {
         $st = new \atk4\ui\Template();
         $st->loadTemplateFromString($this->get('subject'));
 
-        $phpmailer = new PHPMailer($this->app);
-
         //add Attachments
         if($this->get('attachments')) {
             $a_files = new \PMRAtk\Data\File($this->persistence);
             $a_files->addCondition('id', 'in', $this->get('attachments'));
             foreach($a_files as $a) {
-                $phpmailer->addAttachment($a->getFullFilePath());
+                $this->phpMailer->addAttachment($a->getFullFilePath());
             }
         }
 
         //if email is sent to several recipients, keep SMTP connection open
         if(intval($this->ref('EmailRecipient')->action('count')->getOne()) > 1) {
-            $phpmailer->SMTPKeepAlive = true;
+            $this->phpMailer->SMTPKeepAlive = true;
         }
 
         $successful_send = false;
@@ -331,24 +335,24 @@ class BaseEmail extends \atk4\data\Model {
                 call_user_func($this->processMessagePerRecipient, $r, $message_template);
             }
 
-            $phpmailer->Subject = $subject_template->render();
-            $phpmailer->Body    = $this->header.$message_template->render().$this->footer;
-            $phpmailer->AltBody = $phpmailer->html2text($phpmailer->Body);
-            $phpmailer->addAddress($r->get('email'), $r->get('firstname').' '.$r->get('lastname'));
+            $this->phpMailer->Subject = $subject_template->render();
+            $this->phpMailer->Body    = $this->header.$message_template->render().$this->footer;
+            $this->phpMailer->AltBody = $this->phpMailer->html2text($this->phpMailer->Body);
+            $this->phpMailer->addAddress($r->get('email'), $r->get('firstname').' '.$r->get('lastname'));
 
             //Send single Email, add Recipient to success or fail list
-            if(!$phpmailer->send()) {
-                $this->app->addUserMessage('Die Email '.$phpmailer->Subject.' konnte nicht an  '.$r->get('email').' gesendet werden.', 'error');
+            if(!$this->phpMailer->send()) {
+                $this->app->addUserMessage('Die Email '.$this->phpMailer->Subject.' konnte nicht an  '.$r->get('email').' gesendet werden.', 'error');
             }
             else {
                 $successful_send = true;
-                $this->app->addUserMessage('Die Email '.$phpmailer->Subject.' wurde erfolgreich an '.$r->get('email').' versendet.', 'success');
+                $this->app->addUserMessage('Die Email '.$this->phpMailer->Subject.' wurde erfolgreich an '.$r->get('email').' versendet.', 'success');
                 //add Email to IMAP Sent Folder
-                $this->_addToIMAP($phpmailer->getSentMIMEMessage());
+                $this->_addToIMAP($this->phpMailer->getSentMIMEMessage());
             }
 
             //clear recipient after each Email
-            $phpmailer->clearAddresses();
+            $this->phpMailer->clearAddresses();
         }
 
         return $successful_send;
