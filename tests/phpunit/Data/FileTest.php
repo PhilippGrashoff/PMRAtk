@@ -70,4 +70,14 @@ class FileTest extends \PMRAtk\tests\phpunit\TestCase {
         $f->set('value', 'Logo.jpg');
         $this->assertEquals(URL_BASE_PATH.'somepath/Logo.jpg', $f->getLink());
     }
+
+
+    /*
+     *
+     */
+    public function testuploadFile() {
+        $f = new \PMRAtk\Data\File(self::$app->db);
+        //false because move_uploaded_file knows it not an uploaded file
+        $this->assertFalse($f->uploadFile(['name' => 'LALA', 'tmp_name' => 'sdfkjsdf.txt']));
+    }
 }
