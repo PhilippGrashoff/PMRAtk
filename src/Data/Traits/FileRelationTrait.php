@@ -49,7 +49,7 @@ trait FileRelationTrait {
         $this->app->addUserMessage('Die Datei wurde erfolgreich hochgeladen nach '.$file->get('path').$file->get('value'), 'success');
         //add audit if model has audit, too
         if(method_exists($this, 'addAdditionalAudit')) {
-            $this->addAdditionalAudit('ADD_FILE', ['filename' => $file->get('filename'), 'auto_generated' => $file->get('auto_generated')]);
+            $this->addAdditionalAudit('ADD_FILE', ['filename' => $file->get('value'), 'auto_generated' => $file->get('auto_generated')]);
         }
 
         return clone $file;

@@ -174,7 +174,7 @@ class BaseEmailTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testInitialTemplateLoading() {
-        $base_email = new \PMRAtk\Data\Email\BaseEmail(self::$app->db, ['template' => 'tests/testemailtemplate.html']);
+        $base_email = new \PMRAtk\Data\Email\BaseEmail(self::$app->db, ['template' => 'testemailtemplate.html']);
         $base_email->loadInitialValues();
         $this->assertEquals($base_email->get('subject'), 'TestBetreff');
         $this->assertTrue(strpos($base_email->get('message'), 'TestInhalt') !== false);
@@ -232,7 +232,7 @@ class BaseEmailTest extends \PMRAtk\tests\phpunit\TestCase {
     /*
      *
      */
-    public function testProcessSubjectAndMessage() {
+    public function testProcessSubjectAndMessagePerRecipient() {
         $base_email = new EditPerRecipient(self::$app->db, ['template' => '{Subject}BlaDu{$testsubject}{/Subject}BlaDu{$testbody}']);
         $base_email->loadInitialValues();
         $base_email->processSubjectPerRecipient = function($recipient, $template) {
@@ -245,5 +245,38 @@ class BaseEmailTest extends \PMRAtk\tests\phpunit\TestCase {
         $this->assertTrue($base_email->send());
         $this->assertTrue(strpos($base_email->phpMailer->getSentMIMEMessage(), 'HARALD') !== false);
         $this->assertTrue(strpos($base_email->phpMailer->getSentMIMEMessage(), 'MARTOR') !== false);
+    }
+
+
+    /*
+     *
+     */
+    public function testProcessMessageFunction() {
+        $base_email = new \PMRAtk\Data\Email\BaseEmail(self::$app->db, ['template' => '{Subject}BlaDu{$testsubject}{/Subject}BlaDu{$testbody}']);
+        $base_email->processMessageTemplate = function($template, $model) {
+            $template->set('testbody', 'HALLELUJA');
+        };
+        $base_email->processSubjectTemplate = function($template, $model) {
+            $template->set('testsubject', 'HALLELUJA');
+        };
+        $base_email->loadInitialValues();
+        $this->assertTrue(strpos($base_email->get('message'), 'HALLELUJA') !== false);
+        $this->assertTrue(strpos($base_email->get('subject'), 'HALLELUJA') !== false);
+    }
+
+
+    /*
+     *
+     */
+    public function testOnSuccessFunction() {
+        $base_email = new \PMRAtk\Data\Email\BaseEmail(self::$app->db, ['template' => '{Subject}BlaDu{$testsubject}{/Subject}BlaDu{$testbody}']);
+        $base_email->loadInitialValues();
+        $base_email->model = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
+        $base_email->onSuccess = function($model) {
+            $model->set('name', 'PIPI');
+        };
+        $base_email->addRecipient('test1@easyoutdooroffice.com');
+        $this->assertTrue($base_email->send());
+        $this->assertEquals('PIPI', $base_email->model->get('name'));
     }
 }
