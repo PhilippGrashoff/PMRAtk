@@ -34,7 +34,7 @@ class File extends SecondaryBaseModel {
         });
 
         //set path to standard file
-        if(!$this->get('path')) {
+        if(empty($this->get('path'))) {
             $this->set('path', $this->app->getSetting('SAVE_FILES_IN'));
         }
     }
