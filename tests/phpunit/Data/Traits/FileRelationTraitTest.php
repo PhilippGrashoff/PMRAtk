@@ -26,4 +26,15 @@ class FileReferenceTest extends \PMRAtk\tests\phpunit\TestCase {
         $m->removeFile($f->get('id'));
         $this->assertEquals($m->ref('File')->action('count')->getOne(), 0);
     }
+
+
+    /*
+     * trying to delete a non-related file using removeFile will throw exception
+     */
+    public function testExceptionNonExistingFile() {
+        $m = new \PMRAtk\tests\phpunit\Data\BaseModelB(self::$app->db);
+        $m->save();
+        $this->expectException(\PMRAtk\Data\UserException::class);
+        $m->removeFile(23432543635);
+    }
 }

@@ -6,6 +6,9 @@ class BaseEmail extends \atk4\data\Model {
 
     public $table = 'base_email';
 
+    //usually an Email is per Model record, e.g. per Group. Save in here to make work easier
+    public $model;
+
     //the template to load to get initial subject and message
     public $template;
 
@@ -25,6 +28,18 @@ class BaseEmail extends \atk4\data\Model {
     //callable to alter message per recipient, gets recipient and subject template as param
     //function($recipient, $template) {}
     public $processMessagePerRecipient;
+
+    //callable to alter message template when loaded from template, gets template and model as param
+    //function($template, $model) {}
+    public $processMessageTemplate;
+
+    //callable to alter subject template when loaded from template, gets template and model as param
+    //function($template, $model) {}
+    public $processSubjectTemplate;
+
+    //callable which gets called when at least one send was successful, gets model as param
+    //function($model) {}
+    public $onSuccess;
 
 
     /*
@@ -94,19 +109,26 @@ class BaseEmail extends \atk4\data\Model {
             return;
         }
 
-        //if its a file, load file, else treat as string
-        $template = new \atk4\ui\Template();
-        if(file_exists(FILE_BASE_PATH.$this->template)) {
-            $template->load($this->template);
+        try {
+            $template = $this->app->loadEmailTemplate($this->template);
         }
-        else {
+        catch(\Exception $e) {
+            $template = new \atk4\ui\Template();
             $template->loadTemplateFromString($this->template);
         }
+
+        if(is_callable($this->processMessageTemplate)) {
+            call_user_func($this->processMessageTemplate, $template, $this->model);
+        }
+
 
         //get subject from Template if available
         if($template->hasTag('Subject')) {
             $t_subject = $template->cloneRegion('Subject');
             $template->del('Subject');
+            if(is_callable($this->processSubjectTemplate)) {
+                call_user_func($this->processSubjectTemplate, $t_subject, $this->model);
+            }
             $this->set('subject', $t_subject->render());
         }
 
@@ -353,6 +375,10 @@ class BaseEmail extends \atk4\data\Model {
 
             //clear recipient after each Email
             $this->phpMailer->clearAddresses();
+        }
+
+        if($successful_send && is_callable($this->onSuccess)) {
+            call_user_func($this->onSuccess, $this->model);
         }
 
         return $successful_send;

@@ -32,6 +32,11 @@ class File extends SecondaryBaseModel {
         $this->addHook('afterDelete', function($m) {
             $m->deleteFile();
         });
+
+        //set path to standard file
+        if(!$this->get('path')) {
+            $this->set('path', $this->app->getSetting('SAVE_FILES_IN'));
+        }
     }
 
 
