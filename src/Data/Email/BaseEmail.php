@@ -63,13 +63,13 @@ class BaseEmail extends \atk4\data\Model {
         //try load default header and footer
         if(empty($this->header)) {
             $t = $this->app->loadEmailTemplate('default_header.html');
-            if($t instanceOf \atk4\ui\Template) {
+            if($t instanceOf \PMRAtk\View\Template) {
                 $this->header = $t->render();
             }
         }
         if(empty($this->footer)) {
             $t = $this->app->loadEmailTemplate('default_footer.html');
-            if($t instanceOf \atk4\ui\Template) {
+            if($t instanceOf \PMRAtk\View\Template) {
                 $this->footer = $t->render();
             }
         }
@@ -113,7 +113,8 @@ class BaseEmail extends \atk4\data\Model {
             $template = $this->app->loadEmailTemplate($this->template);
         }
         catch(\Exception $e) {
-            $template = new \atk4\ui\Template();
+            $template = new \PMRAtk\View\Template();
+            $template->app = $this->app;
             $template->loadTemplateFromString($this->template);
         }
 
@@ -121,6 +122,7 @@ class BaseEmail extends \atk4\data\Model {
             call_user_func($this->processMessageTemplate, $template, $this->model);
         }
 
+        $template->setSTDValues();
 
         //get subject from Template if available
         if($template->hasTag('Subject')) {
@@ -311,10 +313,10 @@ class BaseEmail extends \atk4\data\Model {
      public function send():bool {
         //create a template from message so tags set in message like
         //{$firstname} can be filled
-        $mt = new \atk4\ui\Template();
+        $mt = new \PMRAtk\View\Template();
         $mt->loadTemplateFromString($this->get('message'));
 
-        $st = new \atk4\ui\Template();
+        $st = new \PMRAtk\View\Template();
         $st->loadTemplateFromString($this->get('subject'));
 
         //add Attachments

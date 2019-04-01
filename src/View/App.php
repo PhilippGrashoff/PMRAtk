@@ -103,7 +103,7 @@ class App extends \atk4\ui\App {
      * from HTML element templates
      */
     public function loadEmailTemplate(string $name) {
-        $template = new \atk4\ui\Template();
+        $template = new \PMRAtk\View\Template();
         $template->app = $this;
 
         if ($t = $template->tryLoad(FILE_BASE_PATH.$this->emailTemplateDir.'/'.$name)) {
@@ -156,5 +156,18 @@ class App extends \atk4\ui\App {
         elseif(defined($ident)) {
             return constant($ident);
         }
+    }
+
+
+    /*
+     * returns all STD_ settings
+     * TODO: Implement properly when implementing Settings class in PMRAtk
+     */
+    public function getAllSTDSettings():array {
+        if(defined('STD_SET_ARRAY')) {
+            return STD_SET_ARRAY;
+        }
+
+        return [];
     }
 }
