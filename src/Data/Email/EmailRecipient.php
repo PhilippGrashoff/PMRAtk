@@ -12,8 +12,6 @@ class EmailRecipient extends \atk4\data\Model {
     public function init() {
         parent::init();
         $this->addFields([
-            //id of the BaseEmail it belongs to
-            ['base_email_id',   'type' => 'integer'],
             //id of model this email comes from
             ['model_id',        'type' => 'integer'],
             ['model_class',     'type' => 'string'],
@@ -22,5 +20,8 @@ class EmailRecipient extends \atk4\data\Model {
             ['firstname',       'type' => 'string'],
             ['lastname',        'type' => 'string'],
         ]);
+
+        //id of the BaseEmail it belongs to
+        $this->hasOne('base_email_id', new BaseEmail());
     }
 };
