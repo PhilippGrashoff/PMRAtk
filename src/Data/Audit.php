@@ -10,7 +10,7 @@ class Audit extends SecondaryBaseModel {
         parent::init();
 
         $this->addFields([
-            ['data',            'type'      => 'array',       'serialize' => 'json'],
+            ['data',            'type'      => 'array',       'serialize' => 'serialize'],
             ['created_by_name', 'type'      => 'string'],
             ['created_by',      'type'      => 'integer'],
         ]);
