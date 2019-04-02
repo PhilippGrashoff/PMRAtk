@@ -41,6 +41,12 @@ class BaseEmail extends \atk4\data\Model {
     //function($model) {}
     public $onSuccess;
 
+    //record_id is a common param passed to emails
+    public $recordId;
+
+    //param1 is the second common param passed to emails
+    public $param1;
+
 
     /*
      * define fields and references
