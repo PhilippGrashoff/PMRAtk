@@ -82,6 +82,14 @@ class BaseEmail extends \atk4\data\Model {
 
 
         $this->phpMailer = new PHPMailer($this->app);
+
+        //load params from REQUEST
+        if(!$this->param1 && isset($_REQUEST['param1'])) {
+            $this->param1 = $_REQUEST['param1'];
+        }
+        if(!$this->recordId && isset($_REQUEST['record_id'])) {
+            $this->recordId = $_REQUEST['record_id'];
+        }
     }
 
 
