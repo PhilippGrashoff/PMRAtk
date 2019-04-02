@@ -25,7 +25,7 @@ class TemplateTest extends \PMRAtk\tests\phpunit\TestCase {
         $t = new \PMRAtk\View\Template();
         $t->app = self::$app;
         $t->loadTemplateFromString('Hallo {$DADA} Test');
-        $t->setGermanList('DADA', ['Hansi', 'Peter', 'Klaus']);
+        $t->setGermanList('DADA', ['Hansi', '', 'Peter', 'Klaus']);
         $this->assertTrue(strpos($t->render(), 'Hansi, Peter und Klaus') !== false);
     }
 }
