@@ -116,4 +116,27 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase {
 
         return clone $file;
     }
+
+
+    /*
+     *
+     */
+    protected function _testMToM(\PMRAtk\Data\BaseModel $o, \PMRAtk\Data\BaseModel $other) {
+        if(!$o->loaded()) {
+            $o->save();
+        }
+        if(!$other->loaded()) {
+            $other->save();
+        }
+
+        $shortname = (new \ReflectionClass($other))->getShortName();
+        $hasname = 'has'.$shortname.'Relation';
+        $addname = 'add'.$shortname;
+        $removename = 'remove'.$shortname;
+        $this->assertFalse($o->$hasname($other));
+        $this->assertTrue($o->$addname($other));
+        $this->assertTrue($o->$hasname($other));
+        $this->assertTrue($o->$removename($other));
+        $this->assertFalse($o->$hasname($other));
+    }
 }
