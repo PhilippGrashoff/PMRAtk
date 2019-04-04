@@ -122,7 +122,9 @@ trait EPARelationsTrait {
                 $new_epa->set('model_id', $id);
                 $new_epa->set('value', $value);
                 $new_epa->save();
-                $m->addSecondaryAudit('ADD', $new_epa);
+                if(method_exists($m, 'addSecondaryAudit')) {
+                    $m->addSecondaryAudit('ADD', $new_epa);
+                }
             });
             return null;
         }
@@ -133,7 +135,9 @@ trait EPARelationsTrait {
             //create a new Instance, set value and reference field, save
             $new_epa->set('value', $value);
             $new_epa->save();
-            $this->addSecondaryAudit('ADD', $new_epa);
+            if(method_exists($this, 'addSecondaryAudit')) {
+                $this->addSecondaryAudit('ADD', $new_epa);
+            }
 
             return clone $new_epa;
         }
@@ -167,8 +171,11 @@ trait EPARelationsTrait {
         if($value !== $epa->get('value')) {
             $epa->set('value', $value);
             $epa->save();
-            $this->addSecondaryAudit('CHANGE', $epa);
+            if(method_exists($this, 'addSecondaryAudit')) {
+                $this->addSecondaryAudit('CHANGE', $epa);
+            }
         }
+
         return true;
     }
 
@@ -196,7 +203,10 @@ trait EPARelationsTrait {
 
         $clone = clone $epa;
         $epa->delete();
-        $this->addSecondaryAudit('REMOVE', $clone);
+        if(method_exists($this, 'addSecondaryAudit')) {
+            $this->addSecondaryAudit('REMOVE', $clone);
+        }
+
 
         return true;
     }
