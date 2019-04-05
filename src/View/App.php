@@ -118,9 +118,9 @@ class App extends \atk4\ui\App {
      * Adds Js and CSS needed for summernote Textareas
      */
     public function addSummernote() {
-        $this->requireJS('js/summernote-lite.js');
-        $this->requireJS('js/lang/summernote-de-DE.js');
-        $this->requireCSS('css/summernote-lite-bs3-libre.css');
+        $this->requireJS(URL_BASE_PATH.'js/summernote-lite.js');
+        $this->requireJS(URL_BASE_PATH.'js/lang/summernote-de-DE.js');
+        $this->requireCSS(URL_BASE_PATH.'css/summernote-lite-bs3-libre.css');
     }
 
 
