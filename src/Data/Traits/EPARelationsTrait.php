@@ -170,10 +170,11 @@ trait EPARelationsTrait {
         //update if value does not match stored one
         if($value !== $epa->get('value')) {
             $epa->set('value', $value);
-            $epa->save();
             if(method_exists($this, 'addSecondaryAudit')) {
                 $this->addSecondaryAudit('CHANGE', $epa);
             }
+
+            $epa->save();
         }
 
         return true;
