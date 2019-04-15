@@ -208,4 +208,27 @@ class MToMTraitTest extends \PMRAtk\tests\phpunit\TestCase {
         $this->expectException(\atk4\data\Exception::class);
         $this->callProtected($a, '_hasMToMRelation', [$a, new \PMRAtk\tests\phpunit\Data\MToMModel(self::$app->db), '\PMRAtk\tests\phpunit\Data\BaseModelB', 'BaseModelA_id', 'BaseModelB_id']);
     }
+
+
+    /*
+     *
+     */
+    public function testAddAdditionalFields() {
+        $a = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
+        $b = new \PMRAtk\tests\phpunit\Data\BaseModelB(self::$app->db);
+        $a->save();
+        $b->save();
+
+        $mtom_count = (new \PMRAtk\tests\phpunit\Data\MToMModel(self::$app->db))->action('count')->getOne();
+        $this->assertTrue($this->callProtected($a, '_addMToMRelation', [$b, new \PMRAtk\tests\phpunit\Data\MToMModel(self::$app->db), '\PMRAtk\tests\phpunit\Data\BaseModelB', 'BaseModelA_id', 'BaseModelB_id', ['test1' => 'LALA']]));
+        $this->assertEquals($mtom_count + 1, (new \PMRAtk\tests\phpunit\Data\MToMModel(self::$app->db))->action('count')->getOne());
+
+        $mtommodel = new \PMRAtk\tests\phpunit\Data\MToMModel(self::$app->db);
+        $mtommodel->setOrder('id desc');
+        $mtommodel->setLimit(0,1);
+        foreach($mtommodel as $m) {
+            $this->assertEquals($m->get('test1'), 'LALA');
+            echo "LALA";
+        }
+    }
 }

@@ -9,7 +9,7 @@ trait MToMTrait {
      * GuestToGroup etc.
      * First checks if record does exist already, and only then adds new relation.
      */
-    protected function _addMToMRelation($object, \atk4\data\Model $mtom_object, string $object_class, string $our_field, string $their_field):bool {
+    protected function _addMToMRelation($object, \atk4\data\Model $mtom_object, string $object_class, string $our_field, string $their_field, array $addtional_fields = []):bool {
         //$this needs to be loaded to get ID
         if(!$this->loaded()) {
             throw new \atk4\data\Exception('$this needs to be loaded in '.__FUNCTION__);
@@ -20,13 +20,24 @@ trait MToMTrait {
         //set values and conditions
         $mtom_object->set($our_field, $this->get('id'));
         $mtom_object->set($their_field, $object->get('id'));
+
+        //set additional field values
+        foreach($addtional_fields as $field_name => $value) {
+            $mtom_object->set($field_name, $value);
+        }
+
         //no reload neccessary after insert
         $mtom_object->reload_after_save = false;
         //if that record already exists mysql will throw an error if unique index is set, catch here
         try {
             $mtom_object->save();
-            $this->addMToMAudit('ADD', $object);
-            $object->addMToMAudit('ADD', $this);
+            //audit if defined
+            if(method_exists($this, 'addMToMAudit')) {
+                $this->addMToMAudit('ADD', $object);
+            }
+            if(method_exists($object, 'addMToMAudit')) {
+                $object->addMToMAudit('ADD', $this);
+            }
             return $mtom_object->loaded();
         }
         catch(\Exception $e) {
@@ -56,8 +67,13 @@ trait MToMTrait {
         }
         $mtom_object->delete();
 
-        $this->addMToMAudit('REMOVE', $object);
-        $object->addMToMAudit('REMOVE', $this);
+        //audit if available
+        if(method_exists($this, 'addMToMAudit')) {
+            $this->addMToMAudit('REMOVE', $object);
+        }
+        if(method_exists($object, 'addMToMAudit')) {
+            $object->addMToMAudit('REMOVE', $this);
+        }
 
         return true;
     }

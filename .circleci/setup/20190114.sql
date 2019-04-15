@@ -117,6 +117,7 @@ CREATE TABLE IF NOT EXISTS `AToB` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `BaseModelA_id` INT NOT NULL,
   `BaseModelB_id` INT NOT NULL,
+  `test1` VARCHAR(255) NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `id_UNIQUE` (`id` ASC),
   UNIQUE INDEX `APlusB_UNIQUE` (`BaseModelA_id`, `BaseModelB_id`),
