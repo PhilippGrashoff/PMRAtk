@@ -14,7 +14,9 @@ class App extends \atk4\ui\App {
 
     public $userRolesMaySeeThisPage = [];
 
-    protected $settings = [];
+    protected $settings     = [];
+
+    protected $cachedValues = [];
 
     public $isApiRequest = false;
 
@@ -169,5 +171,34 @@ class App extends \atk4\ui\App {
         }
 
         return [];
+    }
+
+
+    /*
+     * Load a cached value by ident
+     * a timeout in seconds can be defined after which the setting becomes invalid
+     */
+    public function getCachedValue(string $ident, int $timeout = 0) {
+        if($timeout > 0) {
+            if(isset($this->cachedValues[$ident])
+            && $this->cachedValues[$ident]->get('last_updated') >= (new \DateTime())->modify('-'.$timeout.' Seconds')) {
+                return $this->cachedValues[$ident]->get('value');
+            }
+        }
+        elseif(isset($this->cachedValues[$ident])) {
+            return $this->cachedValues[$ident]->get('value');
+        }
+    }
+
+
+    /*
+     * set a cached value in the App
+     */
+    public function setCachedValue(string $ident, string $value) {
+        $s = new \PMRAtk\Data\CachedValue($this->db);
+        $s->set('ident', $ident);
+        $s->set('value', $value);
+        $s->save();
+        $this->cachedValues[$ident] = $s;
     }
 }

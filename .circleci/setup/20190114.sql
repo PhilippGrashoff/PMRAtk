@@ -71,6 +71,32 @@ DEFAULT CHARACTER SET = latin1
 COLLATE = latin1_german1_ci;
 
 
+CREATE TABLE IF NOT EXISTS `setting` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `ident` VARCHAR(255) NULL,
+  `name` VARCHAR(255) NULL,
+  `created_date` DATETIME NULL,
+  `last_updated` DATETIME NULL,
+  `description` TEXT NULL,
+  `system` TINYINT NULL,
+  `category` VARCHAR(255) NULL,
+  `value` TEXT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_german1_ci;
+
+CREATE TABLE IF NOT EXISTS `cached_value` (
+  `ident` VARCHAR(255) NOT NULL,
+  `value` TEXT NULL,
+  `created_date` DATETIME NULL,
+  `last_updated` DATETIME NULL,
+  PRIMARY KEY (`ident`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_german1_ci;
+
+
 -- -----------------------------------------------------
 -- Table `BaseModelA`
 -- -----------------------------------------------------

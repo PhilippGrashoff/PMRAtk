@@ -90,4 +90,25 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
         $this->expectException(\atk4\data\Exception::class);
         $app->loadEmailTemplate('DDFUSFsfdfse');
     }
+
+
+    /*
+     *
+     */
+    public function testgetCachedValue() {
+        $app = new \PMRAtk\View\App(['nologin'], ['always_run' => false]);
+        $app->setCachedValue('LALA', 'hamma');
+        $this->assertEquals('hamma', $app->getCachedValue('LALA'));
+    }
+
+    /*
+     *
+     */
+    public function testgetCachedValueWithTimeout() {
+        $app = new \PMRAtk\View\App(['nologin'], ['always_run' => false]);
+        $app->setCachedValue('LALA', 'hamma');
+        usleep(1100000);
+        $this->assertEquals(null, $app->getCachedValue('LALA', 1));
+        $this->assertEquals('hamma', $app->getCachedValue('LALA'));
+    }
 }
