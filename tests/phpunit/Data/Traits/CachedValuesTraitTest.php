@@ -34,6 +34,6 @@ class CachedValuesTraitTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function testgetNonExistantCachedValue() {
         $app = new CVTestApp(['nologin'], ['always_run' => false]);
-        $this->assertEquals('hamma', $app->getCachedValue('LALA', function() {return 'hamma';}, 1));
+        $this->assertEquals('hamma', $app->getCachedValue('LALA', function() {return 'hamma';}));
     }
 }
