@@ -16,13 +16,24 @@ class CachedValuesTraitTest extends \PMRAtk\tests\phpunit\TestCase {
         $this->assertEquals('hamma', $app->getCachedValue('LALA', function() {return 'Duggu';}));
     }
 
+
     /*
      *
      */
     public function testgetCachedValueWithTimeout() {
         $app = new CVTestApp(['nologin'], ['always_run' => false]);
-        $app->setCachedValue('LALA', 'hamma');
+        $app->setCachedValue('DADA', 'hamma');
+        $this->assertEquals('hamma', $app->getCachedValue('DADA', function() {return 'Duggu';}, 1));
         usleep(2000000);
-        $this->assertEquals('Duggu', $app->getCachedValue('LALA', function() {return 'Duggu';}, 1));
+        $this->assertEquals('Duggu', $app->getCachedValue('DADA', function() {return 'Duggu';}, 1));
+    }
+
+
+    /*
+     *
+     */
+    public function testgetNonExistantCachedValue() {
+        $app = new CVTestApp(['nologin'], ['always_run' => false]);
+        $this->assertEquals('hamma', $app->getCachedValue('LALA', function() {return 'hamma';}, 1));
     }
 }
