@@ -72,6 +72,7 @@ class FieldChangedMessageTraitTest extends \PMRAtk\tests\phpunit\TestCase {
         $this->assertEquals((new \DateTime())->format('d.m.Y H:i:s'), $this->callProtected($m, '_castDateTimeToString', [new \DateTime(), 'datetime']));
         $this->assertEquals((new \DateTime())->format('d.m.Y'),       $this->callProtected($m, '_castDateTimeToString', [new \DateTime(), 'date']));
         $this->assertEquals((new \DateTime())->format('H:i:s'),       $this->callProtected($m, '_castDateTimeToString', [new \DateTime(), 'time']));
+        $this->assertEquals('',                                       $this->callProtected($m, '_castDateTimeToString', [new \DateTime(), 'lalala']));
     }
 
 
