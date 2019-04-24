@@ -5,6 +5,10 @@ class FCMTraitTest extends \PMRAtk\tests\phpunit\Data\BaseModelA {
     use \PMRAtk\Data\Traits\DateTimeHelpersTrait;
 }
 
+class FCMTraitTestNoDTH extends \PMRAtk\tests\phpunit\Data\BaseModelA {
+    use \PMRAtk\Data\Traits\FieldChangedMessageTrait;
+}
+
 class FCMTApp extends \PMRAtk\tests\phpunit\TestApp {
     use \PMRAtk\View\Traits\UserMessageTrait;
 }
@@ -73,5 +77,15 @@ class FieldChangedMessageTraitTest extends \PMRAtk\tests\phpunit\TestCase {
         $m->addFieldChangedMessage('name', 'ha', 'ha');
 
         $this->assertEquals(0, count($this->testApp->userMessages));
+    }
+
+
+    /*
+     *
+     */
+    public function testExceptionOnDateTimeHelpersTraitNotUsed() {
+        $m = new FCMTraitTestNoDTH($this->testApp->db);
+        $this->expectException(\atk4\data\Exception::class);
+        $m->addFieldChangedMessage('name', 'ha', 'ha');
     }
 }
