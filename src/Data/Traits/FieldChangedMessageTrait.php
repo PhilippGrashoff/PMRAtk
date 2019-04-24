@@ -9,6 +9,11 @@ trait FieldChangedMessageTrait {
      * automatically updates field value to inform user about it
      */
     public function addFieldChangedMessage(string $field_name, $old_value, $new_value, string $class = 'warning') {
+        //DateTimeHelpersTrait needs to be used!
+        if(!method_exists($this, 'castDateTimeToGermanString')) {
+            throw new \atk4\data\Exception('The Trait \PMRAtk\Data\Traits\DateTimeHelpersTrait needs to be used in order to use FieldChangedMessageTrait');
+        }
+
         //nothing changed? no message
         if($old_value == $new_value) {
             return;
@@ -23,29 +28,12 @@ trait FieldChangedMessageTrait {
 
         //date handling
         if(in_array($this->getElement($field_name)->type, ['date', 'time', 'datetime']) && $old_value instanceOf \DateTimeInterFace) {
-            $old_value = $this->_castDateTimeToString($old_value, $this->getElement($field_name)->type);
+            $old_value = $this->castDateTimeToGermanString($old_value, $this->getElement($field_name)->type);
         }
         if(in_array($this->getElement($field_name)->type, ['date', 'time', 'datetime']) && $new_value instanceOf \DateTimeInterFace) {
-            $new_value = $this->_castDateTimeToString($new_value, $this->getElement($field_name)->type);
+            $new_value = $this->castDateTimeToGermanString($new_value, $this->getElement($field_name)->type);
         }
 
         $this->app->addUserMessage($this->elements[$field_name]->getCaption().' wurde geändert von '.$old_value.' in '.$new_value, $class);
-    }
-
-
-    /*
-     * makes german formatted strings from date, time and datetime fields
-     */
-    protected function _castDateTimeToString(\DateTimeInterFace $value, string $type):string {
-        if($type == 'datetime') {
-            return $value->format('d.m.Y H:i:s');
-        }
-        if($type == 'date') {
-            return $value->format('d.m.Y');
-        }
-        if($type == 'time') {
-            return $value->format('H:i:s');
-        }
-        return '';
     }
 }

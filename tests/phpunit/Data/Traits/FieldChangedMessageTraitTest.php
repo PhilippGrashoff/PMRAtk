@@ -2,6 +2,7 @@
 
 class FCMTraitTest extends \PMRAtk\tests\phpunit\Data\BaseModelA {
     use \PMRAtk\Data\Traits\FieldChangedMessageTrait;
+    use \PMRAtk\Data\Traits\DateTimeHelpersTrait;
 }
 
 class FCMTApp extends \PMRAtk\tests\phpunit\TestApp {
@@ -61,18 +62,6 @@ class FieldChangedMessageTraitTest extends \PMRAtk\tests\phpunit\TestCase {
         $m->addFieldChangedMessage('time', new \DateTime(),  (new \DateTime())->modify('+ 1 Hour'));
 
         $this->assertEquals(2, count($this->testApp->userMessages));
-    }
-
-
-    /*
-     *
-     */
-    public function testDateCasting() {
-        $m = new FCMTraitTest($this->testApp->db);
-        $this->assertEquals((new \DateTime())->format('d.m.Y H:i:s'), $this->callProtected($m, '_castDateTimeToString', [new \DateTime(), 'datetime']));
-        $this->assertEquals((new \DateTime())->format('d.m.Y'),       $this->callProtected($m, '_castDateTimeToString', [new \DateTime(), 'date']));
-        $this->assertEquals((new \DateTime())->format('H:i:s'),       $this->callProtected($m, '_castDateTimeToString', [new \DateTime(), 'time']));
-        $this->assertEquals('',                                       $this->callProtected($m, '_castDateTimeToString', [new \DateTime(), 'lalala']));
     }
 
 
