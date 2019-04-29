@@ -47,6 +47,9 @@ class BaseEmail extends \atk4\data\Model {
     //param1 is the second common param passed to emails
     public $param1;
 
+    //if true, a message that the email was send is added to app's user messages.
+    public $addUserMessageOnSend = true;
+
 
     /*
      * define fields and references
@@ -378,13 +381,17 @@ class BaseEmail extends \atk4\data\Model {
             $this->phpMailer->AltBody = $this->phpMailer->html2text($this->phpMailer->Body);
             $this->phpMailer->addAddress($r->get('email'), $r->get('firstname').' '.$r->get('lastname'));
 
-            //Send single Email, add Recipient to success or fail list
+            //Send Email
             if(!$this->phpMailer->send()) {
-                $this->app->addUserMessage('Die Email '.$this->phpMailer->Subject.' konnte nicht an  '.$r->get('email').' gesendet werden.', 'error');
+                if($this->addUserMessageOnSend) {
+                    $this->app->addUserMessage('Die Email '.$this->phpMailer->Subject.' konnte nicht an  '.$r->get('email').' gesendet werden.', 'error');
+                }
             }
             else {
                 $successful_send = true;
-                $this->app->addUserMessage('Die Email '.$this->phpMailer->Subject.' wurde erfolgreich an '.$r->get('email').' versendet.', 'success');
+                if($this->addUserMessageOnSend) {
+                    $this->app->addUserMessage('Die Email '.$this->phpMailer->Subject.' wurde erfolgreich an '.$r->get('email').' versendet.', 'success');
+                }
                 //add Email to IMAP Sent Folder
                 $this->_addToIMAP($this->phpMailer->getSentMIMEMessage());
             }
