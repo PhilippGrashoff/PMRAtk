@@ -49,6 +49,7 @@ class FileTest extends \PMRAtk\tests\phpunit\TestCase {
         $f1 = $this->createTestFile('LALA.jpg');
         $f->createFileName($f1->get('value'));
         $this->assertNotEquals($f->get('value'), $f1->get('value'));
+        $this->assertEquals($f->get('filetype'), $f1->get('filetype'));
     }
 
 

@@ -123,6 +123,7 @@ class File extends SecondaryBaseModel {
      */
     public function createFileName(string $name, bool $unique_name = true) {
         $this->set('value', $this->_webalize($name));
+        $this->set('filetype', pathinfo($name, PATHINFO_EXTENSION));
 
         //can only check for existing file if path is set
         if($unique_name) {
