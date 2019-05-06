@@ -108,10 +108,10 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase {
      *
      */
     public function createTestFile(string $filename, string $path = '', \PMRAtk\Data\BaseModel $parent = null) {
-        $this->_copyFile($filename, $path);
         $file = new \PMRAtk\Data\File(self::$app->db, ['parentObject' => $parent]);
-        $file->set('value', $filename);
         $file->set('path', $path);
+        $file->createFileName($filename);
+        $this->_copyFile($file->get('value'), $file->get('path'));
         $file->save();
 
         return clone $file;
