@@ -14,7 +14,15 @@ class App extends \atk4\ui\App {
 
     public $userRolesMaySeeThisPage = [];
 
-    protected $_settings     = [];
+    protected $_settings = [];
+
+    /*
+     * normally used in app, this is used to store all records of a model in
+     * an array.
+     * This is useful for models which are often read multiple times whithin a
+     * single request. This way, DB requests can be limited
+     */
+    protected $_cachedModels = [];
 
     public $isApiRequest = false;
 
@@ -169,5 +177,30 @@ class App extends \atk4\ui\App {
         }
 
         return [];
+    }
+
+
+    /*
+     * get a cached model. Cached means within the same request. If Model
+     * wanst cached yet, load, else return cached value
+     */
+    public function getCachedModel(string $model_name):array {
+        if(!class_exists($model_name)) {
+            throw new \atk4\data\Exception('Class '.$model_name.' does not exist in '.__FUNCTION__);
+        }
+
+        //if isset already, return that
+        if(isset($this->_cachedModels[$model_name])) {
+            return $this->_cachedModels[$model_name];
+        }
+
+        $model = new $model_name($this->db);
+        $a = [];
+        foreach($model as $m) {
+            $a[$m->id] = clone $m;
+        }
+
+        $this->_cachedModels[$model_name] = $a;
+        return $this->_cachedModels[$model_name];
     }
 }

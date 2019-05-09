@@ -90,4 +90,42 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
         $this->expectException(\atk4\data\Exception::class);
         $app->loadEmailTemplate('DDFUSFsfdfse');
     }
+
+
+    /*
+     *
+     */
+    public function testgetCachedModel() {
+        $app = new \PMRAtk\View\App(['nologin'], ['always_run' => false]);
+        $b1 = new \PMRAtk\tests\phpunit\Data\BaseModelA($app->db);
+        $b1->set('name', 'Duggu');
+        $b1->save();
+        $b2 = new \PMRAtk\tests\phpunit\Data\BaseModelA($app->db);
+        $b2->save();
+
+        $a = $app->getCachedModel('\\PMRAtk\\tests\\phpunit\\Data\\BaseModelA');
+        $this->assertEquals(2, count($a));
+        reset($a);
+        $this->assertEquals($b1->id, key($a));
+        end($a);
+        $this->assertEquals($b2->id, key($a));
+        $this->assertTrue($a[$b1->id] instanceOf \PMRAtk\tests\phpunit\Data\BaseModelA);
+        $this->assertTrue($a[$b2->id] instanceOf \PMRAtk\tests\phpunit\Data\BaseModelA);
+
+        //see if its not reloaded from db
+        $b1->set('name', 'lala');
+        $b1->save();
+        $a = $app->getCachedModel('\\PMRAtk\\tests\\phpunit\\Data\\BaseModelA');
+        $this->assertTrue($a[$b1->id]->get('name') == 'Duggu');
+    }
+
+
+    /*
+     *
+     */
+    public function testgetCachedModelExceptionOnNonExistantModel() {
+        $app = new \PMRAtk\View\App(['nologin'], ['always_run' => false]);
+        $this->expectException(\atk4\data\Exception::class);
+        $a = $app->getCachedModel('SomeNonExistantModel');
+    }
 }
