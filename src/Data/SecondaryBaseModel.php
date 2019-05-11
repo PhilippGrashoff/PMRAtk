@@ -45,7 +45,7 @@ class SecondaryBaseModel extends \atk4\data\Model {
      *
      * @return object|null
      */
-    public function getParentObject():?\PMRAtk\Data\BaseModel {
+    public function getParentObject() {
         if(empty($this->get('model_class')) || empty($this->get('model_id'))) {
             return null;
         }

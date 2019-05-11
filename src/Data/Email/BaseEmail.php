@@ -328,6 +328,12 @@ class BaseEmail extends \atk4\data\Model {
      * @return bool   true if at least one send was successful, false otherwise
      */
      public function send():bool {
+        //superimportant, due to awful behaviour of ref() function we need to make
+        //sure $this is loaded
+        if(!$this->loaded()) {
+            $this->save();
+        }
+
         //create a template from message so tags set in message like
         //{$firstname} can be filled
         $mt = new \PMRAtk\View\Template();
@@ -353,7 +359,6 @@ class BaseEmail extends \atk4\data\Model {
         $successful_send = false;
         //single send for each recipient
         foreach($this->ref('EmailRecipient') as $r) {
-
             //clone message and subject so changes per recipient wont affect
             //other recipients
             $message_template = clone $mt;
@@ -403,6 +408,12 @@ class BaseEmail extends \atk4\data\Model {
         if($successful_send && is_callable($this->onSuccess)) {
             call_user_func($this->onSuccess, $this->model);
         }
+
+        //delete all recipients and then outbox email itself
+        foreach($this->ref('EmailRecipient') as $r) {
+            $r->delete();
+        }
+        $this->delete();
 
         return $successful_send;
     }

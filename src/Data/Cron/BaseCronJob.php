@@ -44,7 +44,7 @@ abstract class BaseCronJob {
             $this->successful = true;
             $this->sendSuccessEmail();
         }
-        catch(\Exception $e) {
+        catch(\Throwable $e) {
             $this->sendFailEmail($e);
         }
     }
@@ -79,7 +79,7 @@ abstract class BaseCronJob {
     /*
      * Sends an Email if an Exception was thrown
      */
-    public function sendFailEmail(\Exception $e) {
+    public function sendFailEmail(\Throwable $e) {
         //always send to tech admin
         $this->phpMailer->addAddress(TECH_ADMIN_EMAIL);
         foreach($this->recipients as $email_address) {
