@@ -279,4 +279,52 @@ class BaseEmailTest extends \PMRAtk\tests\phpunit\TestCase {
         $this->assertTrue($base_email->send());
         $this->assertEquals('PIPI', $base_email->model->get('name'));
     }
+
+
+    /*
+     * F***ing ref() function on non-loaded models!.
+     * Make sure non-saved BaseEmail does not accidently
+     * load any EmailRecipients
+     */
+    public function testNonLoadedBaseEmailHasNoRefEmailRecipients() {
+        //first create a baseEmail and some EmailRecipients
+        $be1 = new \PMRAtk\Data\Email\BaseEmail(self::$app->db);
+        $be1->save();
+        $e1 = new \PMRAtk\Data\Email\EmailRecipient(self::$app->db);
+        $e1->set('email', 'test3@easyoutdooroffice.com');
+        $e1->set('base_email_id', $be1->get('id'));
+        $e1->save();
+        $e2 = new \PMRAtk\Data\Email\EmailRecipient(self::$app->db);
+        $e2->set('email', 'test2@easyoutdooroffice.com');
+        $e2->set('base_email_id', $be1->get('id'));
+        $e2->save();
+
+        //this baseEmail should not be sent. $be2->ref('EmailRecipient') will reference
+        //the 2 EmailRecipients above as $be2->loaded() = false. BaseEmail needs to check this!
+        $be2 = new \PMRAtk\Data\Email\BaseEmail(self::$app->db);
+        $this->assertFalse($be2->send());
+    }
+
+
+    /*
+     * test if data really is only temporary = deleted after send
+     */
+    public function testBaseEmailAndEmailRecipientsAreDeletedAfterSend() {
+        $initial_base_email_count = (new \PMRAtk\Data\Email\BaseEmail(self::$app->db))->action('count')->getOne();
+        $initial_email_reci_count = (new \PMRAtk\Data\Email\EmailRecipient(self::$app->db))->action('count')->getOne();
+
+        $be = new \PMRAtk\Data\Email\BaseEmail(self::$app->db);
+        $be->addRecipient('test2@easyoutdooroffice.com');
+        $be->set('subject', __FUNCTION__);
+        $be->save();
+
+        $this->assertEquals($initial_base_email_count + 1, (new \PMRAtk\Data\Email\BaseEmail(self::$app->db))->action('count')->getOne());
+        $this->assertEquals($initial_email_reci_count + 1, (new \PMRAtk\Data\Email\EmailRecipient(self::$app->db))->action('count')->getOne());
+
+        //now send, that should delete
+        $be->send();
+
+        $this->assertEquals($initial_base_email_count, (new \PMRAtk\Data\Email\BaseEmail(self::$app->db))->action('count')->getOne());
+        $this->assertEquals($initial_email_reci_count, (new \PMRAtk\Data\Email\EmailRecipient(self::$app->db))->action('count')->getOne());
+    }
 }
