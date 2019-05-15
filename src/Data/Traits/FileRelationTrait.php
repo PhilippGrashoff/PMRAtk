@@ -17,7 +17,7 @@ trait FileRelationTrait {
     /*
      * Used to map ATK ui file input to data level
      */
-    public function addUploadFileFromAtkUi($temp_file, string $file_class = '\\PMRAtk\\Data\\File'):?\PMRAtk\Data\File {
+    public function addUploadFileFromAtkUi($temp_file):?\PMRAtk\Data\File {
         if($temp_file === 'error') {
             return null;
         }
@@ -25,13 +25,13 @@ trait FileRelationTrait {
         //if $this was never saved (no id yet), use afterSave hook
         if(!$this->loaded()) {
             $this->addHook('afterSave', function($m) use ($temp_file, $file_class) {
-                $this->_addUploadFile($temp_file, $file_class);
+                $this->_addUploadFile($temp_file);
             });
             return null;
         }
         //if id is available, do at once
         else {
-            return $this->_addUploadFile($temp_file, $file_class);
+            return $this->_addUploadFile($temp_file);
         }
     }
 
@@ -39,8 +39,8 @@ trait FileRelationTrait {
     /*
      * helper for addUploadFileFromAtkUi
      */
-    protected function _addUploadFile(array $temp_file, string $file_class):?\PMRAtk\Data\File {
-        $file = new $file_class($this->persistence, ['parentObject' => $this]);
+    protected function _addUploadFile(array $temp_file):?\PMRAtk\Data\File {
+        $file = $this->ref('File')->newInstance(null, ['parentObject' => $this]);
         if(!$file->uploadFile($temp_file)) {
             $this->app->addUserMessage('Die Datei konnte nicht hochgeladen werden, bitte versuche es erneut', 'error');
             return null;
