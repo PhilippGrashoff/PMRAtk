@@ -24,7 +24,7 @@ trait FileRelationTrait {
 
         //if $this was never saved (no id yet), use afterSave hook
         if(!$this->loaded()) {
-            $this->addHook('afterSave', function($m) use ($temp_file, $file_class) {
+            $this->addHook('afterSave', function($m) use ($temp_file) {
                 $this->_addUploadFile($temp_file);
             });
             return null;
