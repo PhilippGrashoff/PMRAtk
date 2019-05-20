@@ -87,7 +87,7 @@ abstract class BaseCronJob {
         }
         $this->phpMailer->Subject = 'Im Cronjob '. $this->name.' ist ein Fehler aufgetreten';
         $this->phpMailer->setBody('Folgender Fehler ist aufgetreten: <br />'.
-            ($e instanceOf \atk4\core\Exception ? $e->getHTML() : $e->getMessage()).'<br />Der Technische Administrator '.TECH_ADMIN_NAME.' wurde informiert.');
+            ($e instanceOf \atk4\core\Exception ? $e->getHTML() : $e->getMessage().'<br />Line: '.$e->getLine().'<br />'.nl2br($e->getTraceAsString())).'<br />Der Technische Administrator '.TECH_ADMIN_NAME.' wurde informiert.');
         $this->phpMailer->send();
     }
 }
