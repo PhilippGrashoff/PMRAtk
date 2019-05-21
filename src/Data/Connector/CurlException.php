@@ -29,9 +29,6 @@ class CurlException extends \atk4\core\Exception {
             if(is_object($r)) {
                 return $this->_findErrorMessage(get_object_vars($r));
             }
-            elseif(is_array($r)) {
-                return $this->_findErrorMessage($r);
-            }
         }
 
         return (string) $this->getParams()['response'];
@@ -48,9 +45,6 @@ class CurlException extends \atk4\core\Exception {
             || strpos($key, 'message') !== false) {
                 if(is_string($value)) {
                     return $value;
-                }
-                elseif(is_array($value)) {
-                    return $this->_findErrorMessage($value);
                 }
                 elseif(is_object($value)) {
                     return $this->_findErrorMessage(get_object_vars($value));

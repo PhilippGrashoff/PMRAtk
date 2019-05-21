@@ -14,7 +14,7 @@ class CurlExceptionTest extends \PMRAtk\tests\phpunit\TestCase {
     /*
      *
      */
-    public function testGetErrorMessageWithJSONArray() {
+    public function testGetErrorMessageWithJSON() {
         $arr = [
             'error' => 'SomeErrorMessage',
             'code' => 404
@@ -27,7 +27,20 @@ class CurlExceptionTest extends \PMRAtk\tests\phpunit\TestCase {
     /*
      *
      */
-    public function testGetErrorMessageWithNestedJSONArray() {
+    public function testGetErrorMessageWithJSONNoValidKey() {
+        $arr = [
+            'somekey' => 'SomeErrorMessage',
+            'code' => 404
+        ];
+        $e = new \PMRAtk\Data\Connector\CurlException('SomeMessage', 404, json_encode($arr));
+        $this->assertEquals('SomeMessage', $e->getErrorMessage());
+    }
+
+
+    /*
+     *
+     */
+    public function testGetErrorMessageWithNestedJSON() {
         $arr = [
             'error' => [
                 'message' => 'SomeErrorMessage',
@@ -39,16 +52,11 @@ class CurlExceptionTest extends \PMRAtk\tests\phpunit\TestCase {
     }
 
 
-
     /*
      *
      */
-    public function testGetErrorMessageWithNestedJSONObject() {
-        $o = new \StdClass();
-        $x = new \StdClass();
-        $x->message = 'SomeErrorMessage';
-        $o->error = $x;
-        $e = new \PMRAtk\Data\Connector\CurlException('SomeMessage', 404, json_encode($o));
+    public function testGetErrorMessageWithString() {
+        $e = new \PMRAtk\Data\Connector\CurlException('SomeMessage', 404, 'SomeErrorMessage');
         $this->assertEquals('SomeErrorMessage', $e->getErrorMessage());
     }
 }
