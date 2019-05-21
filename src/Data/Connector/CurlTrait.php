@@ -4,6 +4,10 @@ namespace PMRAtk\Data\Connector;
 
 trait CurlTrait {
 
+    // Curl\Curl instance, set in constructor
+    public $curl;
+
+
     /*
      * This function takes care of how all functions making api calls respond:
      * 1) If the request itself failed (e.g. timeout), throw exception with code 0
