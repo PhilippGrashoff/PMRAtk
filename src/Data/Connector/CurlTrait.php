@@ -3,6 +3,7 @@
 namespace PMRAtk\Data\Connector;
 
 trait CurlTrait {
+
     /*
      * This function takes care of how all functions making api calls respond:
      * 1) If the request itself failed (e.g. timeout), throw exception with code 0
