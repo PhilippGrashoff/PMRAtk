@@ -27,6 +27,17 @@ class CurlExceptionTest extends \PMRAtk\tests\phpunit\TestCase {
     /*
      *
      */
+    public function testGetErrorMessageResponseAlreadyDecodedToObject() {
+        $o = new \StdClass();
+        $o->error = 'SomeErrorMessage';
+        $e = new \PMRAtk\Data\Connector\CurlException('SomeMessage', 404, $o);
+        $this->assertEquals('SomeErrorMessage', $e->getErrorMessage());
+    }
+
+
+    /*
+     *
+     */
     public function testGetErrorMessageWithJSONNoValidKey() {
         $arr = [
             'somekey' => 'SomeErrorMessage',

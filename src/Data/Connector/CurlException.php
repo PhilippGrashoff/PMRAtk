@@ -24,7 +24,12 @@ class CurlException extends \atk4\core\Exception {
      * else the standard message
      */
     public function getErrorMessage():string {
-        if(($r = json_decode($this->getParams()['response'])) !== null) {
+        //if response was already json_decoded
+        if(is_object($this->getParams()['response'])) {
+            return $this->_findErrorMessage(get_object_vars($this->getParams()['response']));
+        }
+        elseif(is_string($this->getParams()['response'])
+        && ($r = json_decode($this->getParams()['response'])) !== null) {
             //try finding some property that contains "error"
             if(is_object($r)) {
                 return $this->_findErrorMessage(get_object_vars($r));
