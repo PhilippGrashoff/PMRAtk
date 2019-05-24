@@ -55,6 +55,8 @@ class TemplateTest extends \PMRAtk\tests\phpunit\TestCase {
 
         $t = new \PMRAtk\View\Template();
         $t->app = self::$app;
-        $t->loadTemplateFromString('Hallo {$DADA} Test');
+        $t->loadTemplateFromString('Hallo {$name} Test {$value} Miau {$text}!');
+        $t->setTagsFromModel($model, ['name', 'value', 'text']);
+        $this->assertEquals('Hallo BlaDU Test 3 Miau LALALALA!', $t->render());
     }
 }

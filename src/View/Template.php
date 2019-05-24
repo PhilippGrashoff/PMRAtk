@@ -41,9 +41,6 @@ class Template extends \atk4\ui\Template {
      * Tries to set each passed tag with its value from passed model
      */
     public function setTagsFromModel(\atk4\data\Model $model, array $tags) {
-        if(!$model->loaded()) {
-            throw new \atk4\data\Exception('Model needs to be loaded in '.__FUNCTION__);
-        }
         foreach($tags as $tag) {
             if(!$model->hasElement($tag)
             || !$model->getElement($tag) instanceof \atk4\data\Field) {
