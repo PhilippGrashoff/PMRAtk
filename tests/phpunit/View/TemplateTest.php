@@ -1,5 +1,19 @@
 <?php
 
+class TestModel extends \atk4\data\Model {
+    public $table = 'blalba';
+
+    public function init() {
+        parent::init();
+        $this->addFields([
+            ['name',  'type' => 'string'],
+            ['value', 'type' => 'integer'],
+            ['text',  'type' => 'text'],
+        ]);
+    }
+}
+
+
 class TemplateTest extends \PMRAtk\tests\phpunit\TestCase {
 
     /*
@@ -27,5 +41,20 @@ class TemplateTest extends \PMRAtk\tests\phpunit\TestCase {
         $t->loadTemplateFromString('Hallo {$DADA} Test');
         $t->setGermanList('DADA', ['Hansi', '', 'Peter', 'Klaus']);
         $this->assertTrue(strpos($t->render(), 'Hansi, Peter und Klaus') !== false);
+    }
+
+
+    /*
+     *
+     */
+    public function testSetTagsFromModel() {
+        $model = new TestModel(self::$app->db);
+        $model->set('name', 'BlaDU');
+        $model->set('value', 3);
+        $model->set('text', 'LALALALA');
+
+        $t = new \PMRAtk\View\Template();
+        $t->app = self::$app;
+        $t->loadTemplateFromString('Hallo {$DADA} Test');
     }
 }
