@@ -1,6 +1,6 @@
 <?php
 
-class TCADTest extends \PMRAtk\View\View {
+class TCADTest extends \atk4\ui\View {
 
     use \PMRAtk\View\Traits\SubTemplateCloneDeleteTrait;
 
