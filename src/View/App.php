@@ -2,6 +2,9 @@
 
 namespace PMRAtk\View;
 
+use atk4\ui\Exception;
+use atk4\ui\Template;
+
 class App extends \atk4\ui\App {
 
     use \PMRAtk\View\Traits\UserMessageTrait;
@@ -103,6 +106,28 @@ class App extends \atk4\ui\App {
         $this->ui_persistence->time_format = 'H:i';
         $this->ui_persistence->datetime_format = 'Y-m-d\TH:i:s';
         $this->ui_persistence->currency = '';
+    }
+
+
+    /**
+     * overwrite standard atk method to return \PMRAtk\View\Template
+     */
+    public function loadTemplate($name){
+        $template = new \PMRAtk\View\Template();
+        $template->app = $this;
+
+        if (in_array($name[0], ['.', '/', '\\']) || strpos($name, ':\\') !== false) {
+            return $template->load($name);
+        } else {
+            $dir = is_array($this->template_dir) ? $this->template_dir : [$this->template_dir];
+            foreach ($dir as $td) {
+                if ($t = $template->tryLoad($td.'/'.$name)) {
+                    return $t;
+                }
+            }
+        }
+
+        throw new \atk4\ui\Exception(['Can not find template file', 'name'=>$name, 'template_dir'=>$this->template_dir]);
     }
 
 
