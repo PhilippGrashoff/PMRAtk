@@ -1,12 +1,15 @@
 <?php
 
 class TCADTest extends \PMRAtk\View\View {
+
+    use \PMRAtk\View\Traits\SubTemplateCloneDeleteTrait;
+
     public $_tLala;
     public $_tDada;
 }
 
 
-class ViewTest extends \PMRAtk\tests\phpunit\TestCase {
+class SubTemplateCloneDeleteTraitTest extends \PMRAtk\tests\phpunit\TestCase {
 
     /*
      *
