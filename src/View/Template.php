@@ -4,6 +4,8 @@ namespace PMRAtk\View;
 
 class Template extends \atk4\ui\Template {
 
+    use \PMRAtk\Data\Traits\DateTimeHelpersTrait;
+
     /*
      *
      */
@@ -46,7 +48,19 @@ class Template extends \atk4\ui\Template {
             || !$model->getElement($tag) instanceof \atk4\data\Field) {
                 continue;
             }
-            $this->set($tag, $model->get($tag));
+
+            //try converting non-scalar values
+            if(!is_scalar($model->get($tag))) {
+                if($model->get($tag) instanceof \DateTimeInterFace) {
+                    $this->set($tag, $this->castDateTimeToGermanString($model->get($tag), $model->getElement($tag)->type));
+                }
+                else {
+                    $this->set($tag, $model->getElement($tag)->toString());
+                }
+            }
+            else {
+                $this->set($tag, $model->get($tag));
+            }
         }
     }
 }
