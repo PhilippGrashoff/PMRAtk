@@ -227,11 +227,11 @@ class BaseModel extends \atk4\data\Model {
         }
 
         //distinguish MtoM and 1toM relations, only use each for MtoM
-        if($this->getRef($ref_name) instanceOf \atk4\data\Reference_Many) {
+        if($this->getRef($ref_name) instanceOf \atk4\data\Reference\HasMany) {
             $this->ref($ref_name)->each('delete');
             return true;
         }
 
-        throw new \atk4\data\Exception('The Reference '.$ref_name.' is not of type \atk4\data\Reference_Many in '.__FUNCTION__);
+        throw new \atk4\data\Exception('The Reference '.$ref_name.' is not of type \atk4\data\Reference\HasMany in '.__FUNCTION__);
     }
 }

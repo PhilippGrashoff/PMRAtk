@@ -20,7 +20,7 @@ trait FieldChangedMessageTrait {
         }
 
         //value special if its a hasOne relation
-        if($this->hasRef($field_name) && $this->getRef($field_name) instanceOf \atk4\data\Reference_One) {
+        if($this->hasRef($field_name) && $this->getRef($field_name) instanceOf \atk4\data\Reference\HasOne) {
             $refmodel = $this->refModel($field_name);
             $old_value = $refmodel->tryLoad($old_value)->get($refmodel->title_field);
             $new_value = $refmodel->tryLoad($new_value)->get($refmodel->title_field);
