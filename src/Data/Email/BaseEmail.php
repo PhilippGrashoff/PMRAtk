@@ -62,7 +62,7 @@ class BaseEmail extends \atk4\data\Model {
             ['attachments',     'type' => 'array', 'serialize' => 'json'],
         ]);
 
-        $this->hasMany('EmailRecipient', [new EmailRecipient($this->persistence), 'their_field' => 'base_email_id']);
+        $this->hasMany('EmailRecipient', [EmailRecipient::class, 'their_field' => 'base_email_id']);
 
         //on delete, delete all recipients as well
         $this->addHook('beforeDelete', function($m) {

@@ -10,7 +10,11 @@ trait FileRelationTrait {
      *
      */
     protected function _addFileRef() {
-        $this->hasMany('File', [(new \PMRAtk\Data\File($this->persistence, ['parentObject' => $this]))->addCondition('model_class', get_class($this)), 'their_field' => 'model_id']);
+        $this->hasMany('File', [
+            function() {
+                return (new \PMRAtk\Data\File($this->persistence, ['parentObject' => $this]))->addCondition('model_class', get_class($this));
+            },
+            'their_field' => 'model_id']);
     }
 
 

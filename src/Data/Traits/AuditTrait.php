@@ -8,7 +8,11 @@ trait AuditTrait {
      * use in Model::init() to add the audit Ref
      */
     protected function _addAuditRef() {
-        $this->hasMany('Audit', [(new \PMRAtk\Data\Audit($this->persistence, ['parentObject' => $this]))->addCondition('model_class', get_class($this)), 'their_field' => 'model_id']);
+        $this->hasMany('Audit', [
+            function() {
+                return (new \PMRAtk\Data\Audit($this->persistence, ['parentObject' => $this]))->addCondition('model_class', get_class($this));
+            },
+            'their_field' => 'model_id']);
     }
 
 

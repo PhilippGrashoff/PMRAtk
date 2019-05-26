@@ -12,9 +12,21 @@ trait EPARelationsTrait {
      * use this in init() to quickly setup email, phone and address relations
      */
     protected function _addEPARefs() {
-        $this->hasMany('Phone',             [(new \PMRAtk\Data\Phone($this->persistence,   ['parentObject' => $this]))->addCondition('model_class', get_class($this)), 'their_field' => 'model_id']);
-        $this->hasMany('Email',             [(new \PMRAtk\Data\Email($this->persistence,   ['parentObject' => $this]))->addCondition('model_class', get_class($this)), 'their_field' => 'model_id']);
-        $this->hasMany('Address',           [(new \PMRAtk\Data\Address($this->persistence, ['parentObject' => $this]))->addCondition('model_class', get_class($this)), 'their_field' => 'model_id']);
+        $this->hasMany('Phone', [
+            function() {
+                return (new \PMRAtk\Data\Phone($this->persistence,   ['parentObject' => $this]))->addCondition('model_class', get_class($this));
+            },
+            'their_field' => 'model_id']);
+        $this->hasMany('Email', [
+            function() {
+                return (new \PMRAtk\Data\Email($this->persistence,   ['parentObject' => $this]))->addCondition('model_class', get_class($this));
+            },
+            'their_field' => 'model_id']);
+        $this->hasMany('Address', [
+            function() {
+                return (new \PMRAtk\Data\Address($this->persistence, ['parentObject' => $this]))->addCondition('model_class', get_class($this));
+            },
+            'their_field' => 'model_id']);
 
         $this->addHook('beforeDelete', function($m)  {
             $m->deleteHasMany('Phone');
