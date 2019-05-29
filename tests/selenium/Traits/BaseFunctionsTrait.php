@@ -473,6 +473,20 @@ trait BaseFunctionsTrait {
 
 
     /*
+     * checks if a passed webElement is a lookup or a normal dropdown
+     */
+    protected function _isLookup($element) {
+        //at the moment, determining by class="noselection" in hidden input seems best option
+        $input = $this->findByCSS('#'.$element->getAttribute('id').'_input');
+        if(strpos($input->getAttribute('class'), 'noselection') !== false) {
+            return true;
+        }
+        
+        return false;
+    }
+
+
+    /*
     /*
      * function that waits until  a yScroll happened
      * Logic: store current scroll position in $this->scrollOffset.
