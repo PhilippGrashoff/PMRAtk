@@ -507,6 +507,17 @@ trait BaseFunctionsTrait {
     /*
      *
      */
+    public function findAllByCSS(string $css_selector, bool $wait_for_at_least_one = false):array {
+        if ($wait_for_at_least_one) {
+            $this->isVisible($css_selector);
+        }
+        return self::$webDriver->findElements(\WebDriverBy::cssSelector($css_selector));
+    }
+
+
+    /*
+     *
+     */
     public function waitForNotify() {
         self::$webDriver->wait($this->waitTimeOut, $this->waitInterval)->until(
             \WebDriverExpectedCondition::visibilityOfElementLocated(\WebDriverBy::cssSelector('.atk-notify.visible'))
