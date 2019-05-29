@@ -57,7 +57,7 @@ trait BaseFunctionsTrait {
      *
      */
     public static function getWindowHeight() {
-      if(isset(self::$isMobile)) {
+        if(isset(self::$isMobile)) {
             return self::$mobileWindowHeight;
         }
         else {
@@ -444,6 +444,15 @@ trait BaseFunctionsTrait {
         );
     }
 
+    /*
+     *
+     */
+    public function elementPresent(string $css_selector) {
+        self::$webDriver->wait($this->waitTimeOut, $this->waitInterval)->until(
+            \WebDriverExpectedCondition::presenceOfElementLocated(\WebDriverBy::cssSelector($css_selector))
+        );
+    }
+
 
     /*
      *
@@ -477,11 +486,10 @@ trait BaseFunctionsTrait {
      */
     protected function _isLookup($element) {
         //at the moment, determining by class="noselection" in hidden input seems best option
-        $input = $this->findByCSS('#'.$element->getAttribute('id').'_input');
-        if(strpos($input->getAttribute('class'), 'noselection') !== false) {
+        if(strpos($element->getAttribute('id'), '-ac') !== false) {
             return true;
         }
-        
+
         return false;
     }
 
@@ -513,7 +521,8 @@ trait BaseFunctionsTrait {
      */
     public function findByCSS(string $css_selector) {
         //wait until element is found
-        $this->isVisible($css_selector);
+        //$this->isVisible($css_selector);
+        $this->elementPresent($css_selector);
         return self::$webDriver->findElement(\WebDriverBy::cssSelector($css_selector));
     }
 
