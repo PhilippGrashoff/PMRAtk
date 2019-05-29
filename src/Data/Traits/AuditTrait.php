@@ -65,7 +65,7 @@ trait AuditTrait {
                         $data[$field_name] = $this->_dateFieldAudit($field_name, $dirty_field);
                     }
                     //hasOne relationship
-                    elseif($this->hasRef($field_name) && $this->getRef($field_name) instanceOf \atk4\data\Reference_One) {
+                    elseif($this->hasRef($field_name) && $this->getRef($field_name) instanceOf \atk4\data\Reference\HasOne) {
                         $old = $this->ref($field_name)->newInstance();
                         $old->tryLoad($dirty_field);
                         $new = $this->ref($field_name)->newInstance();
