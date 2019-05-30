@@ -307,7 +307,7 @@ trait BaseFunctionsTrait {
         $input->sendKeys(WebDriverKeys::ARROW_LEFT);
 
         //hack for different date format inputs
-        if($this->app->getSetting('TEST_DATEFORMAT') == 'us') {
+        if(self::$app->getSetting('TEST_DATEFORMAT') == 'us') {
             $date = substr($date,2,2).substr($date,0,2).substr($date,4,4);
         }
         $input->sendKeys($date);
