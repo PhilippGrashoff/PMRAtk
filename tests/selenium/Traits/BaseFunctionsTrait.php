@@ -301,7 +301,7 @@ trait BaseFunctionsTrait {
     public function fillDateInput(string $css_selector, string $date, bool $submit = false):object {
         //find input
         $input = $this->findByCSS($css_selector);
-        $input->click();
+        $this->tryClick($css_selector);
         //move 2 times left, so youre sure to be on the day part of the input
         $input->sendKeys(WebDriverKeys::ARROW_LEFT);
         $input->sendKeys(WebDriverKeys::ARROW_LEFT);
@@ -327,7 +327,7 @@ trait BaseFunctionsTrait {
     public function fillTimeInput($css_selector, $time) {
         //find input
         $input = $this->findByCSS($css_selector);
-        $input->tryClick();
+        $this->tryClick($css_selector);
         //move left
         $input->sendKeys(WebDriverKeys::ARROW_LEFT);
         $input->sendKeys(WebDriverKeys::ARROW_LEFT);
