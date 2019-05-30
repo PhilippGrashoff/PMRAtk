@@ -307,7 +307,7 @@ trait BaseFunctionsTrait {
         $input->sendKeys(WebDriverKeys::ARROW_LEFT);
 
         //hack for different date format inputs
-        if(defined('TEST_DATEFORMAT') && TEST_DATEFORMAT == 'us') {
+        if($this->app->getSetting('TEST_DATEFORMAT') == 'us') {
             $date = substr($date,2,2).substr($date,0,2).substr($date,4,4);
         }
         $input->sendKeys($date);
@@ -326,8 +326,8 @@ trait BaseFunctionsTrait {
      */
     public function fillTimeInput($css_selector, $time) {
         //find input
-        $input = self::$webDriver->findElement(\WebDriverBy::cssSelector($css_selector));
-        $input->click();
+        $input = $this->findByCSS($css_selector);
+        $input->tryClick();
         //move left
         $input->sendKeys(WebDriverKeys::ARROW_LEFT);
         $input->sendKeys(WebDriverKeys::ARROW_LEFT);
