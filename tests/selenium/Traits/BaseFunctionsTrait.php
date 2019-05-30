@@ -393,7 +393,7 @@ trait BaseFunctionsTrait {
         self::$webDriver->wait($this->waitTimeOut, $this->waitInterval)->until(
             function() use($css_selector, $text) {
                 try {
-                    $elem = $this->findByCSS($css_selector);
+                    $elem = self::$webDriver->findElement(\WebDriverBy::cssSelector($css_selector));
                     return (strpos($elem->getText(), $text) !== false);
                 }
                 catch(\Exception $e) {}
