@@ -476,8 +476,7 @@ trait BaseFunctionsTrait {
      *
      */
     public function closeModal() {
-        $close_icon = self::$webDriver->findElement(\WebDriverBy::cssSelector('.atk-modal.visible i.icon.close'));
-        $close_icon->click();
+        $this->tryClick('.atk-modal.visible i.icon.close');
     }
 
 
