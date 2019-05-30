@@ -332,7 +332,7 @@ trait BaseFunctionsTrait {
         $input->sendKeys(WebDriverKeys::ARROW_LEFT);
         $input->sendKeys(WebDriverKeys::ARROW_LEFT);
         //hack for different date format inputs
-        if(isset($_ENV['EOO_TEST_DATEFORMAT']) && $_ENV['EOO_TEST_DATEFORMAT'] == 'us') {
+        if(self::$app->getSetting('TEST_DATEFORMAT') == 'us') {
             $d = (new \Datetime())->createFromFormat('Hi', $time);
             $time = $d->format('hia');
         }
