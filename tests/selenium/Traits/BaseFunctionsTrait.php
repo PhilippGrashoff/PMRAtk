@@ -504,8 +504,8 @@ trait BaseFunctionsTrait {
      *
      * @param int initial_position    The initial scroll position to compare to
      */
-    public function waitForScroll(int$initial_offset) {
-        self::$webDriver->wait($this->waitTimeOut, $this->waitInterval)->until(
+    public function waitForScroll(int $initial_offset) {
+        self::$webDriver->wait($this->waitTimeOut, 300)->until(
             function() use ($initial_offset) {
                 $old_offset = $this->scrollOffset;
                 $this->scrollOffset = (self::$webDriver->executeScript("return window.pageYOffset;"));
