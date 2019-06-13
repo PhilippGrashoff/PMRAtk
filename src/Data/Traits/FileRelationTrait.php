@@ -75,7 +75,6 @@ trait FileRelationTrait {
             if(method_exists($this, 'addAdditionalAudit')) {
                 $this->addAdditionalAudit('REMOVE_FILE', ['filename' => $cfile->get('value')]);
             }
-            return true;
         }
 
         throw new \PMRAtk\Data\UserException('Die Datei die gelöscht werden soll kann nicht gefunden werden.');

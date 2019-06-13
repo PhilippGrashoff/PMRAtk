@@ -11,6 +11,7 @@ namespace PMRAtk\Data\Cron;
 abstract class BaseCronJob {
 
     use \atk4\core\DIContainerTrait;
+    use \PMRAtk\Data\Email\EmailThrowableToAdminTrait;
 
     //The name of the cronjob to display to a user
     public $name = 'Cronjob';
@@ -45,7 +46,7 @@ abstract class BaseCronJob {
             $this->sendSuccessEmail();
         }
         catch(\Throwable $e) {
-            $this->sendFailEmail($e);
+            $this->sendErrorEmailToAdmin($e, 'Im Cronjob ' . $this->name . ' ist ein Fehler aufgetreten');
         }
     }
 
@@ -67,27 +68,11 @@ abstract class BaseCronJob {
             $this->phpMailer->addAddress($email_address);
         }
         if($this->addAdminToSuccessEmail) {
-            $this->phpMailer->addAddress(TECH_ADMIN_EMAIL);
+            $this->phpMailer->addAddress($this->app->getSetting('TECH_ADMIN_EMAIL'));
         }
 
         $this->phpMailer->Subject = 'Der Cronjob '. $this->name.' war erfolgreich';
         $this->phpMailer->setBody('Folgende Änderungen wurden durchgeführt: <br />'.$this->app->getUserMessagesAsHTML());
-        $this->phpMailer->send();
-    }
-
-
-    /*
-     * Sends an Email if an Exception was thrown
-     */
-    public function sendFailEmail(\Throwable $e) {
-        //always send to tech admin
-        $this->phpMailer->addAddress(TECH_ADMIN_EMAIL);
-        foreach($this->recipients as $email_address) {
-            $this->phpMailer->addAddress($email_address);
-        }
-        $this->phpMailer->Subject = 'Im Cronjob '. $this->name.' ist ein Fehler aufgetreten';
-        $this->phpMailer->setBody('Folgender Fehler ist aufgetreten: <br />'.
-            ($e instanceOf \atk4\core\Exception ? $e->getHTML() : $e->getMessage().'<br />Line: '.$e->getLine().'<br />'.nl2br($e->getTraceAsString())).'<br />Der Technische Administrator '.TECH_ADMIN_NAME.' wurde informiert.');
         $this->phpMailer->send();
     }
 }
