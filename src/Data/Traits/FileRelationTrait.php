@@ -68,15 +68,15 @@ trait FileRelationTrait {
     public function removeFile(int $file_id) {
         $file = $this->ref('File');
         $file->tryLoad($file_id);
-        if($file->loaded()) {
-            $cfile = clone $file;
-            $file->delete();
-            $this->app->addUserMessage('Die Datei '.$file->get('path').$file->get('value'). 'wurde erfolgreich gelöscht.', 'success');
-            if(method_exists($this, 'addAdditionalAudit')) {
-                $this->addAdditionalAudit('REMOVE_FILE', ['filename' => $cfile->get('value')]);
-            }
+        if(!$file->loaded()) {
+            throw new \PMRAtk\Data\UserException('Die Datei die gelöscht werden soll kann nicht gefunden werden.');
         }
 
-        throw new \PMRAtk\Data\UserException('Die Datei die gelöscht werden soll kann nicht gefunden werden.');
+        $cfile = clone $file;
+        $file->delete();
+        $this->app->addUserMessage('Die Datei ' . $file->get('path') . $file->get('value') . 'wurde erfolgreich gelöscht.', 'success');
+        if (method_exists($this, 'addAdditionalAudit')) {
+            $this->addAdditionalAudit('REMOVE_FILE', ['filename' => $cfile->get('value')]);
+        }
     }
 }
