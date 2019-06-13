@@ -8,8 +8,9 @@ trait EmailThrowableToAdminTrait {
      * Sends an Email if an Exception was thrown
      */
     public function sendErrorEmailToAdmin(\Throwable $e, string $subject, array $additional_recipients = []) {
-        if(!$this->phpMailer) {
-            $this->phpMailer = new \PMRAtk\Data\Email\PHPMailer($this->app);
+        if(!isset($this->phpMailer)
+        || !$this->phpMailer instanceof PHPMailer) {
+            $this->phpMailer = new PHPMailer($this->app);
         }
         //always send to tech admin
         $this->phpMailer->addAddress($this->app->getSetting('TECH_ADMIN_EMAIL'));
