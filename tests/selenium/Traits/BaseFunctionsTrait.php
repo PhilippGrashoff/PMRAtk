@@ -410,28 +410,12 @@ trait BaseFunctionsTrait {
      * @param string input_selector      The css selector for the whole input field
      * @param string file_list_selector  The css selector for the file list displayed
      */
-    public function fileUpload($input_selector, $file_list_selector) {
-        $path = FILE_BASE_PATH.'.circleci/demo-img.jpg';
+    public function baseFileUpload($input_selector) {
+        $path = self::$app->getSetting('FILE_BASE_PATH').'.circleci/demo-img.jpg';
 
-        //initial item count of file list
-        $initial_count = count(self::$webDriver->findElements(\WebDriverBy::cssSelector($file_list_selector.' .eoo-item')));
-
-        //get text of first audit element
-        $this->storeLastAudit();
-
-        $input = self::$webDriver->findElement(\WebDriverBy::cssSelector($input_selector.' input[type="file"]'));
+        $input = $this->findByCSS($input_selector);
         $input->setFileDetector(new \LocalFileDetector());
         $input->sendKeys($path);
-
-        //now jsNotify should be there as well
-        $this->waitForNotify();
-
-        //give js time to update audit and List
-        $this->isAuditChanged();
-
-        //expected result: item list now should have one item more
-        $new_count = count(self::$webDriver->findElements(\WebDriverBy::cssSelector($file_list_selector.' .eoo-item')));
-        $this->assertTrue($initial_count + 1 == $new_count);
     }
 
 
