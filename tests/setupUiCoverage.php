@@ -1,18 +1,47 @@
 <?php
 
 foreach(new \DirectoryIterator('.') as $file) {
-    if($file->isDot()
-    || $file->isDir()
-    || $file->getExtension() !== 'php') {
+    if($file->isDot()) {
         continue;
     }
 
-    $content = file_get_contents($file->getFilename());
-    if(strpos($content, '###CCSTART') === false
-    && strpos($content, '###CCEND') === false) {
-        continue;
+    //Files in that dir
+    if($file->isFile()
+        && $file->getExtension() === 'php') {
+        $content = file_get_contents($file->getFilename());
+        if (strpos($content, '###CCSTART') === false
+            && strpos($content, '###CCEND') === false) {
+            continue;
+        }
+
+        insertCCCode($file->getFilename());
     }
 
+    //go down one dir
+    elseif($file->isDir()) {
+        foreach(new \DirectoryIterator($file->getFilename()) as $subdir) {
+            if($subdir->isDir()
+                || $subdir->isDot()
+                || $subdir->getExtension() !== 'php') {
+                continue;
+            }
+
+            $content = file_get_contents($file->getFilename().'/'.$subdir->getFilename());
+            if (strpos($content, '###CCSTART') === false
+                && strpos($content, '###CCEND') === false) {
+                continue;
+            }
+
+
+            insertCCCode($file->getFilename().'/'.$subdir->getFilename());
+        }
+
+    }
+}
+
+
+function insertCCCode(string $filename) {
+    $content = file_get_contents($filename);
     $content = str_replace('###CCSTART', '
 $coverage = new \SebastianBergmann\CodeCoverage\CodeCoverage(new \SebastianBergmann\CodeCoverage\Driver\Xdebug());
 $coverage->filter()->addDirectoryToWhitelist(\'src/View\');
@@ -26,5 +55,5 @@ $app->addHook(\'beforeExit\', function () use($coverage) {
 });
 ', $content);
 
-    file_put_contents($file->getFilename(), $content);
+    file_put_contents($filename, $content);
 }
