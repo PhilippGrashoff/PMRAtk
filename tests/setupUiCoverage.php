@@ -51,7 +51,7 @@ $coverage->start(pathinfo(__FILE__, PATHINFO_FILENAME));
 $app->addHook(\'beforeExit\', function () use($coverage) {
     $coverage->stop(true);
     $writer = new \SebastianBergmann\CodeCoverage\Report\PHP();
-    $writer->process($coverage, \'\'.$insubdir ? \'../\' : \'\'.\'tests/coverage/\'.basename($_SERVER[\'SCRIPT_NAME\'], \'.php\').\'-\'.uniqid().\'.cov\');
+    $writer->process($coverage, \''.$insubdir ? '../' : ''.'tests/coverage/\'.basename($_SERVER[\'SCRIPT_NAME\'], \'.php\').\'-\'.uniqid().\'.cov\');
 });
 ', $content);
 
