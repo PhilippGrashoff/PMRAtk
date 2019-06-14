@@ -23,4 +23,4 @@ define('TEST_DATEFORMAT',     'us');
 
 
 //test field encryption
-define('ENCRYPTFIELD_KEY',     '1234567890abcefd');
+define('ENCRYPTFIELD_KEY',     '1234567890abcefd1234567890abcefd');

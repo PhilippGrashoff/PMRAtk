@@ -1,6 +1,6 @@
 <?php
 
-namespace PMRAtk\tests\phpunit;
+namespace PMRAtk\tests;
 
 /*
  * This class is used to load the last recieved message from an Email
@@ -10,7 +10,7 @@ namespace PMRAtk\tests\phpunit;
  *
  * Built on top of Zend Frameworks Zend Email
  */
-class SentEmailContentTest extends TestCase {
+class SentEmailContentTest extends \PMRAtk\tests\phpunit\TestCase {
 
     //instance of \PMRAtk\Data\Email\EmailAccount;
     public $emailAccount;
@@ -39,5 +39,21 @@ class SentEmailContentTest extends TestCase {
         ]);
 
         $this->loadedEmail = $es->getMessage($es->countMessages());
+    }
+
+
+    /*
+     *
+     */
+    public function assertSubjectContains(string $search) {
+        $this->assertTrue(strpos($this->loadedEmail->subject, $search) !== false);
+    }
+
+
+    /*
+     *
+     */
+    public function assertBodyContains(string $search) {
+        $this->assertTrue(strpos($this->loadedEmail->getContent(), $search) !== false);
     }
 }

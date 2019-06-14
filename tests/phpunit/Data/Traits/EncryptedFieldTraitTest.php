@@ -9,7 +9,7 @@ class EmailWithEncryptedField extends \PMRAtk\Data\Email {
 
     public function init() {
         parent::init();
-        $this->encryptField($this->getElement('value'), sodium_crypto_stream_keygen());
+        $this->encryptField($this->getElement('value'), self::$app->getSetting('ENCRYPTFIELD_KEY'));
     }
 }
 
