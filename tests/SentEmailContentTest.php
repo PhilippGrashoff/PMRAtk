@@ -30,15 +30,18 @@ class SentEmailContentTest extends \PMRAtk\tests\phpunit\TestCase {
     /*
      *
      */
-    public function loadLastEmail() {
+    public function loadLastEmailFromFolder(string $folder) {
         $es = new Zend\Mail\Storage\Imap([
             'host'     => $this->emailAccount->get('imap_host'),
             'user'     => $this->emailAccount->get('user'),
             'password' => $this->emailAccount->get('password'),
             'port'     => $this->emailAccount->get('imap_port'),
+            'folder'   => $folder,
         ]);
 
         $this->loadedEmail = $es->getMessage($es->countMessages());
+
+        return $this;
     }
 
 
