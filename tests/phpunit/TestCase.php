@@ -139,4 +139,13 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase {
         $this->assertTrue($o->$removename($other));
         $this->assertFalse($o->$hasname($other));
     }
+
+
+    /*
+     * create a UUID for email testing and set it to $_ENV
+     */
+    public function getEmailUUID():string {
+        $_ENV['TEST_EMAIL_UUID'] = uniqid();
+        return $_ENV['TEST_EMAIL_UUID'];
+    }
 }
