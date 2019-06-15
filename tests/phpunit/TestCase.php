@@ -139,4 +139,12 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase {
         $this->assertTrue($o->$removename($other));
         $this->assertFalse($o->$hasname($other));
     }
+
+
+    /*
+     *
+     */
+    public function countModelRecords(string $model_class) {
+        return intval((new $model_class(self::$app->db))->action('count')->getOne());
+    }
 }
