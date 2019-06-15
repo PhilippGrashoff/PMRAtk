@@ -41,7 +41,7 @@ trait CryptIdTrait {
     /*
      * Overwrite to your own needs
      */
-    protected function _generateCryptId() {
+    protected function _generateCryptId():string {
         throw new \atk4\data\Exception(__FUNCTION__.' must be extended in child model');
     }
 
@@ -49,7 +49,7 @@ trait CryptIdTrait {
     /*
      *
      */
-    public function getRandomChar() {
+    public function getRandomChar():string {
         return $this->possibleChars[rand(0, count($this->possibleChars)-1)];
     }
 }
