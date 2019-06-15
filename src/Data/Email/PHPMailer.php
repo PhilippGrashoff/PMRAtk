@@ -43,4 +43,17 @@ class PHPMailer extends \PHPMailer\PHPMailer\PHPMailer {
         $this->Body = $this->header->render().$body.$this->footer->render();
         $this->AltBody = $this->html2text($this->Body);
     }
+
+
+    /*
+     * for testing: add uuid to email subject if set
+     */
+    public function send():bool {
+        if($this->app->getSetting('IS_TEST_MODE')
+        && $this->app->getSetting('TEST_EMAIL_UUID')) {
+            $this->Subject .= $this->app->getSetting('TEST_EMAIL_UUID');
+        }
+
+        return parent::send();
+    }
 }

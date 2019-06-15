@@ -60,4 +60,44 @@ class SentEmailContentTest extends \PMRAtk\tests\phpunit\TestCase {
     public function assertBodyContains(string $search) {
         $this->assertTrue(strpos($this->loadedEmail->getContent(), $search) !== false);
     }
+
+
+    /*
+     *
+     */
+    public function loadLastEmailFromFolderByUUID(string $folder, string $uuid) {
+        $es = new \Zend\Mail\Storage\Imap([
+            'host'     => $this->emailAccount->get('imap_host'),
+            'user'     => $this->emailAccount->get('user'),
+            'password' => $this->emailAccount->get('password'),
+            'port'     => $this->emailAccount->get('imap_port'),
+            'ssl'      => 'SSL',
+            'folder'   => $folder,
+        ]);
+
+        $messageCount = $es->countMessages();
+        //go through last 10 Messages and check subjects for UUID
+        for($i = $messageCount; $i > ($messageCount - 10); $i--) {
+            $message = $es->getMessage($i);
+            if(strpos($message->subject, $uuid) !== false) {
+                $this->loadedEmail = clone $message;
+                return $this;
+            }
+        }
+
+        //timeout and try again, maybe email was not on server yet
+        sleep(3);
+        $messageCount = $es->countMessages();
+        //go through last 10 Messages and check subjects for UUID
+        for($i = $messageCount; $i > ($messageCount - 10); $i--) {
+            $message = $es->getMessage($i);
+            if(strpos($message->subject, $uuid) !== false) {
+                $this->loadedEmail = clone $message;
+                return $this;
+            }
+        }
+
+
+        throw new \atk4\data\Exception('The Email with UUID '.$uuid.' in Subject could not be found');
+    }
 }

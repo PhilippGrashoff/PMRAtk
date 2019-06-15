@@ -147,4 +147,13 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase {
     public function countModelRecords(string $model_class) {
         return intval((new $model_class(self::$app->db))->action('count')->getOne());
     }
+
+
+    /*
+     * create a UUID for email testing and set it to $_ENV
+     */
+    public function getEmailUUID():string {
+        $_ENV['TEST_EMAIL_UUID'] = uniqid();
+        return $_ENV['TEST_EMAIL_UUID'];
+    }
 }
