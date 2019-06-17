@@ -12,7 +12,7 @@ class SecondaryBaseModel extends \atk4\data\Model {
             ['model_class',     'type'=>'text'],
             ['model_id',        'type'=>'integer'],
             ['value',           'type'=>'text'],
-            ['created_date',    'type' => 'datetime', 'default' => date('Y-m-d H:i:s', time()), 'persist_timezone' => 'Europe/Berlin', 'system' => true],
+            ['created_date',    'type' => 'datetime', 'persist_timezone' => 'Europe/Berlin', 'system' => true],
             ['last_updated',    'type' => 'datetime', 'persist_timezone' => 'Europe/Berlin', 'system' => true],
         ]);
 

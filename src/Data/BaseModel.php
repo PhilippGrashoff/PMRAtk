@@ -17,13 +17,18 @@ class BaseModel extends \atk4\data\Model {
 
         // Adds created_date and created_by field to model
         $this->addFields([
-            ['created_date', 'type' => 'datetime', 'default' => date('Y-m-d H:i:s', time()), 'persist_timezone' => 'Europe/Berlin', 'system' => true],
+            ['created_date', 'type' => 'datetime', 'persist_timezone' => 'Europe/Berlin', 'system' => true],
             ['last_updated', 'type' => 'datetime', 'persist_timezone' => 'Europe/Berlin', 'system' => true],
         ]);
 
+        //save created date
+        $this->addHook('beforeInsert', function($m, &$data) {
+            $data['created_date'] = new \DateTime();
+        });
+
         //save last_updated on update
         $this->addHook('beforeUpdate', function($m, &$data) {
-            $data['last_updated'] = date('Y-m-d H:i:s', time());
+            $data['last_updated'] = new \DateTime();
         });
 
         //before load check if its allowed
