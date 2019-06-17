@@ -114,7 +114,7 @@ trait EPARelationsTrait {
     /*
      * creates a new referenced Email, Phone or Address
      */
-    public function createEPA(string $type, string $value) {
+    public function createEPA(string $type, $value) {
         //check if reference exists
         if(!$this->hasRef($type)) {
             throw new \atk4\data\Exception('The model does not have the reference '.$type);
