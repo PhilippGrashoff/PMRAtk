@@ -85,7 +85,22 @@ class App extends \atk4\ui\App {
      * Fix error with 1.7.1. Hopefully this function will be removed soon from ATK base App class,
      * then this fix here is obsolete.
      */
-    public function normalizeClassNameApp($name) {
+    public function normalizeClassNameApp($name, $prefix) {
+        if(class_exists($name)) {
+            return $name;
+        }
+        elseif(class_exists(__NAMESPACE__.'\\'.$name)) {
+            return __NAMESPACE__.'\\'.$name;
+        }
+        elseif(class_exists(__NAMESPACE__.'\\'.$prefix.'\\'.$name)) {
+            return __NAMESPACE__.'\\'.$prefix.'\\'.$name;
+        }
+        elseif(class_exists('\atk4\ui\\'.$name)) {
+            return '\atk4\ui\\'.$name;
+        }
+        elseif(class_exists('\atk4\ui\\'.$prefix.'\\'.$name)) {
+            return '\atk4\ui\\'.$prefix.'\\'.$name;
+        }
         return null;
     }
 
