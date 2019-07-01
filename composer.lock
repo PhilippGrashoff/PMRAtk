@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ad8edaf2bd7ce6c0eb8e114a1b6ad901",
+    "content-hash": "1a2a106fd9998c50dfc40f1e3e811c89",
     "packages": [
         {
             "name": "atk4/api",
@@ -69,16 +69,17 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/atk4/core.git",
-                "reference": "2768f50"
+                "reference": "f74ab9f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/atk4/core/zipball/2768f50",
-                "reference": "2768f50",
+                "url": "https://api.github.com/repos/atk4/core/zipball/f74ab9f",
+                "reference": "f74ab9f",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.6.0",
+                "ext-json": "*",
+                "php": ">=7.2.0",
                 "psr/log": "~1.0"
             },
             "require-dev": {
@@ -115,7 +116,7 @@
                 "php",
                 "trains"
             ],
-            "time": "2019-06-10T23:54:48+00:00"
+            "time": "2019-02-04T13:37:55+00:00"
         },
         {
             "name": "atk4/data",
@@ -123,18 +124,18 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/atk4/data.git",
-                "reference": "c84d818"
+                "reference": "86d953f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/atk4/data/zipball/c84d818",
-                "reference": "c84d818",
+                "url": "https://api.github.com/repos/atk4/data/zipball/86d953f",
+                "reference": "86d953f",
                 "shasum": ""
             },
             "require": {
                 "atk4/core": "dev-develop",
                 "atk4/dsql": "dev-develop as 1.2.5",
-                "php": ">=7.0.0"
+                "php": ">=7.2.0"
             },
             "require-dev": {
                 "atk4/schema": "dev-develop",
@@ -174,7 +175,7 @@
                 "query",
                 "sql"
             ],
-            "time": "2019-06-05T20:04:19+00:00"
+            "time": "2019-05-23T05:40:33+00:00"
         },
         {
             "name": "atk4/dsql",
@@ -182,12 +183,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/atk4/dsql.git",
-                "reference": "6abdd96"
+                "reference": "82b39c7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/atk4/dsql/zipball/6abdd96",
-                "reference": "6abdd96",
+                "url": "https://api.github.com/repos/atk4/dsql/zipball/82b39c7",
+                "reference": "82b39c7",
                 "shasum": ""
             },
             "require": {
@@ -348,21 +349,21 @@
         },
         {
             "name": "atk4/ui",
-            "version": "1.7.1",
+            "version": "1.6.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/atk4/ui.git",
-                "reference": "1ca8f16ab7e4a499e9e25690eb237ab4be82940c"
+                "reference": "8e4512d63bdd413849633fbe25684268b59153eb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/atk4/ui/zipball/1ca8f16ab7e4a499e9e25690eb237ab4be82940c",
-                "reference": "1ca8f16ab7e4a499e9e25690eb237ab4be82940c",
+                "url": "https://api.github.com/repos/atk4/ui/zipball/8e4512d63bdd413849633fbe25684268b59153eb",
+                "reference": "8e4512d63bdd413849633fbe25684268b59153eb",
                 "shasum": ""
             },
             "require": {
-                "atk4/core": "<2",
-                "atk4/data": "<2",
+                "atk4/core": "^1.3",
+                "atk4/data": "^1.4",
                 "php": ">=5.6.0"
             },
             "require-dev": {
@@ -406,7 +407,7 @@
                 "web",
                 "widget"
             ],
-            "time": "2019-06-12T01:56:02+00:00"
+            "time": "2019-03-05T15:12:26+00:00"
         },
         {
             "name": "container-interop/container-interop",
@@ -441,19 +442,20 @@
         },
         {
             "name": "league/period",
-            "version": "4.7.1",
+            "version": "4.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/period.git",
-                "reference": "ba15e92a57d37c413eb382b3d589699d43d10fdd"
+                "reference": "fbe9d2102e36b84c996baba0d0227551282c7742"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/period/zipball/ba15e92a57d37c413eb382b3d589699d43d10fdd",
-                "reference": "ba15e92a57d37c413eb382b3d589699d43d10fdd",
+                "url": "https://api.github.com/repos/thephpleague/period/zipball/fbe9d2102e36b84c996baba0d0227551282c7742",
+                "reference": "fbe9d2102e36b84c996baba0d0227551282c7742",
                 "shasum": ""
             },
             "require": {
+                "ext-json": "*",
                 "php": "^7.1.3"
             },
             "require-dev": {
@@ -512,7 +514,7 @@
                 "timeline",
                 "unions"
             ],
-            "time": "2019-05-19T08:11:21+00:00"
+            "time": "2019-06-20T20:50:18+00:00"
         },
         {
             "name": "php-curl-class/php-curl-class",

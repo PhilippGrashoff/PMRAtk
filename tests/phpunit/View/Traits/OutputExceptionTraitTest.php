@@ -18,7 +18,7 @@ class OutputExceptionTraitTest extends \PMRAtk\tests\phpunit\TestCase {
             throw new \atk4\data\Exception('Some Error');
         }
         catch(\Exception $e) {
-            $res = $this->callProtected($v, '_outputException', [$e]);
+            $res = $v->outputException($e);
             $this->assertTrue(strpos($res[0], 'Ein technischer Fehler ist aufgetreten') !== false);
         }
     }
@@ -34,7 +34,7 @@ class OutputExceptionTraitTest extends \PMRAtk\tests\phpunit\TestCase {
             throw new \PMRAtk\Data\UserException('Some Error Duggu');
         }
         catch(\Exception $e) {
-            $res = $this->callProtected($v, '_outputException', [$e]);
+            $res = $v->outputException($e);
             $this->assertTrue(strpos($res[0], 'Some Error Duggu') !== false);
         }
     }
@@ -50,7 +50,7 @@ class OutputExceptionTraitTest extends \PMRAtk\tests\phpunit\TestCase {
             throw new \atk4\data\ValidationException(['Some Error']);
         }
         catch(\Exception $e) {
-            $res = $this->callProtected($v, '_outputException', [$e]);
+            $res = $v->outputException($e);
             $this->assertTrue(strpos($res[0], 'Some Error') !== false);
         }
     }
@@ -66,7 +66,7 @@ class OutputExceptionTraitTest extends \PMRAtk\tests\phpunit\TestCase {
             throw new \atk4\data\ValidationException(['Some Error1', 'Some Error2']);
         }
         catch(\Exception $e) {
-            $res = $this->callProtected($v, '_outputException', [$e]);
+            $res = $v->outputException($e);
             $this->assertTrue(strpos($res[0], 'Some Error1') !== false);
             $this->assertTrue(strpos($res[1], 'Some Error2') !== false);
         }
@@ -83,7 +83,7 @@ class OutputExceptionTraitTest extends \PMRAtk\tests\phpunit\TestCase {
             throw new \atk4\data\ValidationException(['Some Error1', 'Some Error2']);
         }
         catch(\Exception $e) {
-            $res = $app->outputExceptionAsJsNotify($e);
+            $res = $v->outputExceptionAsJsNotify($e);
             $this->assertEquals(2, count($res));
         }
     }
