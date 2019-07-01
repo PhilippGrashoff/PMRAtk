@@ -83,7 +83,7 @@ class OutputExceptionTraitTest extends \PMRAtk\tests\phpunit\TestCase {
             throw new \atk4\data\ValidationException(['Some Error1', 'Some Error2']);
         }
         catch(\Exception $e) {
-            $res = $this->callProtected($v, '_outputExceptionAsJsNotify', [$e]);
+            $res = $app->outputExceptionAsJsNotify($e);
             $this->assertEquals(2, count($res));
         }
     }
