@@ -9,7 +9,7 @@ trait OutputExceptionTrait {
      */
     public function outputExceptionAsJsNotify(\Exception $e, string $text_before = ''):array {
         $return = [];
-        foreach($this->_outputException($e, $text_before) as $message) {
+        foreach($this->outputException($e, $text_before) as $message) {
             $return[] = $this->failNotify($message);
         }
 
