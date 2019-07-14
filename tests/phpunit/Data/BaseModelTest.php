@@ -240,4 +240,34 @@ class BaseModelTest extends \PMRAtk\tests\phpunit\TestCase {
         $this->expectException(\atk4\data\Exception::class);
         $this->callProtected($u, '_exceptionIfThisNotLoaded', []);
     }
+
+
+    /*
+     *
+     */
+    public function testloadedHasOneRef() {
+        $b = new \PMRAtk\tests\phpunit\Data\BaseModelB(self::$app->db);
+        $b->save();
+        $u = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
+        $u->set('BaseModelB_id', $b->id);
+        $u->save();
+        $ref = $u->loadedHasOneRef('BaseModelB_id');
+        $this->assertEquals($b->id, $ref->id);
+        $b->delete();
+        $this->expectException(\atk4\data\Exception::class);
+        $ref = $u->loadedHasOneRef('BaseModelB_id');
+    }
+
+
+    /*
+     *
+     */
+    public function testloadedHasOneRefFieldEmpty() {
+        $b = new \PMRAtk\tests\phpunit\Data\BaseModelB(self::$app->db);
+        $b->save();
+        $u = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
+        $u->save();
+        $this->expectException(\atk4\data\Exception::class);
+        $ref = $u->loadedHasOneRef('BaseModelB_id');
+    }
 }

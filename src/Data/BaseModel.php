@@ -246,4 +246,18 @@ class BaseModel extends \atk4\data\Model {
             throw new \atk4\data\Exception('$this needs to be loaded in '.debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,2)[1]['function']);
         }
     }
+
+
+    /*
+     * makes sure that a hasOne reference is loaded, if not throws exception. Workaround for https://github.com/atk4/data/issues/335
+     */
+    public function loadedHasOneRef(string $ref_name) {
+        $this->_exceptionIfThisNotLoaded();
+        $model = $this->ref($ref_name);
+        if(!$model->loaded()) {
+            throw new \atk4\Data\Exception('HasOne Reference Model '.$ref_name.' with id '.$this->get($ref_name).' could not be loaded');
+        }
+        return $model;
+    }
+
 }
