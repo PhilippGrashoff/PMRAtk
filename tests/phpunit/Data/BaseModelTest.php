@@ -227,4 +227,17 @@ class BaseModelTest extends \PMRAtk\tests\phpunit\TestCase {
         self::$app->auth->user = $initial;
         $this->assertFalse($res);
     }
+
+
+    /*
+     *
+     */
+    public function test_exceptionIfThisNotLoaded() {
+        $u = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
+        $u->save();
+        $this->callProtected($u, '_exceptionIfThisNotLoaded', []);
+        $u->unload();
+        $this->expectException(\atk4\data\Exception::class);
+        $this->callProtected($u, '_exceptionIfThisNotLoaded', []);
+    }
 }

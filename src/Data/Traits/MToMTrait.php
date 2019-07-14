@@ -11,9 +11,7 @@ trait MToMTrait {
      */
     protected function _addMToMRelation($object, \atk4\data\Model $mtom_object, string $object_class, string $our_field, string $their_field, array $addtional_fields = []):bool {
         //$this needs to be loaded to get ID
-        if(!$this->loaded()) {
-            throw new \atk4\data\Exception('$this needs to be loaded in '.__FUNCTION__);
-        }
+        $this->_exceptionIfThisNotLoaded();
 
         $object = $this->_mToMLoadObject($object, $object_class);
 
@@ -52,9 +50,7 @@ trait MToMTrait {
      */
     protected function _removeMToMRelation($object, \atk4\data\Model $mtom_object, string $object_class, string $our_field, string $their_field):bool {
         //$this needs to be loaded to get ID
-        if(!$this->loaded()) {
-            throw new \atk4\data\Exception('$this needs to be loaded in '.__FUNCTION__);
-        }
+        $this->_exceptionIfThisNotLoaded();
 
         $object = $this->_mToMLoadObject($object, $object_class);
 
@@ -88,9 +84,8 @@ trait MToMTrait {
      * @return bool
      */
     protected function _hasMToMRelation($object, \atk4\data\Model $mtom_model, string $object_class, string $our_field, string $their_field):bool {
-        if(!$this->loaded()) {
-            throw new \atk4\data\Exception('$this needs to be loaded in '.__FUNCTION__);
-        }
+        $this->_exceptionIfThisNotLoaded();
+
         $object = $this->_mToMLoadObject($object, $object_class);
 
         $mtom_model->addCondition($our_field, $this->get('id'));
