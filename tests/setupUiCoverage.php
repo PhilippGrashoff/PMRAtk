@@ -43,7 +43,7 @@ foreach(new \DirectoryIterator('.') as $file) {
 function insertCCCode(string $filename, string $pathPrefix = '') {
     $content = file_get_contents($filename);
     $content = str_replace('###CCSTART', '
-xdebug_set_filter(XDEBUG_FILTER_CODE_COVERAGE, XDEBUG_PATH_WHITELIST, [\''.$pathPrefix.'src/View\']);
+//xdebug_set_filter(XDEBUG_FILTER_CODE_COVERAGE, XDEBUG_PATH_WHITELIST, [\''.$pathPrefix.'src/View/\']);
 $coverage = new \SebastianBergmann\CodeCoverage\CodeCoverage(new \SebastianBergmann\CodeCoverage\Driver\Xdebug());
 $coverage->filter()->addDirectoryToWhitelist(\''.$pathPrefix.'src/View\');
 $coverage->start(pathinfo(__FILE__, PATHINFO_FILENAME));
