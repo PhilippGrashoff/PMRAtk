@@ -20,7 +20,7 @@ class FieldChangedMessageTraitTest extends \PMRAtk\tests\phpunit\TestCase {
     /*
      * empty userMessages before each test
      */
-    public function setUp() {
+    public function setUp():void {
         parent::setUp();
         $this->testApp = new \FCMTApp(['admin']);
     }

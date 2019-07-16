@@ -26,7 +26,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase {
     /*
      *
      */
-    public function setUp() {
+    public function setUp():void {
         self::$app->queryCount = 0;
         // start transaction
         self::$app->db->connection->beginTransaction();
@@ -46,7 +46,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase {
     /*
      *
      */
-    public function tearDown() {
+    public function tearDown():void {
         //log query count
         self::$app->addLogFootLine('Total Queries in '.$this->getName().': '.self::$app->queryCount);
         // rollback after each test
