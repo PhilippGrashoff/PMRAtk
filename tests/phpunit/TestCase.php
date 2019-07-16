@@ -10,7 +10,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase {
     /*
      *
      */
-    public static function setUpBeforeClass() {
+    public static function setUpBeforeClass():void {
         self::$app = new TestApp(['admin']);
     }
 
@@ -18,7 +18,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase {
     /*
      *
      */
-    public static function tearDownAfterClass() {
+    public static function tearDownAfterClass():void {
         self::$app = null;
     }
 

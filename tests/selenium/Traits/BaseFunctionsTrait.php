@@ -69,7 +69,7 @@ trait BaseFunctionsTrait {
     /*
      * start webdriver session
      */
-    public static function setUpBeforeClass() {
+    public static function setUpBeforeClass():void {
         parent::setUpBeforeClass();
         $capabilities = array(\WebDriverCapabilityType::BROWSER_NAME => 'chrome', \WebDriverCapabilityType::BROWSER_NAME => 'chrome');
         self::$webDriver = \RemoteWebDriver::create('http://localhost:4444/wd/hub', ['browserName' => 'chrome', 'chromeOptions' => ['args' => ['--window-size='.self::getWindowWidth().','.self::getWindowHeight()]]]);
@@ -79,7 +79,7 @@ trait BaseFunctionsTrait {
     /**
      * Close webdriver session and close browser window.
      */
-    public static function tearDownAfterClass() {
+    public static function tearDownAfterClass():void {
         parent::tearDownAfterClass();
         self::$webDriver->quit();
     }

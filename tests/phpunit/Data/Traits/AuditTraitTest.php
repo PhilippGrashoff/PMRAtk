@@ -7,7 +7,7 @@ class AuditTraitTest extends \PMRAtk\tests\phpunit\TestCase {
     /*
      *
      */
-    public static function setUpBeforeClass() {
+    public static function setUpBeforeClass():void {
         parent::setUpBeforeClass();
         $_ENV['CREATE_AUDIT'] = true;
     }
@@ -15,7 +15,7 @@ class AuditTraitTest extends \PMRAtk\tests\phpunit\TestCase {
     /*
      *
      */
-    public static function tearDownAfterClass() {
+    public static function tearDownAfterClass():void {
         parent::tearDownAfterClass();
         $_ENV['CREATE_AUDIT'] = false;
     }
