@@ -15,9 +15,6 @@ class BaseModel extends \atk4\data\Model {
     public function init() {
         parent::init();
 
-        //our id field is numeric
-        $this->getElement($this->id_field)->type = 'integer';
-
         // Adds created_date and created_by field to model
         $this->addFields([
             ['created_date', 'type' => 'datetime', 'persist_timezone' => 'Europe/Berlin', 'system' => true],

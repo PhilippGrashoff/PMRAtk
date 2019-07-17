@@ -300,7 +300,7 @@ class BaseEmail extends \atk4\data\Model {
      *
      * @param object
      */
-    public function addAttachment(int $id) {
+    public function addAttachment($id) {
         $a = $this->get('attachments');
         $a[] = $id;
         $this->set('attachments', $a);
