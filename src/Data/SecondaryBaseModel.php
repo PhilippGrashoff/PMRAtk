@@ -8,6 +8,10 @@ class SecondaryBaseModel extends \atk4\data\Model {
 
     public function init() {
         parent::init();
+
+        //our id field is numeric
+        $this->getElement($this->id_field)->type = 'integer';
+        
         $this->addFields([
             ['model_class',     'type'=>'text'],
             ['model_id',        'type'=>'integer'],
