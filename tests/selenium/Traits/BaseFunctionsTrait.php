@@ -1,9 +1,12 @@
 <?php
 namespace PMRAtk\tests\selenium\Traits;
 
-use RemoteWebDriver;
-use WebDriverBy;
-use WebDriverKeys;
+use Facebook\WebDriver\Remote\WebDriverCapabilityType;
+use Facebook\WebDriver\Remote\RemoteWebDriver;
+use Facebook\WebDriver\WebDriverExpectedCondition;
+use Facebook\WebDriver\WebDriverBy;
+use Facebook\WebDriver\WebDriverKeys;
+use Facebook\WebDriver\Remote\LocalFileDetector;
 
 /*
  * This traits contains test functions which are abstract
@@ -71,8 +74,8 @@ trait BaseFunctionsTrait {
      */
     public static function setUpBeforeClass():void {
         parent::setUpBeforeClass();
-        $capabilities = array(\WebDriverCapabilityType::BROWSER_NAME => 'chrome', \WebDriverCapabilityType::BROWSER_NAME => 'chrome');
-        self::$webDriver = \RemoteWebDriver::create('http://localhost:4444/wd/hub', ['browserName' => 'chrome', 'chromeOptions' => ['args' => ['--window-size='.self::getWindowWidth().','.self::getWindowHeight()]]]);
+        $capabilities = array(WebDriverCapabilityType::BROWSER_NAME => 'chrome', WebDriverCapabilityType::BROWSER_NAME => 'chrome');
+        self::$webDriver = RemoteWebDriver::create('http://localhost:4444/wd/hub', ['browserName' => 'chrome', 'chromeOptions' => ['args' => ['--window-size='.self::getWindowWidth().','.self::getWindowHeight()]]]);
     }
 
 
@@ -198,12 +201,12 @@ trait BaseFunctionsTrait {
         //short interval here is pretty important as loading icon sometimes
         //only appears for a very short time
         self::$webDriver->wait($this->waitTimeOut, $this->waitInterval)->until(
-            \WebDriverExpectedCondition::visibilityOfElementLocated(\WebDriverBy::cssSelector($css_selector.'.loading'))
+            WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::cssSelector($css_selector.'.loading'))
         );
 
         //after reload loading icon should be gone
         self::$webDriver->wait($this->waitTimeOut, $this->waitInterval)->until(
-            \WebDriverExpectedCondition::invisibilityOfElementLocated(\WebDriverBy::cssSelector($css_selector.'.loading'))
+            WebDriverExpectedCondition::invisibilityOfElementLocated(WebDriverBy::cssSelector($css_selector.'.loading'))
         );
     }
 
@@ -258,7 +261,7 @@ trait BaseFunctionsTrait {
         $this->dropDownInitiallySelected = $this->findByCSS($css_selector.' div.menu div.selected')->getAttribute('data-value');
 
         //select a non-selected element
-        $dropdown_options = self::$webDriver->findElements(\WebDriverBy::cssSelector($css_selector.' div.menu div'));
+        $dropdown_options = self::$webDriver->findElements(WebDriverBy::cssSelector($css_selector.' div.menu div'));
         $option_selected = false;
 
         //if no option to select was specified, select some which is not
@@ -280,7 +283,7 @@ trait BaseFunctionsTrait {
         }
         //select
         else {
-            $option = self::$webDriver->findElement(\WebDriverBy::cssSelector($css_selector.' div.menu div[data-value="'.$select_option.'"]'));
+            $option = self::$webDriver->findElement(WebDriverBy::cssSelector($css_selector.' div.menu div[data-value="'.$select_option.'"]'));
             $option_selected = $option->getAttribute('data-value');
             $option->click();
         }
@@ -392,7 +395,7 @@ trait BaseFunctionsTrait {
         self::$webDriver->wait($this->waitTimeOut, $this->waitInterval)->until(
             function() use($css_selector, $text) {
                 try {
-                    $elem = self::$webDriver->findElement(\WebDriverBy::cssSelector($css_selector));
+                    $elem = self::$webDriver->findElement(WebDriverBy::cssSelector($css_selector));
                     return (strpos($elem->getText(), $text) !== false);
                 }
                 catch(\Exception $e) {}
@@ -413,7 +416,7 @@ trait BaseFunctionsTrait {
         $path = self::$app->getSetting('FILE_BASE_PATH').'.circleci/demo-img.jpg';
 
         $input = $this->findByCSS($input_selector);
-        $input->setFileDetector(new \LocalFileDetector());
+        $input->setFileDetector(new LocalFileDetector());
         $input->sendKeys($path);
     }
 
@@ -423,7 +426,7 @@ trait BaseFunctionsTrait {
      */
     public function isVisible(string $css_selector) {
         self::$webDriver->wait($this->waitTimeOut, $this->waitInterval)->until(
-            \WebDriverExpectedCondition::visibilityOfElementLocated(\WebDriverBy::cssSelector($css_selector))
+            WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::cssSelector($css_selector))
         );
     }
 
@@ -432,7 +435,7 @@ trait BaseFunctionsTrait {
      */
     public function elementPresent(string $css_selector) {
         self::$webDriver->wait($this->waitTimeOut, $this->waitInterval)->until(
-            \WebDriverExpectedCondition::presenceOfElementLocated(\WebDriverBy::cssSelector($css_selector))
+            WebDriverExpectedCondition::presenceOfElementLocated(WebDriverBy::cssSelector($css_selector))
         );
     }
 
@@ -442,7 +445,7 @@ trait BaseFunctionsTrait {
      */
     public function isInvisible(string $css_selector) {
         self::$webDriver->wait($this->waitTimeOut, $this->waitInterval)->until(
-            \WebDriverExpectedCondition::invisibilityOfElementLocated(\WebDriverBy::cssSelector($css_selector))
+            WebDriverExpectedCondition::invisibilityOfElementLocated(WebDriverBy::cssSelector($css_selector))
         );
     }
 
@@ -462,7 +465,7 @@ trait BaseFunctionsTrait {
         $current_modal = $this->findByCSS('.atk-modal.visible');
         $this->tryClick('.atk-modal.visible i.icon.close');
         $this->waitUntil(function() use ($current_modal) {
-            \WebDriverExpectedCondition::stalenessOf($current_modal);
+            WebDriverExpectedCondition::stalenessOf($current_modal);
         });
     }
 
@@ -509,7 +512,7 @@ trait BaseFunctionsTrait {
         //wait until element is found
         //$this->isVisible($css_selector);
         $this->elementPresent($css_selector);
-        return self::$webDriver->findElement(\WebDriverBy::cssSelector($css_selector));
+        return self::$webDriver->findElement(WebDriverBy::cssSelector($css_selector));
     }
 
 
@@ -520,7 +523,7 @@ trait BaseFunctionsTrait {
         if ($wait_for_at_least_one) {
             $this->isVisible($css_selector);
         }
-        return self::$webDriver->findElements(\WebDriverBy::cssSelector($css_selector));
+        return self::$webDriver->findElements(WebDriverBy::cssSelector($css_selector));
     }
 
 
@@ -529,7 +532,7 @@ trait BaseFunctionsTrait {
      */
     public function waitForNotify() {
         self::$webDriver->wait($this->waitTimeOut, $this->waitInterval)->until(
-            \WebDriverExpectedCondition::visibilityOfElementLocated(\WebDriverBy::cssSelector('.atk-notify.visible'))
+            WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::cssSelector('.atk-notify.visible'))
         );
     }
 
@@ -539,7 +542,7 @@ trait BaseFunctionsTrait {
      */
     public function waitForNotifyDisappear() {
         self::$webDriver->wait($this->waitTimeOut, $this->waitInterval)->until(
-            \WebDriverExpectedCondition::invisibilityOfElementLocated(\WebDriverBy::cssSelector('.atk-notify'))
+            WebDriverExpectedCondition::invisibilityOfElementLocated(WebDriverBy::cssSelector('.atk-notify'))
         );
     }
 
@@ -548,7 +551,7 @@ trait BaseFunctionsTrait {
      *
      */
     public function countByCSS($css_selector) {
-        return count(self::$webDriver->findElements(\WebDriverBy::cssSelector($css_selector)));
+        return count(self::$webDriver->findElements(WebDriverBy::cssSelector($css_selector)));
     }
 
 
