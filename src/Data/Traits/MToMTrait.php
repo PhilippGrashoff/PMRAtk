@@ -56,11 +56,7 @@ trait MToMTrait {
 
         $mtom_object->addCondition($our_field, $this->get('id'));
         $mtom_object->addCondition($their_field, $object->get('id'));
-        //atk needs active record to be loaded to delete
-        $mtom_object->tryLoadAny();
-        if(!$mtom_object->loaded()) {
-            return false;
-        }
+        $mtom_object->loadAny();
         $mtom_object->delete();
 
         //audit if available

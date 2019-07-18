@@ -93,7 +93,8 @@ class MToMTraitTest extends \PMRAtk\tests\phpunit\TestCase {
         $this->assertTrue($this->callProtected($a, '_removeMToMRelation', [$b, new \PMRAtk\tests\phpunit\Data\MToMModel(self::$app->db), '\PMRAtk\tests\phpunit\Data\BaseModelB', 'BaseModelA_id', 'BaseModelB_id']));
         //should be removed
         $this->assertEquals($mtom_count, (new \PMRAtk\tests\phpunit\Data\MToMModel(self::$app->db))->action('count')->getOne());
-        //trying to remove again shouldnt work
+        //trying to remove again shouldnt work but throw exception
+        $this->expectException(\atk4\data\Exception::class);
         $this->assertFalse($this->callProtected($a, '_removeMToMRelation', [$b, new \PMRAtk\tests\phpunit\Data\MToMModel(self::$app->db), '\PMRAtk\tests\phpunit\Data\BaseModelB', 'BaseModelA_id', 'BaseModelB_id']));
     }
 
