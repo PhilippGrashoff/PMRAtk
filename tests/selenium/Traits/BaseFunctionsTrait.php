@@ -144,12 +144,11 @@ trait BaseFunctionsTrait {
      *
      */
     public function closeToasts() {
-        //wait until toast is visible
         $this->toastVisible();
-        //count all toasts
-        $amount = $this->countByCSS('.ui.toast');
-        for($i = 0; $i < $amount; $i++) {
-            $this->tryClick('.ui.toast');
+        $all_toasts = $this->findAllByCSS('.ui.toast');
+        foreach($all_toasts as $toast) {
+            $toast->click();
+            usleep(100000);
         }
     }
 
@@ -460,7 +459,11 @@ trait BaseFunctionsTrait {
      *
      */
     public function closeModal() {
+        $current_modal = $this->findByCSS('.atk-modal.visible');
         $this->tryClick('.atk-modal.visible i.icon.close');
+        $this->waitUntil(function() use ($current_modal) {
+            \WebDriverExpectedCondition::stalenessOf($current_modal);
+        });
     }
 
 
