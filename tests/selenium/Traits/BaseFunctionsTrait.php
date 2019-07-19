@@ -462,11 +462,7 @@ trait BaseFunctionsTrait {
      *
      */
     public function closeModal() {
-        $current_modal = $this->findByCSS('.atk-modal.visible');
         $this->tryClick('.atk-modal.visible i.icon.close');
-        $this->waitUntil(function() use ($current_modal) {
-            WebDriverExpectedCondition::stalenessOf($current_modal);
-        });
     }
 
 
