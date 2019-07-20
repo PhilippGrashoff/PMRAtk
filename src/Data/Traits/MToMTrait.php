@@ -29,14 +29,6 @@ trait MToMTrait {
         //if that record already exists mysql will throw an error if unique index is set, catch here
         try {
             $mtom_object->save();
-            //audit if defined
-            if(method_exists($this, 'addMToMAudit')) {
-                $this->addMToMAudit('ADD', $object);
-            }
-            if(method_exists($object, 'addMToMAudit')) {
-                $object->addMToMAudit('ADD', $this);
-            }
-            return $mtom_object->loaded();
         }
         catch(\Exception $e) {
             return false;
@@ -58,14 +50,6 @@ trait MToMTrait {
         $mtom_object->addCondition($their_field, $object->get('id'));
         $mtom_object->loadAny();
         $mtom_object->delete();
-
-        //audit if available
-        if(method_exists($this, 'addMToMAudit')) {
-            $this->addMToMAudit('REMOVE', $object);
-        }
-        if(method_exists($object, 'addMToMAudit')) {
-            $object->addMToMAudit('REMOVE', $this);
-        }
 
         return true;
     }
