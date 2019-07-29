@@ -14,7 +14,7 @@ abstract class BaseCronJob {
     use \PMRAtk\Data\Email\EmailThrowableToAdminTrait;
 
     //The name of the cronjob to display to a user
-    public $name = 'Cronjob';
+    public $name = '';
     //usually \EOO\View\CronjobApp instance
     public $app;
     //to all these recipients the success/fail email will be sent.
@@ -46,8 +46,19 @@ abstract class BaseCronJob {
             $this->sendSuccessEmail();
         }
         catch(\Throwable $e) {
-            $this->sendErrorEmailToAdmin($e, 'Im Cronjob ' . $this->name . ' ist ein Fehler aufgetreten');
+            $this->sendErrorEmailToAdmin($e, 'Im Cronjob ' . $this->getName() . ' ist ein Fehler aufgetreten');
         }
+    }
+
+
+    /*
+     *
+     */
+    public function getName() {
+        if(empty($this->name)) {
+            return (new \ReflectionClass($this))->getShortName();
+        }
+        return $this->name;
     }
 
 
@@ -71,7 +82,7 @@ abstract class BaseCronJob {
             $this->phpMailer->addAddress($this->app->getSetting('TECH_ADMIN_EMAIL'));
         }
 
-        $this->phpMailer->Subject = 'Der Cronjob '. $this->name.' war erfolgreich';
+        $this->phpMailer->Subject = 'Der Cronjob '. $this->getName().' war erfolgreich';
         $this->phpMailer->setBody('Folgende Änderungen wurden durchgeführt: <br />'.$this->app->getUserMessagesAsHTML());
         $this->phpMailer->send();
     }

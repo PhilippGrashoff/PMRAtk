@@ -2,6 +2,8 @@
 
 class SampleCronJob extends \PMRAtk\Data\Cron\BaseCronJob {
 
+    public $name = 'TestName';
+
     public function execute() {
         $this->recipients[] = 'test2@easyoutdooroffice.com';
         $this->app->addUserMessage('Test Test');
@@ -69,7 +71,7 @@ class BaseCronJobTest extends \PMRAtk\tests\phpunit\TestCase {
         self::$app->userMessages = [];
         $c = new NoMessageNoSuccessEmail(self::$app);
         $this->assertTrue($c->successful);
-        $this->assertTrue(empty($c->phpMailer->lastMessageID));
+        $this->assertTrue(empty($c->phpMailer->getLastMessageID()));
     }
 
 
@@ -80,6 +82,17 @@ class BaseCronJobTest extends \PMRAtk\tests\phpunit\TestCase {
         self::$app->userMessages[] = ['message' => 'Duggu', 'class' => 'error'];
         $c = new NoMessageNoSuccessEmail(self::$app);
         $this->assertTrue($c->successful);
-        $this->assertTrue(empty($c->phpMailer->lastMessageID));
+        $this->assertTrue(empty($c->phpMailer->getLastMessageID()));
+    }
+
+
+    /*
+     *
+     */
+    public function testGetName() {
+        $c = new SampleCronJob(self::$app);
+        $this->assertEquals('TestName', $c->getName());
+        $c = new NoMessageNoSuccessEmail(self::$app);
+        $this->assertEquals('NoMessageNoSuccessEmail', $c->getName());
     }
 }
