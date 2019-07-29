@@ -29,6 +29,7 @@ trait MToMTrait {
         //if that record already exists mysql will throw an error if unique index is set, catch here
         try {
             $mtom_object->save();
+            return true;
         }
         catch(\Exception $e) {
             return false;
