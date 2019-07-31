@@ -327,4 +327,21 @@ class BaseEmailTest extends \PMRAtk\tests\phpunit\TestCase {
         $this->assertEquals($initial_base_email_count, (new \PMRAtk\Data\Email\BaseEmail(self::$app->db))->action('count')->getOne());
         $this->assertEquals($initial_email_reci_count, (new \PMRAtk\Data\Email\EmailRecipient(self::$app->db))->action('count')->getOne());
     }
+
+
+    /*
+     *
+     */
+    public function testEmailSendFail() {
+        $be = new \PMRAtk\Data\Email\BaseEmail(self::$app->db);
+        $be->phpMailer = new class extends \PHPMailer\PHPMailer\PHPMailer { public function send() {return false;}};
+        $be->addRecipient('test2@easyoutdooroffice.com');
+        $be->set('subject', __FUNCTION__);
+        $be->save();
+        $messages = self::$app->userMessages;
+        $this->assertFalse($be->send());
+        //should add message to app
+        $new_messages = self::$app->userMessages;
+        $this->assertEquals(count($messages) + 1, count($new_messages));
+    }
 }
