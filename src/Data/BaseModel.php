@@ -91,10 +91,8 @@ class BaseModel extends \atk4\data\Model {
             throw new \atk4\data\Exception('The Object to create a copy from needs to be loaded in '.__FUNCTION__);
         }
 
-        foreach($record->elements as $field) {
-            if(!$field instanceOf \atk4\data\Field) {
-                continue;
-            }
+        foreach($record->getFields() as $field) {
+
             //copy all field values that make sense
             if($field->short_name !== 'id'
             && $field->short_name !== 'created_by'
@@ -103,13 +101,13 @@ class BaseModel extends \atk4\data\Model {
             && $field->short_name !== 'crypt_id'
             && $field->short_name !== 'code'
             && $field->read_only  !== true
-            && $this->hasElement($field->short_name)) {
+            && $this->hasField($field->short_name)) {
                 $this->set($field->short_name, $field->get());
             }
         }
 
         //if model has name, add (Kopie)
-        if($this->hasElement('name')) {
+        if($this->hasField('name')) {
             $this->set('name', $this->get('name').' (Kopie)');
         }
 

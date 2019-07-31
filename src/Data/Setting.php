@@ -25,6 +25,6 @@ class Setting extends BaseModel {
         ]);
 
         //encrypt value field
-        $this->encryptField($this->getElement('value'), $this->app->getSetting('ENCRYPTFIELD_KEY'));
+        $this->encryptField($this->getField('value'), $this->app->getSetting('ENCRYPTFIELD_KEY'));
     }
 }

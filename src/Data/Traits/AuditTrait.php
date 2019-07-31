@@ -52,16 +52,16 @@ trait AuditTrait {
         $data = [];
         foreach($this->dirty as $field_name => $dirty_field) {
             //only audit non system fields and fields that go to persistence
-            if($this->hasElement($field_name) && !$this->getElement($field_name)->system && !$this->getElement($field_name)->never_persist) {
+            if($this->hasField($field_name) && !$this->getField($field_name)->system && !$this->getField($field_name)->never_persist) {
 
                 //check if any "real" value change happened
                 if($dirty_field || $this->get($field_name)) {
                     //time fields
-                    if($this->getElement($field_name)->type === 'time') {
+                    if($this->getField($field_name)->type === 'time') {
                         $data[$field_name] = $this->_timeFieldAudit($field_name, $dirty_field);
                     }
                     //date fields
-                    elseif($this->getElement($field_name)->type === 'date') {
+                    elseif($this->getField($field_name)->type === 'date') {
                         $data[$field_name] = $this->_dateFieldAudit($field_name, $dirty_field);
                     }
                     //hasOne relationship
@@ -73,7 +73,7 @@ trait AuditTrait {
                         $data[$field_name] = $this->_hasOneAudit($field_name, $dirty_field, $new, $old);
                     }
                     //dropdowns
-                    elseif(isset($this->getElement($field_name)->ui['form']) && in_array('DropDown', $this->getElement($field_name)->ui['form'])) {
+                    elseif(isset($this->getField($field_name)->ui['form']) && in_array('DropDown', $this->getField($field_name)->ui['form'])) {
                         $data[$field_name] = $this->_dropDownAudit($field_name, $dirty_field);
                     }
                     //any other field
@@ -168,7 +168,7 @@ trait AuditTrait {
      */
     private function _normalFieldAudit($field_name, $dirty_field):array {
         return [
-            'field_name' => $this->getElement($field_name)->getCaption(),
+            'field_name' => $this->getField($field_name)->getCaption(),
             'old_value'  => $dirty_field,
             'new_value'  => $this->get($field_name),
         ];
@@ -185,7 +185,7 @@ trait AuditTrait {
      */
     private function _dateFieldAudit($field_name, $dirty_field):array {
         return [
-            'field_name' => $this->getElement($field_name)->getCaption(),
+            'field_name' => $this->getField($field_name)->getCaption(),
             'old_value'  => ($dirty_field instanceof \DateTime) ? date_format($dirty_field, 'd.m.Y') : '',
             'new_value'  => ($this->get($field_name) instanceof \DateTime) ? date_format($this->get($field_name), 'd.m.Y') : '',
         ];
@@ -202,7 +202,7 @@ trait AuditTrait {
      */
     private function _timeFieldAudit($field_name, $dirty_field):array {
         return [
-            'field_name' => $this->getElement($field_name)->getCaption(),
+            'field_name' => $this->getField($field_name)->getCaption(),
             'old_value'  => ($dirty_field instanceof \DateTime) ? date_format($dirty_field, 'H:i') : '',
             'new_value'  => ($this->get($field_name) instanceof \DateTime) ? date_format($this->get($field_name), 'H:i') : '',
         ];
@@ -223,7 +223,7 @@ trait AuditTrait {
         //both objects loaded, means field had a value before and now
         if($o_new->loaded() && $o_old->loaded()) {
             return [
-                'field_name' => $this->getElement($field_name)->getCaption(),
+                'field_name' => $this->getField($field_name)->getCaption(),
                 'old_value'  => $o_old->get('name'),
                 'new_value'  => $o_new->get('name'),
             ];
@@ -231,14 +231,14 @@ trait AuditTrait {
         //only new object loaded, means field didnt have a value before
         elseif($o_new->loaded()) {
             return [
-                'field_name' => $this->getElement($field_name)->getCaption(),
+                'field_name' => $this->getField($field_name)->getCaption(),
                 'old_value'  => $dirty_field,
                 'new_value'  => $o_new->get('name'),
             ];
         }
         else {
             return [
-                'field_name' => $this->getElement($field_name)->getCaption(),
+                'field_name' => $this->getField($field_name)->getCaption(),
                 'old_value'  => $dirty_field,
                 'new_value'  => $this->get($field_name),
             ];
@@ -257,21 +257,21 @@ trait AuditTrait {
      */
     private function _dropDownAudit(string $field_name, $dirty_field):array {
         $old_value = $new_value = '...';
-        if(isset($this->getElement($field_name)->ui['form']['values'][$dirty_field])) {
-            $old_value = $this->getElement($field_name)->ui['form']['values'][$dirty_field];
+        if(isset($this->getField($field_name)->ui['form']['values'][$dirty_field])) {
+            $old_value = $this->getField($field_name)->ui['form']['values'][$dirty_field];
         }
-        elseif(isset($this->getElement($field_name)->ui['form']['empty'])) {
-            $old_value = $this->getElement($field_name)->ui['form']['empty'];
+        elseif(isset($this->getField($field_name)->ui['form']['empty'])) {
+            $old_value = $this->getField($field_name)->ui['form']['empty'];
         }
 
-        if(isset($this->getElement($field_name)->ui['form']['values'][$this->get($field_name)])) {
-            $new_value = $this->getElement($field_name)->ui['form']['values'][$this->get($field_name) ];
+        if(isset($this->getField($field_name)->ui['form']['values'][$this->get($field_name)])) {
+            $new_value = $this->getField($field_name)->ui['form']['values'][$this->get($field_name) ];
         }
-        elseif(isset($this->getElement($field_name)->ui['form']['empty'])) {
-            $new_value = $this->getElement($field_name)->ui['form']['empty'];
+        elseif(isset($this->getField($field_name)->ui['form']['empty'])) {
+            $new_value = $this->getField($field_name)->ui['form']['empty'];
         }
         return [
-            'field_name' => $this->getElement($field_name)->getCaption(),
+            'field_name' => $this->getField($field_name)->getCaption(),
             'old_value'  => $old_value,
             'new_value'  => $new_value,
         ];

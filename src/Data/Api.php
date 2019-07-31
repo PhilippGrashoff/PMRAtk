@@ -55,10 +55,7 @@ class API extends \atk4\api\Api {
         $datetime_fields = [];
         $date_fields = [];
         $time_fields = [];
-        foreach($m->elements as $elem) {
-            if(!$elem instanceOf \atk4\data\Field) {
-                continue;
-            }
+        foreach($m->getFields() as $elem) {
             if($elem->type == 'datetime') {
                 $datetime_fields[] = $elem->short_name;
             }

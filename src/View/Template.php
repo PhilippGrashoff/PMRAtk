@@ -44,18 +44,17 @@ class Template extends \atk4\ui\Template {
      */
     public function setTagsFromModel(\atk4\data\Model $model, array $tags) {
         foreach($tags as $tag) {
-            if(!$model->hasElement($tag)
-            || !$model->getElement($tag) instanceof \atk4\data\Field) {
+            if(!$model->hasField($tag)) {
                 continue;
             }
 
             //try converting non-scalar values
             if(!is_scalar($model->get($tag))) {
                 if($model->get($tag) instanceof \DateTimeInterFace) {
-                    $this->set($tag, $this->castDateTimeToGermanString($model->get($tag), $model->getElement($tag)->type));
+                    $this->set($tag, $this->castDateTimeToGermanString($model->get($tag), $model->getField($tag)->type));
                 }
                 else {
-                    $this->set($tag, $model->getElement($tag)->toString());
+                    $this->set($tag, $model->getField($tag)->toString());
                 }
             }
             else {

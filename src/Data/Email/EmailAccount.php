@@ -27,7 +27,7 @@ class EmailAccount extends \PMRAtk\Data\Setting {
                 return;
             }
             foreach($a as $key => $value) {
-                if($m->hasElement($key)) {
+                if($m->hasField($key)) {
                     $m->set($key, $value);
                 }
             }

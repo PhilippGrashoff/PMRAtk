@@ -27,13 +27,13 @@ trait FieldChangedMessageTrait {
         }
 
         //date handling
-        if(in_array($this->getElement($field_name)->type, ['date', 'time', 'datetime']) && $old_value instanceOf \DateTimeInterFace) {
-            $old_value = $this->castDateTimeToGermanString($old_value, $this->getElement($field_name)->type);
+        if(in_array($this->getField($field_name)->type, ['date', 'time', 'datetime']) && $old_value instanceOf \DateTimeInterFace) {
+            $old_value = $this->castDateTimeToGermanString($old_value, $this->getField($field_name)->type);
         }
-        if(in_array($this->getElement($field_name)->type, ['date', 'time', 'datetime']) && $new_value instanceOf \DateTimeInterFace) {
-            $new_value = $this->castDateTimeToGermanString($new_value, $this->getElement($field_name)->type);
+        if(in_array($this->getField($field_name)->type, ['date', 'time', 'datetime']) && $new_value instanceOf \DateTimeInterFace) {
+            $new_value = $this->castDateTimeToGermanString($new_value, $this->getField($field_name)->type);
         }
 
-        $this->app->addUserMessage($this->elements[$field_name]->getCaption().' wurde geändert von '.$old_value.' in '.$new_value, $class);
+        $this->app->addUserMessage($this->getField($field_name)->getCaption().' wurde geändert von '.$old_value.' in '.$new_value, $class);
     }
 }

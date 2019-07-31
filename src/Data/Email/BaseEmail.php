@@ -242,8 +242,8 @@ class BaseEmail extends \atk4\data\Model {
     protected function _addRecipientObject(\PMRAtk\Data\BaseModel $object, $email_id = null):?EmailRecipient {
         $r = new EmailRecipient($this->persistence);
         //set firstname and lastname if available
-        $r->set('firstname', $object->hasElement('firstname') ? $object->get('firstname') : '');
-        $r->set('lastname',  $object->hasElement('lastname') ? $object->get('lastname') : '');
+        $r->set('firstname', $object->hasField('firstname') ? $object->get('firstname') : '');
+        $r->set('lastname',  $object->hasField('lastname') ? $object->get('lastname') : '');
         $r->set('model_class',  get_class($object));
         $r->set('model_id',  $object->get($object->id_field));
 
