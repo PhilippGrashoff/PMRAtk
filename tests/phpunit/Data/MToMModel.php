@@ -15,5 +15,13 @@ class MToMModel extends \atk4\data\Model {
 
         $this->hasOne('BaseModelA_id', [new BaseModelA()]);
         $this->hasOne('BaseModelB_id', [new BaseModelB()]);
+
+
+        $this->addHook('afterInsert', function($m) {
+            $tour = $m->ref('BaseModelA_id');
+            $group = $m->ref('BaseModelB_id');
+            $tour->addMToMAudit('ADD', $group);
+            $group->addMToMAudit('ADD', $tour);
+        });
     }
 }
