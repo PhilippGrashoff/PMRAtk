@@ -83,7 +83,6 @@ class BaseEmail extends \atk4\data\Model {
             }
         }
 
-
         $this->phpMailer = new PHPMailer($this->app);
     }
 

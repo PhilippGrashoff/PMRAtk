@@ -7,7 +7,7 @@ trait OutputExceptionTrait {
     /*
      *
      */
-    public function outputExceptionAsJsNotify(\Exception $e, string $text_before = ''):array {
+    public function outputExceptionAsJsNotify(\Throwable $e, string $text_before = ''):array {
         $return = [];
         foreach($this->outputException($e, $text_before) as $message) {
             $return[] = $this->failNotify($message);
@@ -20,7 +20,7 @@ trait OutputExceptionTrait {
     /*
      *
      */
-    public function outputException(\Exception $e, string $text_before = ''):array {
+    public function outputException(\Throwable $e, string $text_before = ''):array {
         $return = [];
         $r = new \ReflectionClass($e);
 
