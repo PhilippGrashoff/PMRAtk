@@ -43,6 +43,7 @@ abstract class BaseCronJob {
         try {
             $this->execute();
             $this->successful = true;
+            echo 'Cronjob '.$this->getName().' erfolgreich ausgeführt';
             $this->sendSuccessEmail();
         }
         catch(\Throwable $e) {
