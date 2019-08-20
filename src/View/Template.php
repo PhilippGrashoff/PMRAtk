@@ -42,23 +42,30 @@ class Template extends \atk4\ui\Template {
     /*
      * Tries to set each passed tag with its value from passed model
      */
-    public function setTagsFromModel(\atk4\data\Model $model, array $tags) {
+    public function setTagsFromModel(\atk4\data\Model $model, array $tags = [], string $prefix = '') {
+        if(!$tags) {
+            $tags = array_keys($model->getFields());
+        }
+
         foreach($tags as $tag) {
             if(!$model->hasField($tag)) {
+                continue;
+            }
+            if(!$this->hasTag($tag)) {
                 continue;
             }
 
             //try converting non-scalar values
             if(!is_scalar($model->get($tag))) {
                 if($model->get($tag) instanceof \DateTimeInterFace) {
-                    $this->set($tag, $this->castDateTimeToGermanString($model->get($tag), $model->getField($tag)->type));
+                    $this->set($prefix.$tag, $this->castDateTimeToGermanString($model->get($tag), $model->getField($tag)->type));
                 }
                 else {
-                    $this->set($tag, $model->getField($tag)->toString());
+                    $this->set($prefix.$tag, $model->getField($tag)->toString());
                 }
             }
             else {
-                $this->set($tag, $model->get($tag));
+                $this->set($prefix.$tag, $this->app->ui_persistence->typecastSaveField($model->getField($tag), $model->get($tag)));
             }
         }
     }
