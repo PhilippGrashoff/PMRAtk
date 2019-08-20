@@ -51,7 +51,7 @@ class Template extends \atk4\ui\Template {
             if(!$model->hasField($tag)) {
                 continue;
             }
-            if(!$this->hasTag($tag)) {
+            if(!$this->hasTag($prefix.$tag)) {
                 continue;
             }
 
