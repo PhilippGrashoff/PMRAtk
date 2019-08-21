@@ -15,9 +15,9 @@ class BaseModelB extends \PMRAtk\Data\BaseModel {
         parent::init();
 
         $this->addFields([
-            ['name',      'type' => 'string'],
-            ['time_test', 'type' => 'time'],
-            ['date_test', 'type' => 'date'],
+            ['name',      'type' => 'string', 'caption' => 'AName'],
+            ['time_test', 'type' => 'time',   'caption' => 'Startzeit'],
+            ['date_test', 'type' => 'date',   'caption' => 'Startdatum'],
         ]);
 
         $this->_addEPARefs();

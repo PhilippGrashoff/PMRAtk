@@ -423,4 +423,31 @@ class BaseEmail extends \atk4\data\Model {
         $result = imap_append($imapStream, $this->app->getSetting('IMAP_PATH_SENT_MAIL'), $sent_message);
         imap_close($imapStream);
     }
+
+
+    /*
+     * used for email template editing. Returns an array of all fields available for the Model:
+     * [
+     *     'field_name' => 'field_caption'
+     * ]
+     */
+    public function getModelVars(\atk4\data\Model $m, string $prefix = ''):array {
+        $fields = [];
+        if(method_exists($m, 'getFieldsForEmailTemplate')) {
+            $field_names = $m->getFieldsForEmailTemplate();
+            foreach($field_names as $field_name) {
+                $fields[$prefix.$field_name] = $m->getField($field_name)->getCaption();
+            }
+
+            return $fields;
+        }
+
+        foreach($m->getFields() as $field_name => $field) {
+            if(in_array($field->type, ['string', 'text', 'integer', 'float', 'date', 'time'])) {
+                $fields[$prefix.$field_name] = $field->getCaption();
+            }
+        }
+
+        return  $fields;
+    }
 }

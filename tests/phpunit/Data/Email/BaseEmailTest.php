@@ -344,4 +344,27 @@ class BaseEmailTest extends \PMRAtk\tests\phpunit\TestCase {
         $new_messages = self::$app->userMessages;
         $this->assertEquals(count($messages) + 1, count($new_messages));
     }
+
+
+    /*
+     *
+     */
+    public function testGetModelVars() {
+        $be = new \PMRAtk\Data\Email\BaseEmail(self::$app->db);
+        $res = $be->getModelVars(new \PMRAtk\tests\phpunit\Data\BaseModelB(self::$app->db));
+        $this->assertEquals(['name' => 'AName', 'time_test' => 'Startzeit', 'date_test' => 'Startdatum'], $res);
+
+        $res = $be->getModelVars(new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db));
+        $this->assertEquals(['name' => 'Name', 'firstname' => 'Vorname'], $res);
+    }
+
+
+    /*
+     *
+     */
+    public function testGetModelVarsPrefix() {
+        $be = new \PMRAtk\Data\Email\BaseEmail(self::$app->db);
+        $res = $be->getModelVars(new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db), 'tour_');
+        $this->assertEquals(['tour_name' => 'Name', 'tour_firstname' => 'Vorname'], $res);
+    }
 }
