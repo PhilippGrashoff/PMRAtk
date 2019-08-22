@@ -464,6 +464,6 @@ class BaseEmail extends \atk4\data\Model {
      * Used by template editing modal
      */
     public function getTemplateEditVars():array {
-        return [$this->model->getModelCaption() => $this->getModelVars($this->model, (new \ReflectionClass($this->model))->getShortName())];
+        return [$this->model->getModelCaption() => $this->getModelVars($this->model, strtolower(new \ReflectionClass($this->model))->getShortName().'_')];
     }
 }
