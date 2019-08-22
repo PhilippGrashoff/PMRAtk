@@ -50,6 +50,10 @@ class BaseEmail extends \atk4\data\Model {
     //if true, a message that the email was send is added to app's user messages.
     public $addUserMessageOnSend = true;
 
+    //process things like model loading in init() or not
+    public $process = true;
+
+
 
     /*
      * define fields and references
