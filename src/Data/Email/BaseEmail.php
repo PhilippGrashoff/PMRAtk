@@ -126,6 +126,10 @@ class BaseEmail extends \atk4\data\Model {
             $template->loadTemplateFromString($this->template);
         }
 
+        $template->trySet('recipient_firstname', '{$recipient_firstname}');
+        $template->trySet('recipient_lastname',  '{$recipient_lastname}');
+        $template->trySet('recipient_email',     '{recipient_email}');
+
         if(is_callable($this->processMessageTemplate)) {
             call_user_func($this->processMessageTemplate, $template, $this->model);
         }
@@ -356,13 +360,13 @@ class BaseEmail extends \atk4\data\Model {
             $subject_template = clone $st;
 
             //try to put the emailrecipient fields in template
-            $message_template->trySet('firstname', $r->get('firstname'));
-            $message_template->trySet('lastname',  $r->get('lastname'));
-            $message_template->trySet('email',     $r->get('email'));
+            $message_template->trySet('recipient_firstname', $r->get('firstname'));
+            $message_template->trySet('recipient_lastname',  $r->get('lastname'));
+            $message_template->trySet('recipient_email',     $r->get('email'));
 
-            $subject_template->trySet('firstname', $r->get('firstname'));
-            $subject_template->trySet('lastname',  $r->get('lastname'));
-            $subject_template->trySet('email',     $r->get('email'));
+            $subject_template->trySet('recipient_firstname', $r->get('firstname'));
+            $subject_template->trySet('recipient_lastname',  $r->get('lastname'));
+            $subject_template->trySet('recipient_email',     $r->get('email'));
 
             //add ability to further alter subject and message per Recipient
             if(is_callable($this->processSubjectPerRecipient)) {
