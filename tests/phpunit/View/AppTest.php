@@ -107,6 +107,18 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
     /*
      *
      */
+    public function testgetEmailTemplateRawString() {
+        $app = new \PMRAtk\View\App(['nologin'], ['always_run' => false]);
+        $app->db = self::$app->db;
+        $app->saveEmailTemplate('DUDU', '<div>Miau{$somevar}</div>');
+        $t = $app->loadEmailTemplate('DUDU', true);
+        self::assertEquals('<div>Miau{$somevar}</div>', $t);
+    }
+
+
+    /*
+     *
+     */
     public function testgetCachedModel() {
         $app = new \PMRAtk\View\App(['nologin'], ['always_run' => false]);
         $b1 = new \PMRAtk\tests\phpunit\Data\BaseModelA($app->db);

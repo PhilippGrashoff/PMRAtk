@@ -135,7 +135,7 @@ class App extends \atk4\ui\App {
      * email templates get an extra function to load to distinguish
      * from HTML element templates
      */
-    public function loadEmailTemplate(string $name) {
+    public function loadEmailTemplate(string $name, bool $raw_template = false) {
         $template = new \PMRAtk\View\Template();
         $template->app = $this;
 
@@ -143,13 +143,23 @@ class App extends \atk4\ui\App {
         $et = new \PMRAtk\Data\Email\EmailTemplate($this->db);
         $et->tryLoadBy('ident', $name);
         if($et->loaded()) {
-            $template->loadTemplateFromString($et->get('value'));
-            return $template;
+            if($raw_template) {
+                return $et->get('value');
+            }
+            else {
+                $template->loadTemplateFromString($et->get('value'));
+                return $template;
+            }
         }
 
         //now try to load from file
-        if ($t = $template->tryLoad(FILE_BASE_PATH.$this->emailTemplateDir.'/'.$name)) {
-            return $t;
+        if(file_exists(FILE_BASE_PATH.$this->emailTemplateDir.'/'.$name)) {
+            if($raw_template) {
+                return file_get_contents(FILE_BASE_PATH.$this->emailTemplateDir.'/'.$name);
+            }
+            elseif($t = $template->tryLoad(FILE_BASE_PATH.$this->emailTemplateDir.'/'.$name)) {
+                return $t;
+            }
         }
 
         throw new \atk4\data\Exception(['Can not find email template file', 'name' => $name, 'template_dir' => $this->emailTemplateDir]);
