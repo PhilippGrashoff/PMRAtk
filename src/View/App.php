@@ -139,6 +139,15 @@ class App extends \atk4\ui\App {
         $template = new \PMRAtk\View\Template();
         $template->app = $this;
 
+        //first, try load it from EmailTemplate
+        $et = new \PMRAtk\Data\Email\EmailTemplate($this->db);
+        $et->tryLoadBy('ident', $name);
+        if($et->loaded()) {
+            $template->loadTemplateFromString($et->get('value'));
+            return $template;
+        }
+
+        //now try to load from file
         if ($t = $template->tryLoad(FILE_BASE_PATH.$this->emailTemplateDir.'/'.$name)) {
             return $t;
         }
