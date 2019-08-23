@@ -128,4 +128,29 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
         $this->expectException(\atk4\data\Exception::class);
         $a = $app->getCachedModel('SomeNonExistantModel');
     }
+
+
+    /*
+     *
+     */
+    public function testSaveEmailTemplate() {
+        $app = new \PMRAtk\View\App(['nologin'], ['always_run' => false]);
+        $app->db = self::$app->db;
+        $initial_count = $this->countModelRecords('\\PMRAtk\\Data\\Email\\EmailTemplate');
+        //should create a new one
+        $app->saveEmailTemplate('SOME', 'AndSomeValie');
+        $this->assertEquals($initial_count + 1, $this->countModelRecords('\\PMRAtk\\Data\\Email\\EmailTemplate'));
+        //shouldnt create a new one
+        $app->saveEmailTemplate('SOME', 'AndSomeOtherValue');
+        $this->assertEquals($initial_count + 1, $this->countModelRecords('\\PMRAtk\\Data\\Email\\EmailTemplate'));
+        //see if value is stored
+        $et = new \PMRAtk\Data\Email\EmailTemplate(self::$app->db);
+        $et->loadBy('ident', 'SOME');
+        self::assertEquals('AndSomeOtherValue', $et->get('value'));
+
+        //should create a new one
+        $app->saveEmailTemplate('SOMEOTHERIDENT', 'AndSomeOtherValue');
+        $this->assertEquals($initial_count +2, $this->countModelRecords('\\PMRAtk\\Data\\Email\\EmailTemplate'));
+    }
+
 }

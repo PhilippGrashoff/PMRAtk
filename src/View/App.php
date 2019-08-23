@@ -193,6 +193,20 @@ class App extends \atk4\ui\App {
 
 
     /*
+     * Save a setting into Settings table
+     */
+    public function saveEmailTemplate(string $ident, $value) {
+        $template = new \PMRAtk\Data\Email\EmailTemplate($this->db);
+        $template->tryLoadBy('ident', $ident);
+        if(!$template->loaded()) {
+            $template->set('ident', $ident);
+        }
+        $template->set('value', $value);
+        $template->save();
+    }
+
+
+    /*
      * returns all STD_ settings
      * TODO: Implement properly when implementing Settings class in PMRAtk
      */
