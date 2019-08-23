@@ -177,4 +177,24 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
         $this->assertEquals($initial_count +2, $this->countModelRecords('\\PMRAtk\\Data\\Email\\EmailTemplate'));
     }
 
+
+    /*
+     *
+     */
+    public function testLoadTemplateException() {
+        $app = new \PMRAtk\View\App(['nologin'], ['always_run' => false]);
+        $this->expectException(\atk4\ui\Exception::class);
+        $app->loadTemplate('SomeNonExistantModel');
+    }
+
+
+    /*
+     *
+     */
+    public function testloadEmailTemplateRawFromFile() {
+        $app = new \PMRAtk\View\App(['nologin'], ['always_run' => false]);
+        $app->db = self::$app->db;
+        $t = $app->loadEmailTemplate('testemailtemplate.html', true);
+        self::assertTrue(strpos($t, '{$testtag}') !== false);
+    }
 }
