@@ -197,4 +197,24 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
         $t = $app->loadEmailTemplate('testemailtemplate.html', true);
         self::assertTrue(strpos($t, '{$testtag}') !== false);
     }
+
+
+    /*
+     *
+     */
+    public function testloadTemplateWithFilePath() {
+        $app = new \PMRAtk\View\App(['nologin'], ['always_run' => false]);
+        $t = $app->loadTemplate($app->getSetting('FILE_BASE_PATH').'/template/email/default_footer.html');
+        self::assertEquals('</div>'.PHP_EOL.'</body>'.PHP_EOL.'</html>', $t->render());
+    }
+
+
+    /*
+     *
+     */
+    public function testgetSettingFromSettingsArray() {
+        $app = new \PMRAtk\View\App(['nologin'], ['always_run' => false]);
+        $app->settings['GRUIL'] = 'LALA';
+        self::assertEquals('LALA', $app->getSetting('GRUIL'));
+    }
 }
