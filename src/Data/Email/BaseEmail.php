@@ -75,16 +75,10 @@ class BaseEmail extends \atk4\data\Model {
 
         //try load default header and footer
         if(empty($this->header)) {
-            $t = $this->app->loadEmailTemplate('default_header.html');
-            if($t instanceOf \PMRAtk\View\Template) {
-                $this->header = $t->render();
-            }
+            $this->header = $this->app->loadEmailTemplate('default_header.html', true);
         }
         if(empty($this->footer)) {
-            $t = $this->app->loadEmailTemplate('default_footer.html');
-            if($t instanceOf \PMRAtk\View\Template) {
-                $this->footer = $t->render();
-            }
+            $this->header = $this->app->loadEmailTemplate('default_footer.html', true);
         }
 
         $this->phpMailer = new PHPMailer($this->app);
