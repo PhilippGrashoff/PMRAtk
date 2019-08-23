@@ -17,7 +17,7 @@ class App extends \atk4\ui\App {
 
     public $userRolesMaySeeThisPage = [];
 
-    protected $_settings = [];
+    public $settings = [];
 
     /*
      * normally used in app, this is used to store all records of a model in

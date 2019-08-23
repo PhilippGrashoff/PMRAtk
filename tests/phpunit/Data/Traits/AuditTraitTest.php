@@ -143,4 +143,16 @@ class AuditTraitTest extends \PMRAtk\tests\phpunit\TestCase {
         $this->assertEquals($initial_audit_count, (new \PMRAtk\Data\Audit(self::$app->db))->action('count')->getOne());
         $_ENV['CREATE_AUDIT'] = true;
     }
+
+
+    /*
+     *
+     */
+    public function testMToMAudit() {
+        $a = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
+        $a->save();
+        $initial_audit_count = (new \PMRAtk\Data\Audit(self::$app->db))->action('count')->getOne();
+        $a->addMToMAudit('ADD', new \PMRAtk\tests\phpunit\Data\BaseModelB(self::$app->db));
+        $this->assertEquals($initial_audit_count + 1, (new \PMRAtk\Data\Audit(self::$app->db))->action('count')->getOne());
+    }
 }
