@@ -6,6 +6,12 @@ class BaseEmail extends \atk4\data\Model {
 
     public $table = 'base_email';
 
+    //A title: what is this email for
+    public $title = '';
+
+    //like title, but more descriptive: What is this email for
+    public $description = '';
+
     //usually an Email is per Model record, e.g. per Group. Save in here to make work easier
     public $model;
 
