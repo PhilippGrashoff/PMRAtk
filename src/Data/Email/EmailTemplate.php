@@ -2,7 +2,7 @@
 
 namespace PMRAtk\Data\Email;
 
-class EmailTemplate extends \PMRAtk\Data\BaseModel {
+class EmailTemplate extends \PMRAtk\Data\SecondaryBaseModel {
 
     public $table = 'email_template';
 
@@ -14,7 +14,6 @@ class EmailTemplate extends \PMRAtk\Data\BaseModel {
 
         $this->addFields([
             ['ident',        'type' => 'string'],
-            ['value',        'type' => 'text'],
         ]);
     }
 }

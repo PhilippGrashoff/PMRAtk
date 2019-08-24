@@ -135,11 +135,27 @@ class App extends \atk4\ui\App {
      * email templates get an extra function to load to distinguish
      * from HTML element templates
      */
-    public function loadEmailTemplate(string $name, bool $raw_template = false) {
+    public function loadEmailTemplate(string $name, bool $raw_template = false, string $model_class = '', $model_id = null) {
         $template = new \PMRAtk\View\Template();
         $template->app = $this;
 
-        //first, try load it from EmailTemplate
+        //try to load From EmailTemplate per Model
+        if($model_class && $model_id) {
+            $et = new \PMRAtk\Data\Email\EmailTemplate($this->db);
+            $et->addCondition('model_class', $model_class);
+            $et->addCondition('model_id', $model_id);
+            $et->tryLoadBy('ident', $name);
+            if ($et->loaded()) {
+                if ($raw_template) {
+                    return $et->get('value');
+                } else {
+                    $template->loadTemplateFromString($et->get('value'));
+                    return $template;
+                }
+            }
+        }
+
+        //then, try load it from EmailTemplate
         $et = new \PMRAtk\Data\Email\EmailTemplate($this->db);
         $et->tryLoadBy('ident', $name);
         if($et->loaded()) {
@@ -164,6 +180,29 @@ class App extends \atk4\ui\App {
 
         throw new \atk4\data\Exception(['Can not find email template file', 'name' => $name, 'template_dir' => $this->emailTemplateDir]);
     }
+
+
+    /*
+     * Save a setting into Settings table
+     */
+    public function saveEmailTemplate(string $ident, string $value, string $model_class = '', $model_id = null) {
+        $et = new \PMRAtk\Data\Email\EmailTemplate($this->db);
+        if($model_class && $model_id) {
+            $et->addCondition('model_class', $model_class);
+            $et->addCondition('model_id', $model_id);
+        }
+        $et->tryLoadBy('ident', $ident);
+        if(!$et->loaded()) {
+            $et->set('ident', $ident);
+        }
+        $et->set('value', $value);
+        if($model_class && $model_id) {
+            $et->set('model_class', $model_class);
+            $et->set('model_id', $model_id);
+        }
+        $et->save();
+    }
+
 
 
     /*
@@ -208,20 +247,6 @@ class App extends \atk4\ui\App {
         elseif(defined($ident)) {
             return constant($ident);
         }
-    }
-
-
-    /*
-     * Save a setting into Settings table
-     */
-    public function saveEmailTemplate(string $ident, $value) {
-        $template = new \PMRAtk\Data\Email\EmailTemplate($this->db);
-        $template->tryLoadBy('ident', $ident);
-        if(!$template->loaded()) {
-            $template->set('ident', $ident);
-        }
-        $template->set('value', $value);
-        $template->save();
     }
 
 

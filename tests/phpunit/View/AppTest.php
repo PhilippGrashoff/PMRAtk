@@ -212,6 +212,33 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
     /*
      *
      */
+    public function testsaveAndLoadEmailTemplateFromModel() {
+        $app = new \PMRAtk\View\App(['nologin'], ['always_run' => false]);
+        $app->db = self::$app->db;
+
+        //initial state should be same as file, as file should be loaded
+        self::assertEquals(file_get_contents($app->getSetting('FILE_BASE_PATH').'/template/email/testemailtemplate.html'), $app->loadEmailTemplate('testemailtemplate.html', true));
+
+        //now save a custom template
+        $app->saveEmailTemplate('testemailtemplate.html', 'DugguWuggu');
+        self::assertEquals('DugguWuggu', $app->loadEmailTemplate('testemailtemplate.html', true));
+
+        //now save a custom template for a model. When loaded without these params,  it should still return the general one
+        $app->saveEmailTemplate('testemailtemplate.html', 'Migasalasa', 'SomeClass', 13);
+        self::assertEquals('DugguWuggu', $app->loadEmailTemplate('testemailtemplate.html', true));
+
+        //when loading with the model_class and model_id params it should find the one saved for the record
+        self::assertEquals('Migasalasa', $app->loadEmailTemplate('testemailtemplate.html', true, 'SomeClass', 13));
+
+        //when loading an invalid class or id, fall back to general one
+        self::assertEquals('DugguWuggu', $app->loadEmailTemplate('testemailtemplate.html', true, 'SomeNonExistantClass', 13));
+        self::assertEquals('DugguWuggu', $app->loadEmailTemplate('testemailtemplate.html', true, 'SomeClass', 155));
+    }
+
+
+    /*
+     *
+     */
     public function testgetSettingFromSettingsArray() {
         $app = new \PMRAtk\View\App(['nologin'], ['always_run' => false]);
         $app->settings['GRUIL'] = 'LALA';

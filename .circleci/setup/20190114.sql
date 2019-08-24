@@ -103,10 +103,12 @@ CREATE TABLE IF NOT EXISTS `setting`
 CREATE TABLE IF NOT EXISTS `email_template`
 (
     `id`           INT          NOT NULL AUTO_INCREMENT,
-    `ident`        VARCHAR(255) NULL,
-    `created_date` DATETIME     NULL,
     `last_updated` DATETIME     NULL,
+    `created_date` DATETIME     NULL,
     `value`        TEXT         NULL,
+    `model_class`  VARCHAR(255) NULL,
+    `model_id`     INT          NULL,
+    `ident`        VARCHAR(255) NULL,
     PRIMARY KEY (`id`)
 )
     ENGINE = InnoDB
