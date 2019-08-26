@@ -84,7 +84,7 @@ class BaseEmail extends \atk4\data\Model {
             $this->header = $this->app->loadEmailTemplate('default_header.html', true);
         }
         if(empty($this->footer)) {
-            $this->header = $this->app->loadEmailTemplate('default_footer.html', true);
+            $this->footer = $this->app->loadEmailTemplate('default_footer.html', true);
         }
 
         $this->phpMailer = new PHPMailer($this->app);
