@@ -60,8 +60,8 @@ class BaseEmail extends \atk4\data\Model {
     public $process = true;
 
     //if set to a models namespace and class name and its id, a custom template for that model will be tried to be loaded.
-    public $customTemplateModelClass;
-    public $customTemplateModelId;
+    public $customTemplateModelClass = '';
+    public $customTemplateModelId = '';
 
 
 
@@ -126,7 +126,7 @@ class BaseEmail extends \atk4\data\Model {
         }
 
         try {
-            $template = $this->app->loadEmailTemplate($this->template, false, $this->customTemplateModelClass, $this->customTemplateModelId);
+            $template = $this->app->loadEmailTemplate($this->template, false, (string) $this->customTemplateModelClass, $this->customTemplateModelId);
         }
         catch(\Exception $e) {
             $template = new \PMRAtk\View\Template();
