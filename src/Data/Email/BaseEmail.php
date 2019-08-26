@@ -132,7 +132,7 @@ class BaseEmail extends \atk4\data\Model {
 
         $template->trySet('recipient_firstname', '{$recipient_firstname}');
         $template->trySet('recipient_lastname',  '{$recipient_lastname}');
-        $template->trySet('recipient_email',     '{recipient_email}');
+        $template->trySet('recipient_email',     '{$recipient_email}');
 
         if(is_callable($this->processMessageTemplate)) {
             call_user_func($this->processMessageTemplate, $template, $this->model);
