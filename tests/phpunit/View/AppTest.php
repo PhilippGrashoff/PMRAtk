@@ -237,6 +237,29 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
 
 
     /*
+     * If only a custom template is set for a specific model_class and model_id, see if this is not accidently loaded
+     * for another model_id
+     */
+    public function testLoadEmailTemplateLoadFromFileIfInDBOnlyPerModel() {
+        $app = new \PMRAtk\View\App(['nologin'], ['always_run' => false]);
+        $app->db = self::$app->db;
+
+        //initial state should be same as file, as file should be loaded
+        self::assertEquals(file_get_contents($app->getSetting('FILE_BASE_PATH').'/template/email/testemailtemplate.html'), $app->loadEmailTemplate('testemailtemplate.html', true));
+
+        //now save a custom template for a model. When loaded without these params,  it should still return the general one
+        $app->saveEmailTemplate('testemailtemplate.html', 'Migasalasa', 'SomeClass', 13);
+        self::assertEquals(file_get_contents($app->getSetting('FILE_BASE_PATH').'/template/email/testemailtemplate.html'), $app->loadEmailTemplate('testemailtemplate.html', true));
+
+        //also for any other model id
+        self::assertEquals(file_get_contents($app->getSetting('FILE_BASE_PATH').'/template/email/testemailtemplate.html'), $app->loadEmailTemplate('testemailtemplate.html', true, 'SomeClass', 12));
+
+        //but for that special ID return that custom one
+        self::assertEquals('Migasalasa', $app->loadEmailTemplate('testemailtemplate.html', true, 'SomeClass', 13));
+    }
+
+
+    /*
      *
      */
     public function testgetSettingFromSettingsArray() {

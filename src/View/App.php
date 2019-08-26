@@ -139,25 +139,21 @@ class App extends \atk4\ui\App {
         $template = new \PMRAtk\View\Template();
         $template->app = $this;
 
+        $et = new \PMRAtk\Data\Email\EmailTemplate($this->db);
         //try to load From EmailTemplate per Model
         if($model_class && $model_id) {
-            $et = new \PMRAtk\Data\Email\EmailTemplate($this->db);
             $et->addCondition('model_class', $model_class);
             $et->addCondition('model_id', $model_id);
             $et->tryLoadBy('ident', $name);
-            if ($et->loaded()) {
-                if ($raw_template) {
-                    return $et->get('value');
-                } else {
-                    $template->loadTemplateFromString($et->get('value'));
-                    return $template;
-                }
-            }
+        }
+        //else try to load from DB
+        if(!$et->loaded()) {
+            $et = new \PMRAtk\Data\Email\EmailTemplate($this->db);
+            $et->addCondition('model_class', null);
+            $et->addCondition('model_id', null);
+            $et->tryLoadBy('ident', $name);
         }
 
-        //then, try load it from EmailTemplate
-        $et = new \PMRAtk\Data\Email\EmailTemplate($this->db);
-        $et->tryLoadBy('ident', $name);
         if($et->loaded()) {
             if($raw_template) {
                 return $et->get('value');
