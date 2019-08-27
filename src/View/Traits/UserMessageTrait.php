@@ -50,7 +50,12 @@ trait UserMessageTrait {
     public function getUserMessagesAsJsToast():array {
         $return = [];
         foreach($this->userMessages as $message) {
-            $return[] = new \atk4\ui\jsToast(['message' => $message['message'], 'class' => $message['class'], 'displayTime' => ($message['class'] == 'success' ? 3000 : 8000)]);
+            $return[] = new \atk4\ui\jsToast([
+                'message' => $message['message'],
+                'position' => 'bottom right',
+                'class' => $message['class'],
+                'showProgress' => 'bottom',
+                'displayTime' => ($message['class'] == 'success' ? 3000 : 8000)]);
         }
 
         return $return;

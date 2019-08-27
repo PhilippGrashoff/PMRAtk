@@ -8,7 +8,12 @@ trait NotifyTrait {
      *
      */
     public function successNotify(string $text):\atk4\ui\jsToast {
-        return new \atk4\ui\jsToast(['message' => $text, 'class' => 'success', 'displayTime' => 3000]);
+        return new \atk4\ui\jsToast([
+            'message' => $text,
+            'position' => 'bottom right',
+            'showProgress' => 'bottom',
+            'class' => 'success',
+            'displayTime' => 3000]);
     }
 
 
@@ -16,7 +21,12 @@ trait NotifyTrait {
      *
      */
     public function failNotify(string $text):\atk4\ui\jsToast {
-        return new \atk4\ui\jsToast(['message' => $text, 'class' => 'error', 'displayTime' => 8000]);
+        return new \atk4\ui\jsToast([
+            'message' => $text,
+            'position' => 'bottom right',
+            'showProgress' => 'bottom',
+            'class' => 'error',
+            'displayTime' => 8000]);
     }
 
 
@@ -24,6 +34,11 @@ trait NotifyTrait {
      *
      */
     public function warningNotify(string $text):\atk4\ui\jsToast {
-        return new \atk4\ui\jsToast(['message' => $text, 'class' => 'warning', 'displayTime' => 8000]);
+        return new \atk4\ui\jsToast([
+            'message' => $text,
+            'position' => 'bottom right',
+            'showProgress' => 'bottom',
+            'class' => 'warning',
+            'displayTime' => 8000]);
     }
 }
