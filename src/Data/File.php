@@ -26,9 +26,9 @@ class File extends SecondaryBaseModel {
         ]);
 
         //before save, check if file exists
-        $this->addHook('beforeSave', function($m) {
-            if(!$m->checkFileExists()) {
-                throw new \atk4\data\Exception('The file to be saved does not exist: '.$this->getFullFilePath());
+        $this->addHook('beforeInsert', function($m) {
+            if (!$m->checkFileExists()) {
+                throw new \atk4\data\Exception('The file to be saved does not exist: ' . $this->getFullFilePath());
             }
         });
 
@@ -39,7 +39,12 @@ class File extends SecondaryBaseModel {
         //Crypt ID was introduced Aug. 2019
         //This creates a crypt_id for older records as soon as theyre loaded
         $this->addHook('afterLoad', function($m) {
-            if(!$m->get('crypt_id')) {
+            if(!$m->checkFileExists()) {
+                $this->delete();
+                $this->app->addUserMessage('Die Datei '.$m->get('value').' konnte nicht gefunden werden, sie wurde entfernt', 'warning');
+                $m->breakHook(false);
+            }
+            elseif(!$m->get('crypt_id')) {
                 $m->setCryptId('crypt_id');
                 $m->save();
             }

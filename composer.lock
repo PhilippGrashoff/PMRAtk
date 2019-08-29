@@ -125,12 +125,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/atk4/data.git",
-                "reference": "ffd55c988c16299d45f13c2d0fd5ad4520746f0e"
+                "reference": "328a258c880bc5ca3da0d70abb978e4614f3dbed"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/atk4/data/zipball/ffd55c988c16299d45f13c2d0fd5ad4520746f0e",
-                "reference": "ffd55c988c16299d45f13c2d0fd5ad4520746f0e",
+                "url": "https://api.github.com/repos/atk4/data/zipball/328a258c880bc5ca3da0d70abb978e4614f3dbed",
+                "reference": "328a258c880bc5ca3da0d70abb978e4614f3dbed",
                 "shasum": ""
             },
             "require": {
@@ -177,7 +177,7 @@
                 "query",
                 "sql"
             ],
-            "time": "2019-08-13T17:31:53+00:00"
+            "time": "2019-08-28T10:21:17+00:00"
         },
         {
             "name": "atk4/dsql",
@@ -185,12 +185,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/atk4/dsql.git",
-                "reference": "6def8bffa3bccea1253dbdaaa0858346d422ae43"
+                "reference": "25d117355a6b22ab8d5afe7f610a1b7a6685ce75"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/atk4/dsql/zipball/6def8bffa3bccea1253dbdaaa0858346d422ae43",
-                "reference": "6def8bffa3bccea1253dbdaaa0858346d422ae43",
+                "url": "https://api.github.com/repos/atk4/dsql/zipball/25d117355a6b22ab8d5afe7f610a1b7a6685ce75",
+                "reference": "25d117355a6b22ab8d5afe7f610a1b7a6685ce75",
                 "shasum": ""
             },
             "require": {
@@ -231,7 +231,7 @@
                 "orm",
                 "sql"
             ],
-            "time": "2019-05-14T16:32:29+00:00"
+            "time": "2019-08-22T17:39:16+00:00"
         },
         {
             "name": "atk4/login",
@@ -358,12 +358,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/atk4/ui.git",
-                "reference": "8b5b7ce5ce9a29e9ebd20df0a2d25562590c4ab2"
+                "reference": "73bc22982bc05391cca9f0fd929c84126585f771"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/atk4/ui/zipball/8b5b7ce5ce9a29e9ebd20df0a2d25562590c4ab2",
-                "reference": "8b5b7ce5ce9a29e9ebd20df0a2d25562590c4ab2",
+                "url": "https://api.github.com/repos/atk4/ui/zipball/73bc22982bc05391cca9f0fd929c84126585f771",
+                "reference": "73bc22982bc05391cca9f0fd929c84126585f771",
                 "shasum": ""
             },
             "require": {
@@ -415,7 +415,7 @@
                 "web",
                 "widget"
             ],
-            "time": "2019-08-15T19:20:22+00:00"
+            "time": "2019-08-27T06:17:26+00:00"
         },
         {
             "name": "container-interop/container-interop",
@@ -526,16 +526,16 @@
         },
         {
             "name": "php-curl-class/php-curl-class",
-            "version": "8.6.0",
+            "version": "8.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-curl-class/php-curl-class.git",
-                "reference": "73bf10e2652ad2261cbab7fbf242b76f0e7ee359"
+                "reference": "a418962c4385aba6b97d2d57d65a0d405b514cf7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-curl-class/php-curl-class/zipball/73bf10e2652ad2261cbab7fbf242b76f0e7ee359",
-                "reference": "73bf10e2652ad2261cbab7fbf242b76f0e7ee359",
+                "url": "https://api.github.com/repos/php-curl-class/php-curl-class/zipball/a418962c4385aba6b97d2d57d65a0d405b514cf7",
+                "reference": "a418962c4385aba6b97d2d57d65a0d405b514cf7",
                 "shasum": ""
             },
             "require": {
@@ -589,7 +589,7 @@
                 "web-service",
                 "xml"
             ],
-            "time": "2019-05-12T08:22:01+00:00"
+            "time": "2019-08-05T04:18:26+00:00"
         },
         {
             "name": "phpmailer/phpmailer",
@@ -2740,16 +2740,16 @@
         },
         {
             "name": "symfony/process",
-            "version": "v4.3.3",
+            "version": "v4.3.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/process.git",
-                "reference": "856d35814cf287480465bb7a6c413bb7f5f5e69c"
+                "reference": "e89969c00d762349f078db1128506f7f3dcc0d4a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/process/zipball/856d35814cf287480465bb7a6c413bb7f5f5e69c",
-                "reference": "856d35814cf287480465bb7a6c413bb7f5f5e69c",
+                "url": "https://api.github.com/repos/symfony/process/zipball/e89969c00d762349f078db1128506f7f3dcc0d4a",
+                "reference": "e89969c00d762349f078db1128506f7f3dcc0d4a",
                 "shasum": ""
             },
             "require": {
@@ -2785,7 +2785,7 @@
             ],
             "description": "Symfony Process Component",
             "homepage": "https://symfony.com",
-            "time": "2019-05-30T16:10:05+00:00"
+            "time": "2019-08-26T08:26:39+00:00"
         },
         {
             "name": "theseer/tokenizer",
@@ -2829,16 +2829,16 @@
         },
         {
             "name": "webmozart/assert",
-            "version": "1.4.0",
+            "version": "1.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webmozart/assert.git",
-                "reference": "83e253c8e0be5b0257b881e1827274667c5c17a9"
+                "reference": "88e6d84706d09a236046d686bbea96f07b3a34f4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webmozart/assert/zipball/83e253c8e0be5b0257b881e1827274667c5c17a9",
-                "reference": "83e253c8e0be5b0257b881e1827274667c5c17a9",
+                "url": "https://api.github.com/repos/webmozart/assert/zipball/88e6d84706d09a236046d686bbea96f07b3a34f4",
+                "reference": "88e6d84706d09a236046d686bbea96f07b3a34f4",
                 "shasum": ""
             },
             "require": {
@@ -2846,8 +2846,7 @@
                 "symfony/polyfill-ctype": "^1.8"
             },
             "require-dev": {
-                "phpunit/phpunit": "^4.6",
-                "sebastian/version": "^1.0.1"
+                "phpunit/phpunit": "^4.8.36 || ^7.5.13"
             },
             "type": "library",
             "extra": {
@@ -2876,7 +2875,7 @@
                 "check",
                 "validate"
             ],
-            "time": "2018-12-25T11:19:39+00:00"
+            "time": "2019-08-24T08:43:50+00:00"
         }
     ],
     "aliases": [

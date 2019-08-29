@@ -111,4 +111,18 @@ class FileTest extends \PMRAtk\tests\phpunit\TestCase {
         //now a crypt_id should have been created and saved
         $this->assertEquals(21, strlen($g->get('crypt_id')));
     }
+
+
+    /*
+     * File id = 2 should be saved after load due to missing crypt_id, but file does not exist.
+     * Should be deleted and a message added to app
+     */
+    public function testNonExistantFileGetsDeletedOnUpdate() {
+        $initial_file_count = $this->countModelRecords(\PMRAtk\Data\File::class);
+        $message_count = count(self::$app->userMessages);
+        $g = new \PMRAtk\Data\File(self::$app->db);
+        $g->load(2);
+        self::assertEquals($initial_file_count - 1, $this->countModelRecords(\PMRAtk\Data\File::class));
+        self::assertEquals($message_count + 1, count(self::$app->userMessages));
+    }
 }
