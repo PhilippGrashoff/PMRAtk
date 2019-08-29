@@ -200,7 +200,6 @@ class App extends \atk4\ui\App {
     }
 
 
-
     /*
      * Adds Js and CSS needed for summernote Textareas
      */

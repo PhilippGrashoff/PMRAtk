@@ -81,4 +81,34 @@ class FileTest extends \PMRAtk\tests\phpunit\TestCase {
         //false because move_uploaded_file knows it not an uploaded file
         $this->assertFalse($f->uploadFile(['name' => 'LALA', 'tmp_name' => 'sdfkjsdf.txt']));
     }
+
+
+    /*
+     *
+     */
+    public function testCryptId() {
+        $g = new \PMRAtk\Data\File(self::$app->db);
+        $g->set('value', 'demo_file.txt');
+        $g->set('path', 'tests/');
+        $g->save();
+        $c = $g->get('crypt_id');
+        $this->assertEquals(21, strlen($g->get('crypt_id')));
+
+        //see if it stays the same after another save
+        $g->save();
+        $this->assertEquals($c, $g->get('crypt_id'));
+    }
+
+
+    /*
+     *
+     */
+    public function testCryptIdForRecordsWithoutCreatedOnLoad() {
+        //id = 1 does not have a crypt_id
+        $g = new \PMRAtk\Data\File(self::$app->db);
+        $g->load(1);
+
+        //now a crypt_id should have been created and saved
+        $this->assertEquals(21, strlen($g->get('crypt_id')));
+    }
 }
