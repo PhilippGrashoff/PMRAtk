@@ -29,13 +29,13 @@ trait FileRelationTrait {
         //if $this was never saved (no id yet), use afterSave hook
         if(!$this->loaded()) {
             $this->addHook('afterSave', function($m) use ($temp_file, $type) {
-                $this->_addUploadFile($temp_file);
+                $this->_addUploadFile($temp_file, $type);
             });
             return null;
         }
         //if id is available, do at once
         else {
-            return $this->_addUploadFile($temp_file);
+            return $this->_addUploadFile($temp_file, $type);
         }
     }
 
@@ -43,7 +43,7 @@ trait FileRelationTrait {
     /*
      * helper for addUploadFileFromAtkUi
      */
-    protected function _addUploadFile(array $temp_file, $type):?\PMRAtk\Data\File {
+    protected function _addUploadFile(array $temp_file, string $type):?\PMRAtk\Data\File {
         $file = $this->ref('File')->newInstance(null, ['parentObject' => $this]);
         if(!$file->uploadFile($temp_file)) {
             $this->app->addUserMessage('Die Datei konnte nicht hochgeladen werden, bitte versuche es erneut', 'error');
