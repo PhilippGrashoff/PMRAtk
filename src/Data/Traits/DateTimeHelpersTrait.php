@@ -16,11 +16,12 @@ trait DateTimeHelpersTrait {
 
     /*
      * makes german formatted strings from date, time and datetime fields
+     * //TODO: Pass field would make more sense
      */
     public function castDateTimeToGermanString($value, string $type, bool $shorten_time = false):string {
         //no DateTimeInterFace passed? Just return given value
-        if(!$value instanceOf \DateTimeInterface) {
-            return $value;
+        if(!$value instanceof \DateTimeInterface) {
+            return (string) $value;
         }
 
         if($type == 'datetime') {

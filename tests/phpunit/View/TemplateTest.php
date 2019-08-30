@@ -94,7 +94,7 @@ class TemplateTest extends \PMRAtk\tests\phpunit\TestCase {
         $t->app = self::$app;
         $t->loadTemplateFromString('Hallo {$datetime} Test {$date} Miau {$time}!');
         $t->setTagsFromModel($model, ['datetime', 'date', 'time']);
-        $this->assertEquals('Hallo 05.05.2019 10:30:00 Test 05.05.2019 Miau 10:30:00!', $t->render());
+        $this->assertEquals('Hallo 05.05.2019 10:30 Test 05.05.2019 Miau 10:30!', $t->render());
     }
 
 
