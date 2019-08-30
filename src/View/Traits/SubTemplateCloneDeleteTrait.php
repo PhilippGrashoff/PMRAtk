@@ -19,8 +19,8 @@ trait SubTemplateCloneDeleteTrait {
             if (!property_exists($this, $property_name)) {
                 throw new \atk4\data\Exception('Region '.$region_name.' not found in '.__FUNCTION__);
             }
-            $this->$property_name = $this->template->cloneRegion($region_name);
-            $this->template->del($region_name);
+            $this->$property_name = $template->cloneRegion($region_name);
+            $template->del($region_name);
         }
     }
 }
