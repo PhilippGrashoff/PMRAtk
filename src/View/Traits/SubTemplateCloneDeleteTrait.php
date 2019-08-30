@@ -9,8 +9,11 @@ trait SubTemplateCloneDeleteTrait {
      * is looked for. If found, clones region and sets it to property. Deletes region
      * in $this->template
      */
-    public function templateCloneAndDelete(array $a)
-    {
+    public function templateCloneAndDelete(array $a, \atk4\ui\Template $template = null) {
+        if($template === null) {
+            $template = $this->template;
+        }
+
         foreach ($a as $region_name) {
             $property_name = '_t' . $region_name;
             if (!property_exists($this, $property_name)) {
