@@ -17,21 +17,32 @@ trait DateTimeHelpersTrait {
     /*
      * makes german formatted strings from date, time and datetime fields
      */
-    public function castDateTimeToGermanString($value, string $type):string {
+    public function castDateTimeToGermanString($value, string $type, bool $shorten_time = false):string {
         //no DateTimeInterFace passed? Just return given value
-        if(!$value instanceOf \DateTimeInterFace) {
+        if(!$value instanceOf \DateTimeInterface) {
             return $value;
         }
 
         if($type == 'datetime') {
-            return $value->format('d.m.Y H:i:s');
+            if($shorten_time) {
+                return $value->format('d.m.Y H:i');
+            }
+            else {
+                return $value->format('d.m.Y H:i:s');
+            }
         }
         if($type == 'date') {
             return $value->format('d.m.Y');
         }
         if($type == 'time') {
-            return $value->format('H:i:s');
+            if($shorten_time) {
+                return $value->format('H:i');
+            }
+            else {
+                return $value->format('H:i:s');
+            }
         }
+
         return '';
     }
 }
