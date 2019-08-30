@@ -36,7 +36,6 @@ class FileDownload {
         header("Content-Transfer-Encoding: binary");
         header("Content-Length: ".filesize($file->getFullFilePath()));
         @readfile($file->getFullFilePath());
-        exit();
     }
 
 
