@@ -1,5 +1,14 @@
 <?php
 
+class FileDownLoadMock extends \PMRAtk\View\FileDownload {
+
+    protected function _sendHeaders()
+    {
+
+    }
+}
+
+
 class FileDownloadTest extends \PMRAtk\tests\phpunit\TestCase
 {
 
@@ -42,7 +51,7 @@ class FileDownloadTest extends \PMRAtk\tests\phpunit\TestCase
         $file->save();
 
         ob_start();
-        $fd = new \PMRAtk\View\FileDownload(self::$app);
+        $fd = new FileDownLoadMock(self::$app);
         $_REQUEST[$fd->paramName] = $file->get('crypt_id');
         @$fd->sendFile();
         self::assertTrue(strpos(ob_get_contents(), file_get_contents($file->getFullFilePath())) !== false);
