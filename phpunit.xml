@@ -1,8 +1,8 @@
 <phpunit colors="true"
          bootstrap="tests/bootstrap.php"
-         convertErrorsToExceptions="false"
-         convertNoticesToExceptions="false"
-         convertWarningsToExceptions="false"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
 >
 
 	<php>
