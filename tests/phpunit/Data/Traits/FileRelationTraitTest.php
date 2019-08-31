@@ -72,4 +72,19 @@ class FileReferenceTest extends \PMRAtk\tests\phpunit\TestCase {
         self::assertInstanceOf(\PMRAtk\Data\File::class, $file);
         self::assertEquals(1 ,$m->ref('File')->action('count')->getOne());
     }
+
+
+    /*
+     *
+     */
+    public function testAddTypeToFile() {
+        $m = new \PMRAtk\tests\phpunit\Data\BaseModelB(self::$app->db);
+        $m->save();
+        $m->getRef('File')->model = new  FileMock(self::$app->db);
+        $file = $m->addUploadFileFromAtkUi(['name' => 'demo_file.txt', 'path' => 'tests/']);
+        self::assertEquals('', $file->get('type'));
+
+        $file = $m->addUploadFileFromAtkUi(['name' => 'demo_file.txt', 'path' => 'tests/'], 'SOMETYPE');
+        self::assertEquals('SOMETYPE', $file->get('type'));
+    }
 }
