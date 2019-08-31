@@ -121,7 +121,7 @@ class File extends SecondaryBaseModel {
                 'ALLSSSSTZZZallssstzzzRAAAALCCCEEEEIIDDNNOOOOxRUUUUYTsraaaalccceeeeiiddnnooooruuuuyt- <->|-.');
             $s = preg_replace('#[^\x00-\x7F]++#', '', $s);
         } else {
-            $s = @iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $s); // intentionally @
+            $s = @iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $s); //@codeCoverageIgnore
         }
         $s = str_replace(array('`', "'", '"', '^', '~', '?'), '', $s);
         return strtr($s, "\x01\x02\x03\x04\x05\x06", '`\'"^~?');

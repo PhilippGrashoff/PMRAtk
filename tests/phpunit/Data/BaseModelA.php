@@ -10,6 +10,8 @@ class BaseModelA extends \PMRAtk\Data\BaseModel {
 
     public $table = 'BaseModelA';
 
+    public $caption = 'BMACAPTION';
+
     public function init() {
         parent::init();
 
