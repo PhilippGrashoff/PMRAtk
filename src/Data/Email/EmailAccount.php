@@ -23,9 +23,6 @@ class EmailAccount extends \PMRAtk\Data\Setting {
         //after load, unserialize value field
         $this->addHook('afterLoad', function($m) {
             $a = unserialize($m->get('value'));
-            if(!is_array($a)) {
-                return;
-            }
             foreach($a as $key => $value) {
                 if($m->hasField($key)) {
                     $m->set($key, $value);

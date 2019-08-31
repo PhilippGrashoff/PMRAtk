@@ -54,24 +54,4 @@ class EmailAccountTest extends \PMRAtk\tests\phpunit\TestCase {
         $this->assertEquals($ea2->get('smtp_host'),  'some5');
         $this->assertEquals($ea2->get('smtp_port'),  'some6');
     }
-
-
-    /*
-     *
-     */
-    public function testReturnOnNoArray() {
-        $ea = new \PMRAtk\Data\Email\EmailAccount(self::$app->db);
-        $ea->set('user', 'Ddfsdfsd');
-        $ea->save();
-
-        //check if its encrypted by using normal setting
-        $setting = new SettingNoDecrypt(self::$app->db);
-        $setting->load($ea->get('id'));
-        $setting->set('value', '');
-        $setting->save();
-
-        $ea->reload();
-
-        self::assertEquals('', $ea->get('user'));
-    }
 }

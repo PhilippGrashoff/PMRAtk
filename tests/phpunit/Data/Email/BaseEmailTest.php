@@ -375,6 +375,6 @@ class BaseEmailTest extends \PMRAtk\tests\phpunit\TestCase {
     public function testgetTemplateEditVars() {
         $be = new \PMRAtk\Data\Email\BaseEmail(self::$app->db);
         $be->model = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
-        self::assertEquals(['BMACAPTION' => ['tour_name' => 'Name', 'tour_firstname' => 'Vorname']], $be->getTemplateEditVars());
+        self::assertEquals(['BMACAPTION' => ['basemodela_name' => 'Name', 'basemodela_firstname' => 'Vorname']], $be->getTemplateEditVars());
     }
 }
