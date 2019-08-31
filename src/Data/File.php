@@ -230,7 +230,7 @@ class File extends SecondaryBaseModel {
         if($res) {
             return true;
         }
-        return false;
+        return false; //@codeCoverageIgnore
     }
 
 
