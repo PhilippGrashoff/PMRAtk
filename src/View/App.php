@@ -288,13 +288,12 @@ class App extends \atk4\ui\App {
      * as Email and so on
      */
     public function sendEmailToAdmin(string $subject, string $message_template, array $set_to_template = []) {
-        $email = new \PMRAtk\Data\Email\BaseEmail($this->db);
+        $email = new \PMRAtk\Data\Email\BaseEmail($this->db, ['addUserMessageOnSend' => false, 'template' => $message_template]);
         $email->processMessageTemplate = function($template) use ($set_to_template) {
             foreach($set_to_template as $tag => $value) {
                 $template->set($tag, $value);
             }
         };
-        $email->template = $message_template;
         $email->loadInitialTemplate();
         $email->set('subject', $subject);
         $email->addRecipient($this->app->getSetting('STD_EMAIL'));
