@@ -267,4 +267,14 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
         $app->settings['GRUIL'] = 'LALA';
         self::assertEquals('LALA', $app->getSetting('GRUIL'));
     }
+
+
+    /*
+     *
+     */
+    public function testSendEmailToAdmin() {
+        $app = new \PMRAtk\View\App(['nologin'], ['always_run' => false]);
+        $e = $app->sendEmailToAdmin('Test:LALA', 'Hans {$he} ist Super {$te}', ['he' => '22', 'te' => '33']);
+        self::assertTrue(strpos($e->phpMailer->getSentMIMEMessage(), 'Hans 22 ist Super 33') !== false);
+    }
 }

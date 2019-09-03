@@ -16,8 +16,8 @@ trait UserMessageTrait {
      * This works as message storage. Data level can add messages here as well as
      * Ui. Ui can pick these messages and display to user
      */
-    public function addUserMessage(string $message, string $class = '') {
-        $this->userMessages[] = ['message' => $message, 'class' => $class];
+    public function addUserMessage(string $message, string $class = '', int $displayTime = null) {
+        $this->userMessages[] = ['message' => $message, 'class' => $class, 'displayTime' => $displayTime];
     }
 
 
@@ -55,7 +55,7 @@ trait UserMessageTrait {
                 'position' => 'bottom right',
                 'class' => $message['class'],
                 'showProgress' => 'bottom',
-                'displayTime' => ($message['class'] == 'success' ? 3000 : 8000)]);
+                'displayTime' => $message['displayTime'] ?? ($message['class'] == 'success' ? 3000 : 8000)]);
         }
 
         return $return;

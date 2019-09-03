@@ -281,4 +281,25 @@ class App extends \atk4\ui\App {
         $this->_cachedModels[$model_name] = $a;
         return $this->_cachedModels[$model_name];
     }
+
+
+    /*
+     * sends an email to EOO owner. The template is not editable in this case. Meant for short Emails like notifications
+     * as Email and so on
+     */
+    public function sendEmailToAdmin(string $subject, string $message_template, array $set_to_template = []) {
+        $email = new \PMRAtk\Data\Email\BaseEmail($this->db);
+        $email->processMessageTemplate = function($template) use ($set_to_template) {
+            foreach($set_to_template as $tag => $value) {
+                $template->set($tag, $value);
+            }
+        };
+        $email->template = $message_template;
+        $email->loadInitialTemplate();
+        $email->set('subject', $subject);
+        $email->addRecipient($this->app->getSetting('STD_EMAIL'));
+        $email->send();
+
+        return $email;
+    }
 }

@@ -25,4 +25,31 @@ class UserMessageTraitTest extends \PMRAtk\tests\phpunit\TestCase {
         $inlinehtml = $v->getUserMessagesAsHTML(true);
         $this->assertTrue(strpos($inlinehtml, 'style="color:') !== false);
     }
+
+
+    /*
+     *
+     */
+    public function testSetDuration() {
+        $v = new \TestClassForUserMessageTrait();
+        $v->addUserMessage('TestMessage1', 'success', 2000);
+        $res = $v->getUserMessagesAsJsToast();
+        self::assertEquals(2000, $res[0]->settings['displayTime']);
+
+        $v->addUserMessage('TestMessage1', 'success', 0);
+        $res = $v->getUserMessagesAsJsToast();
+        self::assertEquals(0, $res[1]->settings['displayTime']);
+
+        $v->addUserMessage('TestMessage1', 'success');
+        $res = $v->getUserMessagesAsJsToast();
+        self::assertEquals(3000, $res[2]->settings['displayTime']);
+
+        $v->addUserMessage('TestMessage1', 'warning');
+        $res = $v->getUserMessagesAsJsToast();
+        self::assertEquals(8000, $res[3]->settings['displayTime']);
+
+        $v->addUserMessage('TestMessage1', 'error');
+        $res = $v->getUserMessagesAsJsToast();
+        self::assertEquals(8000, $res[4]->settings['displayTime']);
+    }
 }
