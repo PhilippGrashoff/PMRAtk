@@ -51,7 +51,7 @@ class FileDownload {
         header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
         header("Cache-Control: public");
         header("Content-Description: File Transfer");
-        header("Content-type: application/octet-stream");
+        header("Content-Type: application/octet-stream");
         header("Content-Disposition: attachment; filename=\"".$this->file->get('value')."\"");
         header("Content-Transfer-Encoding: binary");
         header("Content-Length: ".filesize($this->file->getFullFilePath()));

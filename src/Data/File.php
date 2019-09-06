@@ -80,8 +80,8 @@ class File extends SecondaryBaseModel {
      * returns bool
      */
     public function deleteFile() {
-        if(file_exists(FILE_BASE_PATH.$this->get('path').$this->get('value'))) {
-            return unlink(FILE_BASE_PATH.$this->get('path').$this->get('value'));
+        if(file_exists($this->getFullFilePath())) {
+            return unlink($this->getFullFilePath());
         }
         return false;
     }
@@ -164,7 +164,7 @@ class File extends SecondaryBaseModel {
         if($unique_name) {
             $old_name = $this->get('value');
             $i = 1;
-            while(file_exists(FILE_BASE_PATH.$this->get('path').$this->get('value'))) {
+            while(file_exists($this->getFullFilePath())) {
                 $this->set('value', pathinfo($old_name, PATHINFO_FILENAME).'_'.$i.($this->get('filetype') ? '.'.$this->get('filetype') : ''));
                 $i++;
             }
