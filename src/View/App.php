@@ -267,6 +267,13 @@ class App extends \atk4\ui\App {
 
 
     /*
+     * Force reload of settings
+     */
+    public function unloadSettings() {
+        $this->_settingsLoaded = false;
+    }
+
+    /*
      * returns all STD_ settings, which are typically used in templates
      */
     public function getAllSTDSettings():array {
