@@ -314,6 +314,16 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
     /*
      *
      */
+    public function testUnloadSettings() {
+        self::$app->getSetting('LALA');
+        self::$app->unloadSettings();
+        self::assertThat(self::$app, self::attributeEqualTo('_settingsLoaded', false));
+    }
+
+
+    /*
+     *
+     */
     public function testGetSTDSettings() {
         $s = new \PMRAtk\Data\Setting(self::$app->db);
         $s->set('ident', 'STD_NAME');

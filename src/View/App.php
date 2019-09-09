@@ -273,6 +273,7 @@ class App extends \atk4\ui\App {
         $this->_settingsLoaded = false;
     }
 
+
     /*
      * returns all STD_ settings, which are typically used in templates
      */
