@@ -90,8 +90,23 @@ CREATE TABLE IF NOT EXISTS `setting`
     `last_updated` DATETIME     NULL,
     `description`  TEXT         NULL,
     `system`       TINYINT      NULL,
-    `category`     VARCHAR(255) NULL,
     `value`        TEXT         NULL,
+    `setting_group_id` INT      NULL,
+    PRIMARY KEY (`id`)
+)
+    ENGINE = InnoDB
+    DEFAULT CHARACTER SET = latin1
+    COLLATE = latin1_german1_ci;
+
+
+CREATE TABLE IF NOT EXISTS `setting_group`
+(
+    `id`           INT          NOT NULL AUTO_INCREMENT,
+    `order`        INT          NULL,
+    `name`         VARCHAR(255) NULL,
+    `created_date` DATETIME     NULL,
+    `last_updated` DATETIME     NULL,
+    `description`  TEXT         NULL,
     PRIMARY KEY (`id`)
 )
     ENGINE = InnoDB

@@ -9,26 +9,30 @@ class App extends \atk4\ui\App {
 
     use \PMRAtk\View\Traits\UserMessageTrait;
 
+    //used to determine which layout to use
     public $deviceWidth;
 
+    //atk data Persistence
     public $db;
 
+    //atk login Auth
     public $auth;
 
+    //array of user roles which may see the requested page. Checked in __construct
     public $userRolesMaySeeThisPage = [];
 
-    public $settings = [];
+    //most settings are now stored in database. The Settings are loaded once and stored in _settings array
+    private $_settings = [];
+    protected $_settingsLoaded = false;
 
-    /*
-     * normally used in app, this is used to store all records of a model in
-     * an array.
-     * This is useful for models which are often read multiple times whithin a
-     * single request. This way, DB requests can be limited
-     */
+    //models which are requested often during a single script can be loaded once in here and re-used. Make sure its
+    //read-only usage otherwise caching may cause trouble
     protected $_cachedModels = [];
 
+    //if API uses App, it sets this property to true
     public $isApiRequest = false;
 
+    //the dir in which the email templates are stored
     public $emailTemplateDir = 'template/email';
 
 
@@ -227,34 +231,60 @@ class App extends \atk4\ui\App {
 
 
     /*
-     * Function to load a setting from App. App is the central point
-     * which both data and ui can access to get $_ENV etc settings
-     * Using this function makes definition of the settings independent from
-     * their definition, may it be $_ENV[], define() or stored in DB (preferred)
+     * Function to load all saved settings into the app as they are needed often
+     * during a single request
      */
     public function getSetting(string $ident) {
-        if(isset($this->settings[$ident])) {
-            return $this->settings[$ident];
+        //load settings once
+        $this->_loadSettings();
+
+        if(isset($this->_settings[$ident])) {
+            return $this->_settings[$ident];
         }
-        elseif(isset($_ENV[$ident])) {
-            return $_ENV[$ident];
-        }
-        elseif(defined($ident)) {
-            return constant($ident);
-        }
+
+        return null;
     }
 
 
     /*
-     * returns all STD_ settings
-     * TODO: Implement properly when implementing Settings class in PMRAtk
+     *
+     */
+    private function _loadSettings() {
+        if($this->_settingsLoaded) {
+            return;
+        }
+        foreach(new \PMRAtk\Data\Setting($this->db) as $m) {
+            $this->_settings[$m->get('ident')] = $m->get('value');
+        }
+        $this->_settingsLoaded = true;
+    }
+
+
+    /*
+     * returns all STD_ settings, which are typically used in templates
      */
     public function getAllSTDSettings():array {
-        if(defined('STD_SET_ARRAY')) {
-            return STD_SET_ARRAY;
-        }
+        $return = [];
+        $this->_loadSettings();
 
-        return [];
+        foreach($this->_settings as $key => $value) {
+            if(substr($key, 0, 4) == 'STD_') {
+                $return[$key] = $value;
+            }
+        }
+        return $return;
+    }
+
+
+    /*
+     * For "installers": Add a setting if it does not exist yet
+     */
+    public function addSetting(\PMRAtk\Data\Setting $s) {
+        $this->_loadSettings();
+        if(!array_key_exists($s->get('ident'), $this->_settings)) {
+            $s->save();
+            $this->_settingsLoaded = false;
+        }
     }
 
 

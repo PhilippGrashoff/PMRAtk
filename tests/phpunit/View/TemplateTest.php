@@ -25,10 +25,11 @@ class TemplateTest extends \PMRAtk\tests\phpunit\TestCase {
     public function testSTDValues() {
         $t = new \PMRAtk\View\Template();
         $t->app = self::$app;
-        if(!defined('STD_SET_ARRAY')) {
-            define('STD_SET_ARRAY', ['DADA' => 'LALA']);
-        }
-        $t->loadTemplateFromString('Hallo {$DADA} Test');
+        $s = new \PMRAtk\Data\Setting(self::$app->db);
+        $s->set('ident', 'STD_DADAPRA');
+        $s->set('value', 'LALA');
+        self::$app->addSetting($s);
+        $t->loadTemplateFromString('Hallo {$STD_DADAPRA} Test');
         $t->setSTDValues();
         $this->assertTrue(strpos($t->render(), 'LALA') !== false);
     }

@@ -14,7 +14,6 @@ class SettingNoDecrypt extends \PMRAtk\Data\BaseModel {
             ['name', 'type' => 'string'],
             ['description', 'type' => 'text'],
             ['system', 'type' => 'integer', 'system' => true],
-            ['category', 'type' => 'string'],
             ['value', 'type' => 'string'],
         ]);
     }

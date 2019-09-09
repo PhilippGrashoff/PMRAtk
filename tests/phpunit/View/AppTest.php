@@ -204,7 +204,7 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function testloadTemplateWithFilePath() {
         $app = new \PMRAtk\View\App(['nologin'], ['always_run' => false]);
-        $t = $app->loadTemplate($app->getSetting('FILE_BASE_PATH').'/template/email/default_footer.html');
+        $t = $app->loadTemplate(FILE_BASE_PATH.'/template/email/default_footer.html');
         self::assertEquals('</div>'.PHP_EOL.'</body>'.PHP_EOL.'</html>', $t->render());
     }
 
@@ -217,7 +217,7 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
         $app->db = self::$app->db;
 
         //initial state should be same as file, as file should be loaded
-        self::assertEquals(file_get_contents($app->getSetting('FILE_BASE_PATH').'/template/email/testemailtemplate.html'), $app->loadEmailTemplate('testemailtemplate.html', true));
+        self::assertEquals(file_get_contents(FILE_BASE_PATH.'/template/email/testemailtemplate.html'), $app->loadEmailTemplate('testemailtemplate.html', true));
 
         //now save a custom template
         $app->saveEmailTemplate('testemailtemplate.html', 'DugguWuggu');
@@ -245,14 +245,14 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
         $app->db = self::$app->db;
 
         //initial state should be same as file, as file should be loaded
-        self::assertEquals(file_get_contents($app->getSetting('FILE_BASE_PATH').'/template/email/testemailtemplate.html'), $app->loadEmailTemplate('testemailtemplate.html', true));
+        self::assertEquals(file_get_contents(FILE_BASE_PATH.'/template/email/testemailtemplate.html'), $app->loadEmailTemplate('testemailtemplate.html', true));
 
         //now save a custom template for a model. When loaded without these params,  it should still return the general one
         $app->saveEmailTemplate('testemailtemplate.html', 'Migasalasa', 'SomeClass', 13);
-        self::assertEquals(file_get_contents($app->getSetting('FILE_BASE_PATH').'/template/email/testemailtemplate.html'), $app->loadEmailTemplate('testemailtemplate.html', true));
+        self::assertEquals(file_get_contents(FILE_BASE_PATH.'/template/email/testemailtemplate.html'), $app->loadEmailTemplate('testemailtemplate.html', true));
 
         //also for any other model id
-        self::assertEquals(file_get_contents($app->getSetting('FILE_BASE_PATH').'/template/email/testemailtemplate.html'), $app->loadEmailTemplate('testemailtemplate.html', true, 'SomeClass', 12));
+        self::assertEquals(file_get_contents(FILE_BASE_PATH.'/template/email/testemailtemplate.html'), $app->loadEmailTemplate('testemailtemplate.html', true, 'SomeClass', 12));
 
         //but for that special ID return that custom one
         self::assertEquals('Migasalasa', $app->loadEmailTemplate('testemailtemplate.html', true, 'SomeClass', 13));
@@ -262,19 +262,69 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
     /*
      *
      */
-    public function testgetSettingFromSettingsArray() {
-        $app = new \PMRAtk\View\App(['nologin'], ['always_run' => false]);
-        $app->settings['GRUIL'] = 'LALA';
-        self::assertEquals('LALA', $app->getSetting('GRUIL'));
+    public function testSendEmailToAdmin() {
+        $s = new \PMRAtk\Data\Setting(self::$app->db);
+        $s->set('ident', 'STD_EMAIL');
+        $s->set('value', 'test2@easyoutdooroffice.com');
+        self::$app->addSetting($s);
+        $s = new \PMRAtk\Data\Setting(self::$app->db);
+        $s->set('ident', 'STD_EMAIL_NAME');
+        $s->set('value', 'HANSI PETER');
+        self::$app->addSetting($s);
+        $e = self::$app->sendEmailToAdmin('Test:LALA', 'Hans {$he} ist Super {$te}', ['he' => '22', 'te' => '33']);
+        self::assertTrue(strpos($e->phpMailer->getSentMIMEMessage(), 'Hans 22 ist Super 33') !== false);
+    }
+
+
+    /*
+     * Adding a setting twice should only save once
+     */
+    public function testAddSetting() {
+        $imc = $this->countModelRecords('\PMRAtk\Data\Setting');
+        $s = new \PMRAtk\Data\Setting(self::$app->db);
+        $s->set('ident', 'LALADU');
+        self::$app->addSetting($s);
+        self::assertEquals($imc + 1, $this->countModelRecords('\PMRAtk\Data\Setting'));
+        self::$app->addSetting($s);
+        self::assertEquals($imc + 1, $this->countModelRecords('\PMRAtk\Data\Setting'));
     }
 
 
     /*
      *
      */
-    public function testSendEmailToAdmin() {
-        $app = new \PMRAtk\View\App(['nologin'], ['always_run' => false]);
-        $e = $app->sendEmailToAdmin('Test:LALA', 'Hans {$he} ist Super {$te}', ['he' => '22', 'te' => '33']);
-        self::assertTrue(strpos($e->phpMailer->getSentMIMEMessage(), 'Hans 22 ist Super 33') !== false);
+    public function testSettingsAreLoadedIfNot() {
+        $s = new \PMRAtk\Data\Setting(self::$app->db);
+        $s->set('ident', 'RERERERE');
+        $s->set('value', 'PIRIDI');
+        self::$app->addSetting($s);
+        //adding a setting causes reload
+        self::assertEquals('PIRIDI', self::$app->getSetting('RERERERE'));
+    }
+
+
+    /*
+     *
+     */
+    public function testGetNonExistantSetting() {
+        self::assertNull(self::$app->getSetting('SOMENONEXISTANTSETTING'));
+    }
+
+
+    /*
+     *
+     */
+    public function testGetSTDSettings() {
+        $s = new \PMRAtk\Data\Setting(self::$app->db);
+        $s->set('ident', 'STD_NAME');
+        $s->set('value', 'HALLOHALLO');
+        self::$app->addSetting($s);
+        $s = new \PMRAtk\Data\Setting(self::$app->db);
+        $s->set('ident', 'SOMENONSTDSETTING');
+        $s->set('value', 'PIRIDA');
+        self::$app->addSetting($s);
+        $std = self::$app->getAllSTDSettings();
+        self::assertArrayHasKey('STD_NAME', $std);
+        self::assertArrayNotHasKey('SOMENONSTDSETTING', $std);
     }
 }

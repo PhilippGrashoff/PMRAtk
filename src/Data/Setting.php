@@ -20,11 +20,13 @@ class Setting extends BaseModel {
             ['name',         'type' => 'string'],
             ['description',  'type' => 'text'],
             ['system',       'type' => 'integer', 'system' => true],
-            ['category',     'type' => 'string'],
             ['value',        'type' => 'string'],
         ]);
 
+        $this->hasOne('setting_group_id', [SettingGroup::class, 'type' => 'integer'])
+              ->addFields(['setting_group_name' => ['name', 'type' => 'string']]);
+
         //encrypt value field
-        $this->encryptField($this->getField('value'), $this->app->getSetting('ENCRYPTFIELD_KEY'));
+        $this->encryptField($this->getField('value'), ENCRYPTFIELD_KEY);
     }
 }
