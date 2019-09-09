@@ -22,7 +22,7 @@ class App extends \atk4\ui\App {
     public $userRolesMaySeeThisPage = [];
 
     //most settings are now stored in database. The Settings are loaded once and stored in _settings array
-    private $_settings = [];
+    protected $_settings = [];
     protected $_settingsLoaded = false;
 
     //models which are requested often during a single script can be loaded once in here and re-used. Make sure its
@@ -255,7 +255,7 @@ class App extends \atk4\ui\App {
     /*
      *
      */
-    private function _loadSettings() {
+    protected function _loadSettings() {
         if($this->_settingsLoaded) {
             return;
         }
