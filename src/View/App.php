@@ -241,6 +241,12 @@ class App extends \atk4\ui\App {
         if(isset($this->_settings[$ident])) {
             return $this->_settings[$ident];
         }
+        elseif(isset($_ENV[$ident])) {
+            return $_ENV[$ident];
+        }
+        elseif(defined($ident)) {
+            return constant($ident);
+        }
 
         return null;
     }

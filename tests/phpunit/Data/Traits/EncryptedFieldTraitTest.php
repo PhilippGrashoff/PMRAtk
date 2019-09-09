@@ -1,6 +1,6 @@
 <?php
 
-namespace PMRAtk\tests\phpunit\Traits\Data;
+namespace PMRAtk\tests\phpunit\Data\Traits;
 
 
 class EmailWithEncryptedField extends \PMRAtk\Data\Email {
@@ -9,7 +9,7 @@ class EmailWithEncryptedField extends \PMRAtk\Data\Email {
 
     public function init() {
         parent::init();
-        $this->encryptField($this->getField('value'), $this->app->getSetting('ENCRYPTFIELD_KEY'));
+        $this->encryptField($this->getField('value'), ENCRYPTFIELD_KEY);
     }
 }
 

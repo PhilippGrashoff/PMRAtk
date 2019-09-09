@@ -240,6 +240,6 @@ class File extends SecondaryBaseModel {
      * @return string
      */
     public function getLink() {
-        return $this->app->getSetting('URL_BASE_PATH').$this->get('path').$this->get('value');
+        return URL_BASE_PATH.$this->get('path').$this->get('value');
     }
 }
