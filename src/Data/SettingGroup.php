@@ -14,7 +14,7 @@ class SettingGroup extends BaseModel {
 
         $this->addFields([
             ['name',         'type' => 'string'],
-            ['desc',         'type' => 'text'],
+            ['description',  'type' => 'text'],
             ['order',        'type' => 'integer'],
         ]);
 
