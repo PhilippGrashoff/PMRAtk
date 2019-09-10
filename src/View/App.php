@@ -291,6 +291,18 @@ class App extends \atk4\ui\App {
 
 
     /*
+     *
+     */
+    public function settingExists(string $ident):bool {
+        $this->_loadSettings();
+        if(array_key_exists($ident, $this->_settings)) {
+            return true;
+        }
+        return false;
+    }
+
+
+    /*
      * For "installers": Add a setting if it does not exist yet
      */
     public function addSetting(\PMRAtk\Data\Setting $s) {
