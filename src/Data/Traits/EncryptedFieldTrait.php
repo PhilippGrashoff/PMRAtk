@@ -16,6 +16,9 @@ trait EncryptedFieldTrait {
     public function encryptField(\atk4\data\Field $field, string $key) {
         $field->typecast = [
             function($value, $field, $persistence) use ($key) {
+                if($value === null) {
+                    $value = '';
+                }
                 $nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
                 $cipher = base64_encode($nonce.sodium_crypto_secretbox($value, $nonce, $key));
                 sodium_memzero($value);
