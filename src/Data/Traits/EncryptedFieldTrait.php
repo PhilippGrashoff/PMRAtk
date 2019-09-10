@@ -16,6 +16,11 @@ trait EncryptedFieldTrait {
     public function encryptField(\atk4\data\Field $field, string $key) {
         $field->typecast = [
             function($value, $field, $persistence) use ($key) {
+                //hack until https://github.com/atk4/ui/issues/798 is resolved
+                if($persistence instanceof \atk4\ui\Persistence\UI) {
+                    return $value;
+                }
+                //sodium needs string
                 if($value === null) {
                     $value = '';
                 }
