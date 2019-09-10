@@ -9,6 +9,7 @@ class SettingGroupTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function testInit() {
         $s = new \PMRAtk\Data\SettingGroup(self::$app->db);
+        $s->save();
         $this->assertTrue(true);
     }
 }
