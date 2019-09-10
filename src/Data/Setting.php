@@ -16,7 +16,7 @@ class Setting extends BaseModel {
         parent::init();
 
         $this->addFields([
-            ['ident',        'type' => 'string',     'caption' => 'Schlüssel', 'ui' => ['editable' => false]],
+            ['ident',        'type' => 'string',     'caption' => 'Schlüssel', 'ui' => ['visible' => true, 'editable' => false]],
             ['name',         'type' => 'string'],
             ['description',  'type' => 'text',       'caption' => 'Beschreibung'],
             ['system',       'type' => 'integer',    'system' => true],
