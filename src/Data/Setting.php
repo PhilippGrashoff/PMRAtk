@@ -16,14 +16,14 @@ class Setting extends BaseModel {
         parent::init();
 
         $this->addFields([
-            ['ident',        'type' => 'string',     'caption' => 'Schlüssel', 'ui' => ['visible' => true, 'editable' => false]],
+            ['ident',        'type' => 'string',     'caption' => 'Schlüssel', 'ui' => ['readonly' => true]],
             ['name',         'type' => 'string'],
             ['description',  'type' => 'text',       'caption' => 'Beschreibung'],
             ['system',       'type' => 'integer',    'system' => true],
             ['value',        'type' => 'string',     'caption' => 'Wert'],
         ]);
 
-        $this->hasOne('setting_group_id', [SettingGroup::class, 'type' => 'integer', 'ui' => ['form' => ['DropDown']]])
+        $this->hasOne('setting_group_id', [SettingGroup::class, 'type' => 'integer', 'system' => true, 'ui' => ['form' => ['DropDown']]])
               ->addFields(['setting_group_name' => ['name', 'type' => 'string', 'system' => true]]);
 
         //encrypt value field
