@@ -1,8 +1,8 @@
 <?php
 
-class SettingNoDecrypt extends \PMRAtk\Data\BaseModel {
+class EANoDecrypt extends \PMRAtk\Data\BaseModel {
 
-    public $table = 'setting';
+    public $table = 'email_account';
 
 
     public function init()
@@ -10,11 +10,7 @@ class SettingNoDecrypt extends \PMRAtk\Data\BaseModel {
         parent::init();
 
         $this->addFields([
-            ['ident', 'type' => 'string'],
-            ['name', 'type' => 'string'],
-            ['description', 'type' => 'text'],
-            ['system', 'type' => 'integer', 'system' => true],
-            ['value', 'type' => 'string'],
+            ['credentials', 'type' => 'string'],
         ]);
     }
 }
@@ -36,13 +32,11 @@ class EmailAccountTest extends \PMRAtk\tests\phpunit\TestCase {
         $ea->save();
 
         //check if its encrypted by using normal setting
-        $setting = new SettingNoDecrypt(self::$app->db);
-
+        $setting = new EANoDecrypt(self::$app->db);
         $setting->load($ea->id);
-        
         //if encrypted, it shouldnt be unserializable
-        $this->assertFalse(@unserialize($setting->get('value')));
-
+        $this->assertFalse(@unserialize($setting->get('credentials')));
+        self::assertFalse(strpos($setting->get('credentials'), 'some1'));
 
         $ea2 = new \PMRAtk\Data\Email\EmailAccount(self::$app->db);
         $ea2->load($ea->id);

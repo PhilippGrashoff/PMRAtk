@@ -265,6 +265,21 @@ CREATE TABLE IF NOT EXISTS `base_email`
     COLLATE = latin1_german1_ci;
 
 
+CREATE TABLE IF NOT EXISTS `email_account`
+(
+    `id`              INT  NOT NULL AUTO_INCREMENT,
+    `email_address`   VARCHAR(255) NULL,
+    `details`         TEXT NULL,
+    `credentials`     TEXT NULL,
+    `last_updated`    DATETIME     NULL,
+    `created_date`    DATETIME     NULL,
+    PRIMARY KEY (`id`)
+)
+    ENGINE = InnoDB
+    DEFAULT CHARACTER SET = latin1
+    COLLATE = latin1_german1_ci;
+
+
 CREATE TABLE IF NOT EXISTS `email_recipient`
 (
     `id`            INT          NOT NULL AUTO_INCREMENT,
