@@ -14,7 +14,7 @@ class EmailAccount extends \PMRAtk\Data\BaseModel {
     public function init() {
         parent::init();
         $this->addFields([
-            ['email_address', 'type' => 'string', 'caption' => 'Email-Adresse'],
+            ['name',          'type' => 'string', 'caption' => 'Email-Adresse'],
             ['details',       'type' => 'text'],
             ['credentials',   'type' => 'text',   'system' => true],
             ['user',          'type' => 'string', 'caption' => 'Benutzername', 'never_persist' => true],

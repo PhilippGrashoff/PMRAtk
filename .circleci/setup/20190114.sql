@@ -268,7 +268,7 @@ CREATE TABLE IF NOT EXISTS `base_email`
 CREATE TABLE IF NOT EXISTS `email_account`
 (
     `id`              INT  NOT NULL AUTO_INCREMENT,
-    `email_address`   VARCHAR(255) NULL,
+    `name`            VARCHAR(255) NULL,
     `details`         TEXT NULL,
     `credentials`     TEXT NULL,
     `last_updated`    DATETIME     NULL,
