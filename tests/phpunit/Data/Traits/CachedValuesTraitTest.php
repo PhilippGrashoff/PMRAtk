@@ -36,4 +36,15 @@ class CachedValuesTraitTest extends \PMRAtk\tests\phpunit\TestCase {
         $app = new CVTestApp(['nologin'], ['always_run' => false]);
         $this->assertEquals('hamma', $app->getCachedValue('HAKIRILI', function() {return 'hamma';}));
     }
+
+
+    /*
+     *
+     */
+    public function testSetCachedValueTwiceDoesNotCauseException() {
+        $app = new CVTestApp(['nologin'], ['always_run' => false]);
+        $this->assertEquals('hamma', $app->getCachedValue('HAKIRILI', function() {return 'hamma';}));
+        $app->setCachedValue('HAKIRILI', 'Mausi');
+        self::assertEquals('Mausi', $app->getCachedValue('HAKIRILI', function() {return 'hamma';}));
+    }
 }

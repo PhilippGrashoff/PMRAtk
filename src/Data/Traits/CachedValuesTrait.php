@@ -25,26 +25,24 @@ trait CachedValuesTrait {
             $this->_cachedValuesLoaded = true;
         }
 
+        //not set? create
+        if(!isset($this->_cachedValues[$ident])) {
+            $this->setCachedValue($ident, $value);
+            return $this->_cachedValues[$ident]->get('value');
+        }
         //if a timeout is defined
         if($timeout > 0) {
-            if(isset($this->_cachedValues[$ident])
-            && $this->_cachedValues[$ident]->get('last_updated') >= (new \DateTime())->modify('-'.$timeout.' Seconds')) {
+            //still good?
+            if($this->_cachedValues[$ident]->get('last_updated') >= (new \DateTime())->modify('-'.$timeout.' Seconds')) {
                 return $this->_cachedValues[$ident]->get('value');
             }
+            //recalculate
             else {
                 $this->setCachedValue($ident, $value);
                 return $this->_cachedValues[$ident]->get('value');
             }
         }
-
-        //just return value if available
-        elseif(isset($this->_cachedValues[$ident])) {
-            return $this->_cachedValues[$ident]->get('value');
-        }
-
-        //if not found, use passed value (usually a callable) to set that value
         else {
-            $this->setCachedValue($ident, $value);
             return $this->_cachedValues[$ident]->get('value');
         }
     }
@@ -58,6 +56,7 @@ trait CachedValuesTrait {
             $value = call_user_func($value);
         }
         $s = new \PMRAtk\Data\CachedValue($this->db);
+        $s->tryLoadBy('ident', $ident);
         $s->set('ident', $ident);
         $s->set('value', $value);
         $s->save();
