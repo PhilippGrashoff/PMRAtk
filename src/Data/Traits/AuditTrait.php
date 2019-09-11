@@ -13,6 +13,16 @@ trait AuditTrait {
                 return (new \PMRAtk\Data\Audit($this->persistence, ['parentObject' => $this]))->addCondition('model_class', get_class($this));
             },
             'their_field' => 'model_id']);
+        
+        //after save, create Audit
+        $this->addHook('afterSave', function($m, $is_update) {
+            $m->createAudit($is_update ? 'CHANGE' : 'CREATE');
+        });
+
+        //after delete, create Audit
+        $this->addHook('afterDelete', function($m) {
+            $m->createDeleteAudit();
+        });
     }
 
 
