@@ -17,12 +17,12 @@ class EmailAccount extends \PMRAtk\Data\BaseModel {
             ['name',          'type' => 'string', 'caption' => 'Email-Adresse'],
             ['details',       'type' => 'text'],
             ['credentials',   'type' => 'text',   'system' => true],
-            ['user',          'type' => 'string', 'caption' => 'Benutzername', 'never_persist' => true],
-            ['password',      'type' => 'string', 'caption' => 'Passwort',     'never_persist' => true],
-            ['imap_host',     'type' => 'string', 'caption' => 'IMAP Host',    'never_persist' => true],
-            ['imap_port',     'type' => 'string', 'caption' => 'IMAP Port',    'never_persist' => true],
-            ['smtp_host',     'type' => 'string', 'caption' => 'SMTP Host',    'never_persist' => true],
-            ['smtp_port',     'type' => 'string', 'caption' => 'SMTP Port',    'never_persist' => true],
+            ['user',          'type' => 'string', 'caption' => 'Benutzername', 'never_persist' => true, 'ui' => ['editable' => true]],
+            ['password',      'type' => 'string', 'caption' => 'Passwort',     'never_persist' => true, 'ui' => ['editable' => true]],
+            ['imap_host',     'type' => 'string', 'caption' => 'IMAP Host',    'never_persist' => true, 'ui' => ['editable' => true]],
+            ['imap_port',     'type' => 'string', 'caption' => 'IMAP Port',    'never_persist' => true, 'ui' => ['editable' => true]],
+            ['smtp_host',     'type' => 'string', 'caption' => 'SMTP Host',    'never_persist' => true, 'ui' => ['editable' => true]],
+            ['smtp_port',     'type' => 'string', 'caption' => 'SMTP Port',    'never_persist' => true, 'ui' => ['editable' => true]],
         ]);
 
         $this->encryptField($this->getField('credentials'), ENCRYPTFIELD_KEY);
