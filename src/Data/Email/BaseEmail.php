@@ -401,7 +401,7 @@ class BaseEmail extends \atk4\data\Model {
                     $this->app->addUserMessage('Die Email '.$this->phpMailer->Subject.' wurde erfolgreich an '.$r->get('email').' versendet.', 'success');
                 }
                 //add Email to IMAP Sent Folder
-                $this->phpMailer->w();
+                $this->phpMailer->addSentEmailByIMAP();
             }
 
             //clear recipient after each Email
