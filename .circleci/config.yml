@@ -77,6 +77,9 @@ jobs:
             echo "\define('EMAIL_PORT',          '$TEST_EMAIL_PORT');" >> config_local.php
             echo "\define('EMAIL_USERNAME',      '$TEST_EMAIL_USERNAME');" >> config_local.php
             echo "\define('EMAIL_PASSWORD',      '$TEST_EMAIL_PASSWORD');" >> config_local.php
+            echo "\define('IMAP_HOST',           '$TEST_IMAP_HOST');" >> config_local.php
+            echo "\define('IMAP_PORT',           '$TEST_IMAP_PORT');" >> config_local.php
+            echo "\define('IMAP_SENT_FOLDER',    '$TEST_IMAP_SENT_FOLDER');" >> config_local.php
             echo "\define('IMAP_PATH_SENT_MAIL', '$TEST_IMAP_PATH_SENT_MAIL');" >> config_local.php
 
 
