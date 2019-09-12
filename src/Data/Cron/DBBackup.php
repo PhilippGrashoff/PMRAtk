@@ -24,6 +24,5 @@ class DBBackup extends BaseCronJob {
         if($return_var !== 0) {
             throw new \atk4\data\Exception('The DB Backup File could not be gzipped (exit code '.$return_var.'): '.implode(PHP_EOL, $output)); // @codeCoverageIgnore
         }
-        var_dump($sql_file);
     }
 }

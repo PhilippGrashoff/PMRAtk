@@ -34,7 +34,6 @@ trait CachedValuesTrait {
         if($timeout > 0) {
             //still good?
             if($this->_cachedValues[$ident]->get('last_updated') >= (new \DateTime())->modify('-'.$timeout.' Seconds')) {
-                var_dump('STILL GOOD');
                 return $this->_cachedValues[$ident]->get('value');
             }
             //recalculate
