@@ -93,4 +93,19 @@ class PHPMailer extends \PHPMailer\PHPMailer\PHPMailer {
             throw new \atk4\core\Exception('No EmailAccount to send from found!');
         }
     }
+
+
+    /*
+     * add Email to IMAP if set
+     * TODO: Find some nice Lib for this
+     * TODO: See if IMAP is configured, only then do so
+     */
+    public function addSentEmailByIMAP() {
+        $imapStream = imap_open(
+            '{'.$this->emailAccount->get('imap_host').':'.$this->emailAccount->get('imap_port').'/imap/ssl}'.$this->emailAccount->get('imap_sent_folder'),
+            $this->emailAccount->get('user'),
+            $this->emailAccount->get('password'));
+        $result = imap_append($imapStream, $this->emailAccount->get('IMAP_PATH_SENT_MAIL'), $this->getSentMIMEMessage());
+        imap_close($imapStream);
+    }
 }

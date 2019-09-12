@@ -401,7 +401,7 @@ class BaseEmail extends \atk4\data\Model {
                     $this->app->addUserMessage('Die Email '.$this->phpMailer->Subject.' wurde erfolgreich an '.$r->get('email').' versendet.', 'success');
                 }
                 //add Email to IMAP Sent Folder
-                $this->_addToIMAP($this->phpMailer->getSentMIMEMessage());
+                $this->phpMailer->w();
             }
 
             //clear recipient after each Email
@@ -419,21 +419,6 @@ class BaseEmail extends \atk4\data\Model {
         $this->delete();
 
         return $successful_send;
-    }
-
-
-    /*
-     * add Email to IMAP if set
-     * TODO: Find some nice Lib for this
-     * TODO: See if IMAP is configured, only then do so
-     */
-    protected function _addToIMAP(string $sent_message) {
-        $imapStream = imap_open(
-            $this->app->getSetting('IMAP_PATH_SENT_MAIL'),
-            $this->app->getSetting('EMAIL_USERNAME'),
-            $this->app->getSetting('EMAIL_PASSWORD'));
-        $result = imap_append($imapStream, $this->app->getSetting('IMAP_PATH_SENT_MAIL'), $sent_message);
-        imap_close($imapStream);
     }
 
 
