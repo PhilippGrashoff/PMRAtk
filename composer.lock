@@ -125,12 +125,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/atk4/data.git",
-                "reference": "328a258c880bc5ca3da0d70abb978e4614f3dbed"
+                "reference": "df871683c08c3c9c19d1d31895c145220240f218"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/atk4/data/zipball/328a258c880bc5ca3da0d70abb978e4614f3dbed",
-                "reference": "328a258c880bc5ca3da0d70abb978e4614f3dbed",
+                "url": "https://api.github.com/repos/atk4/data/zipball/df871683c08c3c9c19d1d31895c145220240f218",
+                "reference": "df871683c08c3c9c19d1d31895c145220240f218",
                 "shasum": ""
             },
             "require": {
@@ -177,7 +177,7 @@
                 "query",
                 "sql"
             ],
-            "time": "2019-08-28T10:21:17+00:00"
+            "time": "2019-09-11T18:01:58+00:00"
         },
         {
             "name": "atk4/dsql",
@@ -450,16 +450,16 @@
         },
         {
             "name": "league/period",
-            "version": "4.8.1",
+            "version": "4.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/period.git",
-                "reference": "f785c498aba8f0f6afded2979c5e3c25439dbfc8"
+                "reference": "b30d2cb474939beaeae8b45ea5aac0edd3ffbf78"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/period/zipball/f785c498aba8f0f6afded2979c5e3c25439dbfc8",
-                "reference": "f785c498aba8f0f6afded2979c5e3c25439dbfc8",
+                "url": "https://api.github.com/repos/thephpleague/period/zipball/b30d2cb474939beaeae8b45ea5aac0edd3ffbf78",
+                "reference": "b30d2cb474939beaeae8b45ea5aac0edd3ffbf78",
                 "shasum": ""
             },
             "require": {
@@ -496,9 +496,9 @@
             "authors": [
                 {
                     "name": "Ignace Nyamagana Butera",
-                    "role": "Developer",
                     "email": "nyamsprod@gmail.com",
-                    "homepage": "https://github.com/nyamsprod/"
+                    "homepage": "https://github.com/nyamsprod/",
+                    "role": "Developer"
                 }
             ],
             "description": "Time range API for PHP",
@@ -522,7 +522,7 @@
                 "timeline",
                 "unions"
             ],
-            "time": "2019-07-16T10:13:34+00:00"
+            "time": "2019-09-02T06:27:10+00:00"
         },
         {
             "name": "php-curl-class/php-curl-class",
@@ -972,16 +972,16 @@
         },
         {
             "name": "zendframework/zend-loader",
-            "version": "2.6.0",
+            "version": "2.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-loader.git",
-                "reference": "78f11749ea340f6ca316bca5958eef80b38f9b6c"
+                "reference": "91da574d29b58547385b2298c020b257310898c6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-loader/zipball/78f11749ea340f6ca316bca5958eef80b38f9b6c",
-                "reference": "78f11749ea340f6ca316bca5958eef80b38f9b6c",
+                "url": "https://api.github.com/repos/zendframework/zend-loader/zipball/91da574d29b58547385b2298c020b257310898c6",
+                "reference": "91da574d29b58547385b2298c020b257310898c6",
                 "shasum": ""
             },
             "require": {
@@ -1013,7 +1013,7 @@
                 "loader",
                 "zf"
             ],
-            "time": "2018-04-30T15:20:54+00:00"
+            "time": "2019-09-04T19:38:14+00:00"
         },
         {
             "name": "zendframework/zend-mail",

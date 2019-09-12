@@ -27,7 +27,7 @@ class CachedValueTest extends \PMRAtk\tests\phpunit\TestCase {
         $s->set('ident', 'LALA');
         $s->set('value', '2');
         $s->save();
-    
+
         $this->assertEquals($initial_count + 1, (new \PMRAtk\Data\CachedValue(self::$app->db))->action('count')->getOne());
     }
 }
