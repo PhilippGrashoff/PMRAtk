@@ -23,25 +23,11 @@ class CachedValueTest extends \PMRAtk\tests\phpunit\TestCase {
         $s->set('value', '1');
         $s->save();
 
-        $this->commit();
-        try {
-            $s->save();
-        }
-        catch(\Exception $e) {
-            echo $e->getColorfulText();
-        }
-
         $s = new \PMRAtk\Data\CachedValue(self::$app->db);
         $s->set('ident', 'LALA');
         $s->set('value', '2');
         $s->save();
-        try {
-            $s->save();
-        }
-        catch(\Exception $e) {
-            echo $e->getColorfulText();
-        }
-
+    
         $this->assertEquals($initial_count + 1, (new \PMRAtk\Data\CachedValue(self::$app->db))->action('count')->getOne());
     }
 }
