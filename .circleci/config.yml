@@ -24,6 +24,7 @@ jobs:
       - run: sudo cp /home/circleci/repo/.circleci/config_local.php /home/circleci/repo/
 
       #install php extensions needed
+      - run: sudo apt update
       - run: sudo apt install -y libpng-dev
       - run: sudo docker-php-ext-install gd
         #needed for imap install
