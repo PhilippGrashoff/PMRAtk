@@ -38,6 +38,7 @@ class BaseCronJobTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testSuccessfulCronJob() {
+        $this->_addStandardEmailAccount();
         $c = new SampleCronJob(self::$app, ['addAdminToSuccessEmail' => true]);
         //App has a userMessage set
         $this->assertTrue($c->successful);
@@ -49,6 +50,7 @@ class BaseCronJobTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testExceptionCronJob() {
+        $this->_addStandardEmailAccount();
         $c = new SampleExceptionCronJob(self::$app, ['addAdminToSuccessEmail' => true]);
         //an email was sent
         $this->assertFalse($c->successful);
@@ -59,6 +61,7 @@ class BaseCronJobTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testExceptionNoExecuteImplemented() {
+        $this->_addStandardEmailAccount();
         $this->expectException(\atk4\data\Exception::class);
         $c = new DoesNotImplementExecuteCronJob(self::$app, ['addAdminToSuccessEmail' => true]);
     }
@@ -68,6 +71,7 @@ class BaseCronJobTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testNoEmailOnNoSuccessMessage() {
+        $this->_addStandardEmailAccount();
         self::$app->userMessages = [];
         $c = new NoMessageNoSuccessEmail(self::$app);
         $this->assertTrue($c->successful);
@@ -79,6 +83,7 @@ class BaseCronJobTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testNoRecipientNoSuccessMessage() {
+        $this->_addStandardEmailAccount();
         self::$app->userMessages[] = ['message' => 'Duggu', 'class' => 'error'];
         $c = new NoMessageNoSuccessEmail(self::$app);
         $this->assertTrue($c->successful);
@@ -90,6 +95,7 @@ class BaseCronJobTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testGetName() {
+        $this->_addStandardEmailAccount();
         $c = new SampleCronJob(self::$app);
         $this->assertEquals('TestName', $c->getName());
         $c = new NoMessageNoSuccessEmail(self::$app);

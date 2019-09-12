@@ -6,6 +6,7 @@ class DBBackupCronTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testCron() {
+        $this->_addStandardEmailAccount();
         $c = new \PMRAtk\Data\Cron\DBBackup(self::$app);
         //backup file should be there
         $sqlgzfilefound = false;

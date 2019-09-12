@@ -269,6 +269,7 @@ CREATE TABLE IF NOT EXISTS `email_account`
 (
     `id`              INT  NOT NULL AUTO_INCREMENT,
     `name`            VARCHAR(255) NULL,
+    `sender_name`     VARCHAR(255) NULL,
     `details`         TEXT NULL,
     `credentials`     TEXT NULL,
     `last_updated`    DATETIME     NULL,

@@ -15,9 +15,6 @@ define('DB_PASSWORD',         'test');
 //Subdomain + Domain
 define('URL_BASE_PATH',       'http://localhost:8080/');
 
-//email sending
-//TODO: Move To DB!
-
 //testing
 define('TEST_DATEFORMAT',     'us');
 

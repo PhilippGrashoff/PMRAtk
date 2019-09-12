@@ -14,15 +14,17 @@ class EmailAccount extends \PMRAtk\Data\BaseModel {
     public function init() {
         parent::init();
         $this->addFields([
-            ['name',          'type' => 'string', 'caption' => 'Email-Adresse'],
-            ['details',       'type' => 'text'],
-            ['credentials',   'type' => 'text',   'system' => true],
-            ['user',          'type' => 'string', 'caption' => 'Benutzername', 'never_persist' => true, 'ui' => ['editable' => true]],
-            ['password',      'type' => 'string', 'caption' => 'Passwort',     'never_persist' => true, 'ui' => ['editable' => true]],
-            ['imap_host',     'type' => 'string', 'caption' => 'IMAP Host',    'never_persist' => true, 'ui' => ['editable' => true]],
-            ['imap_port',     'type' => 'string', 'caption' => 'IMAP Port',    'never_persist' => true, 'ui' => ['editable' => true]],
-            ['smtp_host',     'type' => 'string', 'caption' => 'SMTP Host',    'never_persist' => true, 'ui' => ['editable' => true]],
-            ['smtp_port',     'type' => 'string', 'caption' => 'SMTP Port',    'never_persist' => true, 'ui' => ['editable' => true]],
+            ['name',             'type' => 'string', 'caption' => 'Email-Adresse'],
+            ['sender_name',      'type' => 'string', 'caption' => 'Name des Versenders'],
+            ['details',          'type' => 'text'],
+            ['credentials',      'type' => 'text',   'system' => true],
+            ['user',             'type' => 'string', 'caption' => 'Benutzername',          'never_persist' => true, 'ui' => ['editable' => true]],
+            ['password',         'type' => 'string', 'caption' => 'Passwort',              'never_persist' => true, 'ui' => ['editable' => true]],
+            ['imap_host',        'type' => 'string', 'caption' => 'IMAP Host',             'never_persist' => true, 'ui' => ['editable' => true]],
+            ['imap_port',        'type' => 'string', 'caption' => 'IMAP Port',             'never_persist' => true, 'ui' => ['editable' => true]],
+            ['imap_sent_folder', 'type' => 'string', 'caption' => 'IMAP: Gesendet-Ordner', 'never_persist' => true, 'ui' => ['editable' => true]],
+            ['smtp_host',        'type' => 'string', 'caption' => 'SMTP Host',             'never_persist' => true, 'ui' => ['editable' => true]],
+            ['smtp_port',        'type' => 'string', 'caption' => 'SMTP Port',             'never_persist' => true, 'ui' => ['editable' => true]],
         ]);
 
         $this->encryptField($this->getField('credentials'), ENCRYPTFIELD_KEY);

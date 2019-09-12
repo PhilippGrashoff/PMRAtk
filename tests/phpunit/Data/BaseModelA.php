@@ -33,15 +33,6 @@ class BaseModelA extends \PMRAtk\Data\BaseModel {
         $this->hasMany('MToMModel', new MToMModel());
 
         $this->hasOne('BaseModelB_id', new BaseModelB());
-
-        //after save, create Audit
-        $this->addHook('afterSave', function($m, $is_update) {
-            $m->createAudit($is_update ? 'CHANGE' : 'CREATE');
-        });
-        //after delete, create Audit
-        $this->addHook('afterDelete', function($m) {
-            $m->createDeleteAudit();
-        });
     }
 
 

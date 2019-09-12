@@ -156,4 +156,22 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase {
         $_ENV['TEST_EMAIL_UUID'] = uniqid();
         return $_ENV['TEST_EMAIL_UUID'];
     }
+
+
+    /*
+     *
+     */
+    protected function _addStandardEmailAccount() {
+        $ea = new \PMRAtk\Data\Email\EmailAccount(self::$app->db);
+        $ea->set('name',        STD_EMAIL);
+        $ea->set('sender_name', STD_EMAIL_NAME);
+        $ea->set('user',        EMAIL_USERNAME);
+        $ea->set('password',    EMAIL_PASSWORD);
+        $ea->set('smtp_host',   EMAIL_HOST);
+        $ea->set('smtp_port',   EMAIL_PORT);
+        $ea->set('imap_host',   IMAP_HOST);
+        $ea->set('imap_port',   IMAP_PORT);
+        $ea->set('imap_sent_folder', IMAP_SENT_FOLDER);
+        $ea->save();
+    }
 }

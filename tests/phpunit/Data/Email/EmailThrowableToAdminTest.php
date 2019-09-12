@@ -23,6 +23,7 @@ class EmailThrowableToAdminTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testNewPHPMailer() {
+        $this->_addStandardEmailAccount();
         $tt = new ThrowableTest();
         $tt->app = self::$app;
         $this->assertFalse($tt->throwThat());

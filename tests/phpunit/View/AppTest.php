@@ -263,6 +263,7 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testSendEmailToAdmin() {
+        $this->_addStandardEmailAccount();
         $s = new \PMRAtk\Data\Setting(self::$app->db);
         $s->set('ident', 'STD_EMAIL');
         $s->set('value', 'test2@easyoutdooroffice.com');

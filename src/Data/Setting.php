@@ -20,7 +20,8 @@ class Setting extends BaseModel {
             ['name',         'type' => 'string'],
             ['description',  'type' => 'text',       'caption' => 'Beschreibung'],
             ['system',       'type' => 'integer',    'system' => true],
-            ['value',        'type' => 'string',     'caption' => 'Wert'],
+            //system = true to prevent audit
+            ['value',        'type' => 'string',     'system' => true, 'caption' => 'Wert', 'ui' => ['editable' => true]],
         ]);
 
         $this->hasOne('setting_group_id', [SettingGroup::class, 'type' => 'integer', 'system' => true, 'ui' => ['form' => ['DropDown']]])

@@ -125,6 +125,7 @@ class UserTest extends \PMRAtk\tests\phpunit\TestCase {
      * test sending of password reset email
      */
     public function testsendResetPasswordEmail() {
+        $this->_addStandardEmailAccount();
         $c = new \PMRAtk\Data\User(self::$app->db);
 
         //unexisting username should throw exception
