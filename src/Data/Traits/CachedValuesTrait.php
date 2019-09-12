@@ -34,6 +34,7 @@ trait CachedValuesTrait {
         if($timeout > 0) {
             //still good?
             if($this->_cachedValues[$ident]->get('last_updated') >= (new \DateTime())->modify('-'.$timeout.' Seconds')) {
+                var_dump('STILL GOOD');
                 return $this->_cachedValues[$ident]->get('value');
             }
             //recalculate
@@ -56,7 +57,6 @@ trait CachedValuesTrait {
             $value = call_user_func($value);
         }
         $s = new \PMRAtk\Data\CachedValue($this->db);
-        $s->tryLoadBy('ident', $ident);
         $s->set('ident', $ident);
         $s->set('value', $value);
         $s->save();

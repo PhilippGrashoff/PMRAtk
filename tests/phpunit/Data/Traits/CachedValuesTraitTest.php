@@ -47,4 +47,5 @@ class CachedValuesTraitTest extends \PMRAtk\tests\phpunit\TestCase {
         $app->setCachedValue('HAKIRILI', 'Mausi');
         self::assertEquals('Mausi', $app->getCachedValue('HAKIRILI', function() {return 'hamma';}));
     }
+    /**/
 }
