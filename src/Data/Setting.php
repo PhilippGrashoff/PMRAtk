@@ -30,9 +30,17 @@ class Setting extends BaseModel {
         //encrypt value field
         $this->encryptField($this->getField('value'), ENCRYPTFIELD_KEY);
 
+        //system settings cannot be deleted
         $this->addHook('beforeDelete', function($m) {
-            if($this->get('system')) {
+            if($m->get('system')) {
                 throw new \PMRAtk\Data\UserException('Diese Einstellung ist eine Systemeinstellung und kann nicht gelöscht werden.');
+            }
+        });
+
+        //ident of system setting cannot be edited if set
+        $this->addHook('afterLoad', function($m) {
+            if($m->get('system') && $m->get('ident')) {
+                $m->getField('ident')->read_only = true;
             }
         });
     }
