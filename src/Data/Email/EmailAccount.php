@@ -42,12 +42,13 @@ class EmailAccount extends \PMRAtk\Data\BaseModel {
         //before save, serialize value field
         $this->addHook('beforeSave', function($m) {
             $a = [
-                'user'          => $m->get('user'),
-                'password'      => $m->get('password'),
-                'imap_host'     => $m->get('imap_host'),
-                'imap_port'     => $m->get('imap_port'),
-                'smtp_host'     => $m->get('smtp_host'),
-                'smtp_port'     => $m->get('smtp_port'),
+                'user'             => $m->get('user'),
+                'password'         => $m->get('password'),
+                'imap_host'        => $m->get('imap_host'),
+                'imap_port'        => $m->get('imap_port'),
+                'imap_sent_folder' => $m->get('imap_sent_folder'),
+                'smtp_host'        => $m->get('smtp_host'),
+                'smtp_port'        => $m->get('smtp_port'),
             ];
 
             $m->set('credentials', serialize($a));
