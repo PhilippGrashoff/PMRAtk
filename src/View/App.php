@@ -315,6 +315,16 @@ class App extends \atk4\ui\App {
 
 
     /*
+     * Can be used to overwrite a setting, mostly for tests
+     */
+    public function setSetting(\PMRAtk\Data\Setting $s) {
+        $s->save();
+        $this->_settingsLoaded = false;
+        $this->_loadSettings();
+    }
+
+
+    /*
      * get a cached model. Cached means within the same request. If Model
      * wanst cached yet, load, else return cached value
      */

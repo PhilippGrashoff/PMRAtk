@@ -338,4 +338,16 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
         self::assertArrayHasKey('STD_NAME', $std);
         self::assertArrayNotHasKey('SOMENONSTDSETTING', $std);
     }
+
+
+    /*
+     *
+     */
+    public function testSetSetting() {
+        $s = new \PMRAtk\Data\Setting(self::$app->db);
+        $s->set('ident', 'STD_NAME');
+        $s->set('value', 'HALLOHALLOHALLOHALLO');
+        self::$app->setSetting($s);
+        self::assertEquals('HALLOHALLOHALLOHALLO', self::$app->getSetting('STD_NAME'));
+    }
 }
