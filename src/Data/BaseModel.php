@@ -23,7 +23,9 @@ class BaseModel extends \atk4\data\Model {
 
         //save created date
         $this->addHook('beforeInsert', function($m, &$data) {
-            $data['created_date'] = new \DateTime();
+            if(!$data['created_date']) {
+                $data['created_date'] = new \DateTime();
+            }
         });
 
         //save last_updated on update
