@@ -20,7 +20,8 @@ class Audit extends SecondaryBaseModel {
 
         //if the model also has a field created_by_name (Audit models), fill in the current name of the admin user.
         $this->addHook('beforeInsert', function($m, &$data) {
-            if(isset($m->app->auth->user)) {
+            if(isset($m->app->auth->user)
+                && $m->app->auth->user->loaded()) {
                 $data['created_by_name'] = $m->app->auth->user->get('name');
                 $data['created_by'] = $m->app->auth->user->get('id');
             }
