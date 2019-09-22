@@ -174,4 +174,18 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase {
         $ea->set('imap_sent_folder', IMAP_SENT_FOLDER);
         $ea->save();
     }
+
+
+    /*
+     * helper to delete settings, also system settings by using dummy class
+     */
+    protected function _removeSettings(array $names) {
+        foreach($names as $name) {
+            $setting = new \PMRAtk\tests\phpunit\DeleteSetting(self::$app->db);
+            $setting->tryLoadBy('ident');
+            if($setting->loaded()) {
+                $setting->delete();
+            }
+        }
+    }
 }
