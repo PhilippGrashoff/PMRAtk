@@ -270,6 +270,7 @@ class App extends \atk4\ui\App {
      * Force reload of settings
      */
     public function unloadSettings() {
+        $this->_settings = [];
         $this->_settingsLoaded = false;
     }
 
