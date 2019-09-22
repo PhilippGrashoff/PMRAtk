@@ -182,7 +182,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase {
     protected function _removeSettings(array $names) {
         foreach($names as $name) {
             $setting = new \PMRAtk\tests\phpunit\DeleteSetting(self::$app->db);
-            $setting->tryLoadBy('ident');
+            $setting->tryLoadBy('ident', $name);
             if($setting->loaded()) {
                 $setting->delete();
             }
