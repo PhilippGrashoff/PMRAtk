@@ -65,7 +65,7 @@ trait AuditTrait {
             if($this->hasField($field_name) && !$this->getField($field_name)->system && !$this->getField($field_name)->never_persist) {
 
                 //check if any "real" value change happened
-                if($dirty_field || $this->get($field_name)) {
+                if($dirty_field !== null || $this->get($field_name) !== null) {
                     //time fields
                     if($this->getField($field_name)->type === 'time') {
                         $data[$field_name] = $this->_timeFieldAudit($field_name, $dirty_field);
