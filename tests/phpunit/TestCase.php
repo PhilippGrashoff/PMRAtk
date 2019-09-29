@@ -189,4 +189,17 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase {
             }
         }
     }
+
+
+    /*
+     *
+     */
+    protected function _addSettingToApp(string $ident, $value) {
+        $s = new \PMRAtk\Data\Setting(self::$app->db);
+        $s->tryLoadBy('ident', $ident);
+        $s->set('ident', $ident);
+        $s->set('value', $value);
+        $s->save();
+        self::$app->unloadSettings();
+    }
 }
