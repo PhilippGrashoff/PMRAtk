@@ -12,6 +12,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase {
      */
     public static function setUpBeforeClass():void {
         self::$app = new TestApp(['admin']);
+        $_ENV['IS_TEST_MODE'] = true;
     }
 
 

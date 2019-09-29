@@ -354,11 +354,14 @@ class App extends \atk4\ui\App {
      * sends an email to EOO owner. The template is not editable in this case. Meant for short Emails like notifications
      * as Email and so on
      */
-    public function sendEmailToAdmin(string $subject, string $message_template, array $set_to_template = []) {
+    public function sendEmailToAdmin(string $subject, string $message_template, array $set_to_template = [], array $from_models = []) {
         $email = new \PMRAtk\Data\Email\BaseEmail($this->db, ['addUserMessageOnSend' => false, 'template' => $message_template]);
-        $email->processMessageTemplate = function($template) use ($set_to_template) {
+        $email->processMessageTemplate = function($template) use ($set_to_template, $from_models) {
             foreach($set_to_template as $tag => $value) {
                 $template->set($tag, $value);
+            }
+            foreach($from_models as $model) {
+                $template->setTagsFromModel($model, [], strtolower((new \ReflectionClass($model))->getShortName()).'_');
             }
         };
         $email->loadInitialTemplate();
