@@ -13,7 +13,7 @@ trait AuditTrait {
                 return (new \PMRAtk\Data\Audit($this->persistence, ['parentObject' => $this]))->addCondition('model_class', get_class($this));
             },
             'their_field' => 'model_id']);
-        
+
         //after save, create Audit
         $this->addHook('afterSave', function($m, $is_update) {
             $m->createAudit($is_update ? 'CHANGE' : 'CREATE');
@@ -62,37 +62,46 @@ trait AuditTrait {
         $data = [];
         foreach($this->dirty as $field_name => $dirty_field) {
             //only audit non system fields and fields that go to persistence
-            if($this->hasField($field_name) && !$this->getField($field_name)->system && !$this->getField($field_name)->never_persist) {
-
-                //check if any "real" value change happened
-                if(($dirty_field !== null || $this->get($field_name) !== null)
-                && $dirty_field != $this->get($field_name)) {
-                    //time fields
-                    if($this->getField($field_name)->type === 'time') {
-                        $data[$field_name] = $this->_timeFieldAudit($field_name, $dirty_field);
-                    }
-                    //date fields
-                    elseif($this->getField($field_name)->type === 'date') {
-                        $data[$field_name] = $this->_dateFieldAudit($field_name, $dirty_field);
-                    }
-                    //hasOne relationship
-                    elseif($this->hasRef($field_name) && $this->getRef($field_name) instanceOf \atk4\data\Reference\HasOne) {
-                        $old = $this->ref($field_name)->newInstance();
-                        $old->tryLoad($dirty_field);
-                        $new = $this->ref($field_name)->newInstance();
-                        $new->tryLoad($this->get($field_name));
-                        $data[$field_name] = $this->_hasOneAudit($field_name, $dirty_field, $new, $old);
-                    }
-                    //dropdowns
-                    elseif(isset($this->getField($field_name)->ui['form']) && in_array('DropDown', $this->getField($field_name)->ui['form'])) {
-                        $data[$field_name] = $this->_dropDownAudit($field_name, $dirty_field);
-                    }
-                    //any other field
-                    else {
-                        $data[$field_name] = $this->_normalFieldAudit($field_name, $dirty_field);
-                    }
-                }
+            if(!$this->hasField($field_name)
+                || $this->getField($field_name)->system
+                ||$this->getField($field_name)->never_persist) {
+                continue;
             }
+            //check if any "real" value change happened
+            if($dirty_field === $this->get($field_name)) {
+                continue;
+            }
+            //strings special treatment
+            if(in_array($this->getField($field_name)->type, ['string', 'text'])
+                && $dirty_field == $this->get($field_name)) {
+                continue;
+            }
+
+            //time fields
+            if($this->getField($field_name)->type === 'time') {
+                $data[$field_name] = $this->_timeFieldAudit($field_name, $dirty_field);
+            }
+            //date fields
+            elseif($this->getField($field_name)->type === 'date') {
+                $data[$field_name] = $this->_dateFieldAudit($field_name, $dirty_field);
+            }
+            //hasOne relationship
+            elseif($this->hasRef($field_name) && $this->getRef($field_name) instanceOf \atk4\data\Reference\HasOne) {
+                $old = $this->ref($field_name)->newInstance();
+                $old->tryLoad($dirty_field);
+                $new = $this->ref($field_name)->newInstance();
+                $new->tryLoad($this->get($field_name));
+                $data[$field_name] = $this->_hasOneAudit($field_name, $dirty_field, $new, $old);
+            }
+            //dropdowns
+            elseif(isset($this->getField($field_name)->ui['form']) && in_array('DropDown', $this->getField($field_name)->ui['form'])) {
+                $data[$field_name] = $this->_dropDownAudit($field_name, $dirty_field);
+            }
+            //any other field
+            else {
+                $data[$field_name] = $this->_normalFieldAudit($field_name, $dirty_field);
+            }
+
         }
         if($type == 'CREATE' || $data) {
             $audit->set('data', $data);
