@@ -72,7 +72,8 @@ trait AuditTrait {
                 continue;
             }
             //strings special treatment
-            if(in_array($this->getField($field_name)->type, ['string', 'text'])
+            //money due to GermanMoneyFormatFieldTrait
+            if(in_array($this->getField($field_name)->type, ['string', 'text', 'money'])
                 && $dirty_field == $this->get($field_name)) {
                 continue;
             }

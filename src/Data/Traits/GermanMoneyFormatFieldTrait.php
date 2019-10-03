@@ -9,14 +9,12 @@ trait GermanMoneyFormatFieldTrait {
      */
     protected function _germanPriceForMoneyField(\atk4\data\Field $field) {
         $field->typecast = [
-            function($value, $field, $persistence) {
-                return $value;
-            },
+            null,
             function($value, $field, $persistence) {
                 if (!$persistence instanceof \atk4\ui\Persistence\UI) {
                     return $value;
                 }
-                return (float) str_replace(",",".", $value);
+                return round((float) str_replace(",",".", $value), 4);
             },
         ];
     }
