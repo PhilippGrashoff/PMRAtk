@@ -28,6 +28,7 @@ class GermanMoneyFieldTraitTest extends \PMRAtk\tests\phpunit\TestCase {
         $gmf->save();
 
         $pui = new \atk4\ui\Persistence\UI();
+        $pui->currency = null;
         $res = $pui->typecastSaveField($gmf->getField('money_test'), 25.25);
         self::assertEquals(25.25, $res);
     }
