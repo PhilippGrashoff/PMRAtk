@@ -46,7 +46,7 @@ function insertCCCode(string $filename, string $pathPrefix = '') {
 $coverage = new \SebastianBergmann\CodeCoverage\CodeCoverage();
 $coverage->setProcessUncoveredFilesFromWhitelist(true);
 $coverage->filter()->addDirectoryToWhitelist(\''.$pathPrefix.'src/View\');
-$coverage->start(pathinfo(__FILE__, PATHINFO_FILENAME));
+$coverage->start(uniqid());
 ', $content);
     $content = str_replace('###CCEND', '
 $app->addHook(\'beforeExit\', function () use($coverage) {
