@@ -46,13 +46,13 @@ function insertCCCode(string $filename, string $pathPrefix = '') {
 $coverage = new \SebastianBergmann\CodeCoverage\CodeCoverage();
 $coverage->setProcessUncoveredFilesFromWhitelist(true);
 $coverage->filter()->addDirectoryToWhitelist(\''.$pathPrefix.'src/View\');
-$coverage->start(uniqid());
+$coverage->start(uniqid(\'\', true));
 ', $content);
     $content = str_replace('###CCEND', '
 $app->addHook(\'beforeExit\', function () use($coverage) {
     $coverage->stop(true);
     $writer = new \SebastianBergmann\CodeCoverage\Report\PHP();
-    $writer->process($coverage, \''.$pathPrefix.'tests/coverage/\'.basename($_SERVER[\'SCRIPT_NAME\'], \'.php\').\'-\'.uniqid().\'.cov\');
+    $writer->process($coverage, \''.$pathPrefix.'tests/coverage/\'.uniqid(\'\', true).\'.cov\');
 });
 ', $content);
 
