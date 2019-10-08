@@ -11,9 +11,6 @@ trait GermanMoneyFormatFieldTrait {
         $field->typecast = [
             null,
             function($value, $field, $persistence) {
-                if (!$persistence instanceof \atk4\ui\Persistence\UI) {
-                    return $value;
-                }
                 return round((float) str_replace(",",".", $value), 4);
             },
         ];
