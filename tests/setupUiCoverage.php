@@ -1,5 +1,7 @@
 <?php
 
+require_once(__DIR__.'/config.php');
+
 foreach(new \DirectoryIterator('.') as $file) {
     if($file->isDot()) {
         continue;
@@ -33,28 +35,29 @@ foreach(new \DirectoryIterator('.') as $file) {
             }
 
 
-            insertCCCode($file->getFilename().'/'.$subdir->getFilename(), '../');
+            insertCCCode($file->getFilename().'/'.$subdir->getFilename());
         }
 
     }
 }
 
 
-function insertCCCode(string $filename, string $pathPrefix = '') {
+function insertCCCode(string $filename) {
     $content = file_get_contents($filename);
     $content = str_replace('###CCSTART', '
 $coverage = new \SebastianBergmann\CodeCoverage\CodeCoverage();
 $coverage->setProcessUncoveredFilesFromWhitelist(true);
-$coverage->filter()->addDirectoryToWhitelist(\''.$pathPrefix.'src/View\');
+$coverage->filter()->addDirectoryToWhitelist(\''.__DIR__.'/src/View\');
 $coverage->start(uniqid(\'\', true));
 ', $content);
     $content = str_replace('###CCEND', '
 $app->addHook(\'beforeExit\', function () use($coverage) {
     $coverage->stop(true);
     $writer = new \SebastianBergmann\CodeCoverage\Report\PHP();
-    $writer->process($coverage, \''.$pathPrefix.'tests/coverage/\'.uniqid(\'\', true).\'.cov\');
+    $writer->process($coverage, \''.__DIR__.'/tests/coverage/\'.uniqid(\'\', true).\'.cov\');
 });
 ', $content);
 
     file_put_contents($filename, $content);
+    echo PHP_EOL.'CCCode inserted in '.$filename;
 }
