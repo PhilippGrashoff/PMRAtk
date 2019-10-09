@@ -72,4 +72,12 @@ class Template extends \atk4\ui\Template {
             }
         }
     }
+
+
+    /*
+     *
+     */
+    public function setWithLineBreaks(string $tag, string $value) {
+        $this->setHTML($tag, nl2br(htmlspecialchars($value)));
+    }
 }
