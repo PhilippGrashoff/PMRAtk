@@ -277,7 +277,7 @@ trait BaseFunctionsTrait {
                     continue;
                 }
                 $option_selected = $option->getAttribute('data-value');
-                $this->tryClick($css_selector.' div.menu div[data-value="'.$option_selected.'"]');
+                $option->click();
                 break;
             }
         }
