@@ -4,11 +4,13 @@ namespace PMRAtk\Data\Traits;
 
 trait FieldChangedMessageTrait {
 
+    public $fieldsChanged = [];
+
     /*
      * adds a Message to the app that a Field value was changed. This can be used if Data level
      * automatically updates field value to inform user about it
      */
-    public function addFieldChangedMessage(string $field_name, $old_value, $new_value, string $class = 'warning') {
+    public function addFieldChangedMessage(string $field_name, $old_value, $new_value) {
         //DateTimeHelpersTrait needs to be used!
         if(!method_exists($this, 'castDateTimeToGermanString')) {
             throw new \atk4\data\Exception('The Trait \PMRAtk\Data\Traits\DateTimeHelpersTrait needs to be used in order to use FieldChangedMessageTrait');
@@ -16,6 +18,13 @@ trait FieldChangedMessageTrait {
 
         //nothing changed? no message
         if($old_value == $new_value) {
+            return;
+        }
+        if($old_value === null) {
+            return;
+        }
+        if(in_array($this->getField($field_name)->type , ['string', 'text'])
+            && $old_value == null) {
             return;
         }
 
@@ -34,6 +43,17 @@ trait FieldChangedMessageTrait {
             $new_value = $this->castDateTimeToGermanString($new_value, $this->getField($field_name)->type);
         }
 
-        $this->app->addUserMessage($this->getField($field_name)->getCaption().' wurde geändert von '.$old_value.' in '.$new_value, $class);
+        $this->fieldsChanged[] = $this->getField($field_name)->getCaption().' wurde geändert von '.$old_value.' in '.$new_value;
+    }
+
+
+    /*
+     *
+     */
+    public function addFieldsChangedUserMessage() {
+        if(!$this->fieldsChanged) {
+            return ;
+        }
+        $this->app->addUserMessage(implode('; ', $this->fieldsChanged), 'warning');
     }
 }
