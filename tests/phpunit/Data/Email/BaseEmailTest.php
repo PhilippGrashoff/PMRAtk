@@ -32,11 +32,11 @@ class BaseEmailTest extends \PMRAtk\tests\phpunit\TestCase {
         $g->save();
         $g->addEmail('test1@easyoutdooroffice.com');
         $this->assertTrue($base_email->addRecipient($g));
-        $this->assertEquals(1, $base_email->ref('EmailRecipient')->action('count')->getOne());
+        $this->assertEquals(1, $base_email->ref('email_recipient')->action('count')->getOne());
 
         //adding the same guide again shouldnt change anything
         $this->assertFalse($base_email->addRecipient($g));
-        $this->assertEquals(1, $base_email->ref('EmailRecipient')->action('count')->getOne());
+        $this->assertEquals(1, $base_email->ref('email_recipient')->action('count')->getOne());
 
         //pass a non-loaded Guide
         $g = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
@@ -52,7 +52,7 @@ class BaseEmailTest extends \PMRAtk\tests\phpunit\TestCase {
         $g->save();
         $e = $g->addEmail('test3@easyoutdooroffice.com');
         $this->assertTrue($base_email->addRecipient($e->get('id')));
-        $this->assertEquals(2, $base_email->ref('EmailRecipient')->action('count')->getOne());
+        $this->assertEquals(2, $base_email->ref('email_recipient')->action('count')->getOne());
 
         //pass a non existing email id
         $this->assertFalse($base_email->addRecipient(111111));
@@ -66,16 +66,16 @@ class BaseEmailTest extends \PMRAtk\tests\phpunit\TestCase {
 
         //pass a valid Email
         $this->assertTrue($base_email->addRecipient('philipp@spame.de'));
-        $this->assertEquals(3, $base_email->ref('EmailRecipient')->action('count')->getOne());
+        $this->assertEquals(3, $base_email->ref('email_recipient')->action('count')->getOne());
 
         //pass an invalid email
         $this->assertFalse($base_email->addRecipient('hannsedfsgs'));
 
         //now remove all
-        foreach($base_email->ref('EmailRecipient') as $rec) {
+        foreach($base_email->ref('email_recipient') as $rec) {
             $this->assertTrue($base_email->removeRecipient($rec->get('id')));
         }
-        $this->assertEquals(0, $base_email->ref('EmailRecipient')->action('count')->getOne());
+        $this->assertEquals(0, $base_email->ref('email_recipient')->action('count')->getOne());
 
         //remove some non_existing EmailRecipient
         $this->assertFalse($base_email->removeRecipient('11111'));
@@ -87,7 +87,7 @@ class BaseEmailTest extends \PMRAtk\tests\phpunit\TestCase {
         $test2_id = $g->addEmail('test2@easyoutdooroffice.com');
         $this->assertTrue($base_email->addRecipient($g, $test2_id->get('id')));
         //now there should be a single recipient and its email should be test2...
-        foreach($base_email->ref('EmailRecipient') as $rec) {
+        foreach($base_email->ref('email_recipient') as $rec) {
             $this->assertEquals($rec->get('email'), 'test2@easyoutdooroffice.com');
         }
     }
@@ -119,30 +119,6 @@ class BaseEmailTest extends \PMRAtk\tests\phpunit\TestCase {
         $base_email = new \PMRAtk\Data\Email\BaseEmail(self::$app->db);
         $base_email->loadInitialValues();
         $this->assertTrue(true);
-    }
-
-
-    /*
-     *
-     */
-    public function testEmailRecipientsDeletedOnDelete() {
-        $this->_addStandardEmailAccount();
-        $base_email = new \PMRAtk\Data\Email\BaseEmail(self::$app->db);
-        $base_email->save();
-
-        $initial_count = (new \PMRAtk\Data\Email\EmailRecipient(self::$app->db))->action('count')->getOne();
-
-        //pass a Guide, should have an email set
-        $g = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
-        $g->set('firstname', 'Lala');
-        $g->set('lastname', 'Dusu');
-        $g->save();
-        $g->addEmail('test1@easyoutdooroffice.com');
-        $this->assertTrue($base_email->addRecipient($g));
-        $this->assertEquals(1, $base_email->ref('EmailRecipient')->action('count')->getOne());
-
-        $base_email->delete();
-        $this->assertEquals($initial_count, (new \PMRAtk\Data\Email\EmailRecipient(self::$app->db))->action('count')->getOne());
     }
 
 
@@ -305,43 +281,10 @@ class BaseEmailTest extends \PMRAtk\tests\phpunit\TestCase {
         //first create a baseEmail and some EmailRecipients
         $be1 = new \PMRAtk\Data\Email\BaseEmail(self::$app->db);
         $be1->save();
-        $e1 = new \PMRAtk\Data\Email\EmailRecipient(self::$app->db);
-        $e1->set('email', 'test3@easyoutdooroffice.com');
-        $e1->set('base_email_id', $be1->get('id'));
-        $e1->save();
-        $e2 = new \PMRAtk\Data\Email\EmailRecipient(self::$app->db);
-        $e2->set('email', 'test2@easyoutdooroffice.com');
-        $e2->set('base_email_id', $be1->get('id'));
-        $e2->save();
-
-        //this baseEmail should not be sent. $be2->ref('EmailRecipient') will reference
+        //this baseEmail should not be sent. $be2->ref('email_recipient') will reference
         //the 2 EmailRecipients above as $be2->loaded() = false. BaseEmail needs to check this!
         $be2 = new \PMRAtk\Data\Email\BaseEmail(self::$app->db);
         $this->assertFalse($be2->send());
-    }
-
-
-    /*
-     * test if data really is only temporary = deleted after send
-     */
-    public function testBaseEmailAndEmailRecipientsAreDeletedAfterSend() {
-        $this->_addStandardEmailAccount();
-        $initial_base_email_count = (new \PMRAtk\Data\Email\BaseEmail(self::$app->db))->action('count')->getOne();
-        $initial_email_reci_count = (new \PMRAtk\Data\Email\EmailRecipient(self::$app->db))->action('count')->getOne();
-
-        $be = new \PMRAtk\Data\Email\BaseEmail(self::$app->db);
-        $be->addRecipient('test2@easyoutdooroffice.com');
-        $be->set('subject', __FUNCTION__);
-        $be->save();
-
-        $this->assertEquals($initial_base_email_count + 1, (new \PMRAtk\Data\Email\BaseEmail(self::$app->db))->action('count')->getOne());
-        $this->assertEquals($initial_email_reci_count + 1, (new \PMRAtk\Data\Email\EmailRecipient(self::$app->db))->action('count')->getOne());
-
-        //now send, that should delete
-        $be->send();
-
-        $this->assertEquals($initial_base_email_count, (new \PMRAtk\Data\Email\BaseEmail(self::$app->db))->action('count')->getOne());
-        $this->assertEquals($initial_email_reci_count, (new \PMRAtk\Data\Email\EmailRecipient(self::$app->db))->action('count')->getOne());
     }
 
 

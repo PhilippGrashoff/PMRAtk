@@ -76,12 +76,7 @@ class BaseEmail extends \atk4\data\Model {
             ['attachments',     'type' => 'array', 'serialize' => 'json'],
         ]);
 
-        $this->hasMany('EmailRecipient', [EmailRecipient::class, 'their_field' => 'base_email_id']);
-
-        //on delete, delete all recipients as well
-        $this->addHook('beforeDelete', function($m) {
-            $m->ref('EmailRecipient')->each('delete');
-        });
+        $this->containsMany('email_recipient', [EmailRecipient::class]);
 
         //try load default header and footer
         if(empty($this->header)) {
@@ -211,11 +206,11 @@ class BaseEmail extends \atk4\data\Model {
 
         //else assume its email as string, not belonging to a stored model
         elseif(is_string($class) && filter_var($class, FILTER_VALIDATE_EMAIL)) {
-            $r = new EmailRecipient($this->persistence);
+            $r = $this->ref('email_recipient');
             $r->set('email', $class);
         }
 
-        if(!$r instanceOf EmailRecipient) {
+        if(!$r instanceOf \PMRAtk\Data\Email\EmailRecipient) {
             return false;
         }
 
@@ -224,14 +219,13 @@ class BaseEmail extends \atk4\data\Model {
             $this->save();
         }
 
-        //Make sure recipient for existing object is only added once
-        foreach($this->ref('EmailRecipient') as $rec) {
-            if($r->get('model_class') && $r->get('model_id') && $rec->get('model_class') == $r->get('model_class') && $rec->get('model_id') == $r->get('model_id')) {
+        //if email already exists, skip
+        foreach($this->ref('email_recipient') as $rec) {
+            if($rec->get('email') == $r->get('email')) {
                 return false;
             }
         }
 
-        $r->set('base_email_id', $this->get('id'));
         $r->save();
 
         return true;
@@ -243,7 +237,7 @@ class BaseEmail extends \atk4\data\Model {
      * returns an EmailRecipient object
      */
     protected function _addRecipientObject(\PMRAtk\Data\BaseModel $object, $email_id = null):?EmailRecipient {
-        $r = new EmailRecipient($this->persistence);
+        $r = $this->ref('email_recipient');
         //set firstname and lastname if available
         $r->set('firstname', $object->hasField('firstname') ? $object->get('firstname') : '');
         $r->set('lastname',  $object->hasField('lastname') ? $object->get('lastname') : '');
@@ -287,7 +281,7 @@ class BaseEmail extends \atk4\data\Model {
      * Removes an object from recipient array
      */
     public function removeRecipient($id):bool {
-        foreach($this->ref('EmailRecipient') as $r) {
+        foreach($this->ref('email_recipient') as $r) {
             if($r->get('id') == $id) {
                 $r->delete();
                 return true;
@@ -355,13 +349,13 @@ class BaseEmail extends \atk4\data\Model {
         }
 
         //if email is sent to several recipients, keep SMTP connection open
-        if(intval($this->ref('EmailRecipient')->action('count')->getOne()) > 1) {
+        if(intval($this->ref('email_recipient')->action('count')->getOne()) > 1) {
             $this->phpMailer->SMTPKeepAlive = true;
         }
 
         $successful_send = false;
         //single send for each recipient
-        foreach($this->ref('EmailRecipient') as $r) {
+        foreach($this->ref('email_recipient') as $r) {
             //clone message and subject so changes per recipient wont affect
             //other recipients
             $message_template = clone $mt;
@@ -412,10 +406,6 @@ class BaseEmail extends \atk4\data\Model {
             call_user_func($this->onSuccess, $this->model);
         }
 
-        //delete all recipients and then outbox email itself
-        foreach($this->ref('EmailRecipient') as $r) {
-            $r->delete();
-        }
         $this->delete();
 
         return $successful_send;

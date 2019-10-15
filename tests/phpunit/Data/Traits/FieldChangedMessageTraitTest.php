@@ -32,6 +32,7 @@ class FieldChangedMessageTraitTest extends \PMRAtk\tests\phpunit\TestCase {
     public function testAddMessage() {
         $m = new FCMTraitTest($this->testApp->db);
         $m->addFieldChangedMessage('name', 'hansi', 'peter');
+        $m->addFieldsChangedUserMessage();
         $this->assertEquals(1, count($this->testApp->userMessages));
     }
 
@@ -50,6 +51,7 @@ class FieldChangedMessageTraitTest extends \PMRAtk\tests\phpunit\TestCase {
 
         $m = new FCMTraitTest($this->testApp->db);
         $m->addFieldChangedMessage('BaseModelB_id', $b1->id, $b2->id);
+        $m->addFieldsChangedUserMessage();
         $this->assertEquals(1, count($this->testApp->userMessages));
         //Title field should be used instead of ids
         $this->assertTrue(strpos($this->testApp->userMessages[0]['message'], 'Lala') !== false);
@@ -64,8 +66,8 @@ class FieldChangedMessageTraitTest extends \PMRAtk\tests\phpunit\TestCase {
         $m = new FCMTraitTest($this->testApp->db);
         $m->addFieldChangedMessage('date', new \DateTime(),  (new \DateTime())->modify('+ 1 Day'));
         $m->addFieldChangedMessage('time', new \DateTime(),  (new \DateTime())->modify('+ 1 Hour'));
-
-        $this->assertEquals(2, count($this->testApp->userMessages));
+        $m->addFieldsChangedUserMessage();
+        $this->assertEquals(1, count($this->testApp->userMessages));
     }
 
 
@@ -75,7 +77,7 @@ class FieldChangedMessageTraitTest extends \PMRAtk\tests\phpunit\TestCase {
     public function testNoValueChangeNoMessage() {
         $m = new FCMTraitTest($this->testApp->db);
         $m->addFieldChangedMessage('name', 'ha', 'ha');
-
+        $m->addFieldsChangedUserMessage();
         $this->assertEquals(0, count($this->testApp->userMessages));
     }
 

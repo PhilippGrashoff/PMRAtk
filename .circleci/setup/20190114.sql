@@ -258,6 +258,7 @@ CREATE TABLE IF NOT EXISTS `base_email`
     `subject`     TEXT NULL,
     `message`     TEXT NULL,
     `attachments` JSON NULL,
+    `email_recipient` TEXT NULL,
     PRIMARY KEY (`id`)
 )
     ENGINE = InnoDB
@@ -280,21 +281,6 @@ CREATE TABLE IF NOT EXISTS `email_account`
     DEFAULT CHARACTER SET = latin1
     COLLATE = latin1_german1_ci;
 
-
-CREATE TABLE IF NOT EXISTS `email_recipient`
-(
-    `id`            INT          NOT NULL AUTO_INCREMENT,
-    `base_email_id` INT          NULL,
-    `model_id`      INT          NULL,
-    `model_class`   VARCHAR(255) NULL,
-    `email`         VARCHAR(255) NULL,
-    `firstname`     VARCHAR(255) NULL,
-    `lastname`      VARCHAR(255) NULL,
-    PRIMARY KEY (`id`)
-)
-    ENGINE = InnoDB
-    DEFAULT CHARACTER SET = latin1
-    COLLATE = latin1_german1_ci;
 
 
 CREATE TABLE IF NOT EXISTS `file`
