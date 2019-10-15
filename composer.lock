@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "420077da101945503c7ed7e8839fed55",
+    "content-hash": "f15624c3c856e2ab9d20a540666caf23",
     "packages": [
         {
             "name": "atk4/api",
@@ -121,21 +121,22 @@
         },
         {
             "name": "atk4/data",
-            "version": "dev-feature/action-fields",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
                 "url": "https://github.com/atk4/data.git",
-                "reference": "29042086a7d5bca35897073dbe005dd1f089d34a"
+                "reference": "3b5d1797aba2752e5173907df66b3fc6fa797873"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/atk4/data/zipball/29042086a7d5bca35897073dbe005dd1f089d34a",
-                "reference": "29042086a7d5bca35897073dbe005dd1f089d34a",
+                "url": "https://api.github.com/repos/atk4/data/zipball/3b5d1797aba2752e5173907df66b3fc6fa797873",
+                "reference": "3b5d1797aba2752e5173907df66b3fc6fa797873",
                 "shasum": ""
             },
             "require": {
                 "atk4/core": "dev-develop",
                 "atk4/dsql": "dev-develop as 1.2.5",
+                "ext-intl": "*",
                 "php": ">=7.2.0"
             },
             "require-dev": {
@@ -176,7 +177,7 @@
                 "query",
                 "sql"
             ],
-            "time": "2019-07-15T13:32:39+00:00"
+            "time": "2019-10-07T04:56:17+00:00"
         },
         {
             "name": "atk4/dsql",
@@ -234,25 +235,25 @@
         },
         {
             "name": "atk4/login",
-            "version": "dev-develop",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/atk4/login.git",
-                "reference": "242906d6c24261d940b925ec550b08fc289206f6"
+                "reference": "27d41c67eb7f58894412be7f7f5c76d87012c16f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/atk4/login/zipball/242906d6c24261d940b925ec550b08fc289206f6",
-                "reference": "242906d6c24261d940b925ec550b08fc289206f6",
+                "url": "https://api.github.com/repos/atk4/login/zipball/27d41c67eb7f58894412be7f7f5c76d87012c16f",
+                "reference": "27d41c67eb7f58894412be7f7f5c76d87012c16f",
                 "shasum": ""
             },
             "require": {
-                "atk4/data": "dev-feature/action-fields as dev-develop",
-                "atk4/schema": "dev-develop",
-                "atk4/ui": "dev-develop",
-                "php": ">=7.2.0"
+                "atk4/schema": "^1.1.1",
+                "atk4/ui": "*",
+                "php": ">=5.6.0"
             },
             "require-dev": {
+                "atk4/schema": "*",
                 "behat/behat": "^3.4",
                 "behat/mink-extension": "^2.2",
                 "behat/mink-zombie-driver": "^1.4",
@@ -289,29 +290,29 @@
                 "login",
                 "user"
             ],
-            "time": "2019-10-15T18:47:54+00:00"
+            "time": "2018-04-06T22:43:27+00:00"
         },
         {
             "name": "atk4/schema",
-            "version": "dev-develop",
+            "version": "1.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/atk4/schema.git",
-                "reference": "4a189ee459fde8cc89c7944c0cff922035f940ff"
+                "reference": "e99a481df5f072fd599a083c7297967c3ab6910e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/atk4/schema/zipball/4a189ee459fde8cc89c7944c0cff922035f940ff",
-                "reference": "4a189ee459fde8cc89c7944c0cff922035f940ff",
+                "url": "https://api.github.com/repos/atk4/schema/zipball/e99a481df5f072fd599a083c7297967c3ab6910e",
+                "reference": "e99a481df5f072fd599a083c7297967c3ab6910e",
                 "shasum": ""
             },
             "require": {
-                "atk4/dsql": "dev-develop",
-                "php": ">=7.2.0"
+                "atk4/dsql": "^1.2",
+                "php": ">=7.0.0"
             },
             "require-dev": {
-                "atk4/data": "dev-develop",
-                "atk4/ui": "dev-develop",
+                "atk4/data": "^1.4",
+                "atk4/ui": "^1.6",
                 "codeclimate/php-test-reporter": "*",
                 "phpunit/dbunit": ">=1.2",
                 "phpunit/phpcov": "*",
@@ -319,7 +320,6 @@
             },
             "suggest": {
                 "atk4/data": "*",
-                "atk4/ui": "*",
                 "jdorn/sql-formatter": "*"
             },
             "type": "library",
@@ -350,7 +350,7 @@
                 "schema",
                 "sql"
             ],
-            "time": "2019-08-01T17:50:03+00:00"
+            "time": "2019-05-07T15:27:35+00:00"
         },
         {
             "name": "atk4/ui",
@@ -358,12 +358,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/atk4/ui.git",
-                "reference": "24c81a7265397891fc0ad37b4ffd72f6a5d5b57f"
+                "reference": "a6e4b3b83aa15e6d514e8eb470bea3557e3d40af"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/atk4/ui/zipball/24c81a7265397891fc0ad37b4ffd72f6a5d5b57f",
-                "reference": "24c81a7265397891fc0ad37b4ffd72f6a5d5b57f",
+                "url": "https://api.github.com/repos/atk4/ui/zipball/a6e4b3b83aa15e6d514e8eb470bea3557e3d40af",
+                "reference": "a6e4b3b83aa15e6d514e8eb470bea3557e3d40af",
                 "shasum": ""
             },
             "require": {
@@ -415,7 +415,7 @@
                 "web",
                 "widget"
             ],
-            "time": "2019-10-08T10:00:27+00:00"
+            "time": "2019-10-15T19:48:35+00:00"
         },
         {
             "name": "container-interop/container-interop",
@@ -2884,12 +2884,6 @@
             "package": "atk4/ui"
         },
         {
-            "alias": "dev-develop",
-            "alias_normalized": "dev-develop",
-            "version": "dev-feature/action-fields",
-            "package": "atk4/data"
-        },
-        {
             "alias": "1.2.6",
             "alias_normalized": "1.2.6.0",
             "version": "dev-develop",
@@ -2902,8 +2896,6 @@
         "atk4/data": 20,
         "atk4/dsql": 20,
         "atk4/core": 20,
-        "atk4/login": 20,
-        "atk4/schema": 20,
         "atk4/api": 20,
         "facebook/webdriver": 20
     },
