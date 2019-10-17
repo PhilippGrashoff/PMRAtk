@@ -179,8 +179,8 @@ trait EPARelationsTrait {
             return false;
         }
 
-        //update if value does not match stored one
-        if($value !== $epa->get('value')) {
+        //update if value does not match stored one, take care of damn new line signs
+        if(preg_replace('~\r\n?~', "\n", $value) !== preg_replace('~\r\n?~', "\n", $epa->get('value'))) {
             $epa->set('value', $value);
             if(method_exists($this, 'addSecondaryAudit')) {
                 $this->addSecondaryAudit('CHANGE', $epa);
