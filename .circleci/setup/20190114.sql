@@ -259,6 +259,7 @@ CREATE TABLE IF NOT EXISTS `base_email`
     `message`     TEXT NULL,
     `attachments` JSON NULL,
     `email_recipient` TEXT NULL,
+    `created_date` DATETIME NULL,
     PRIMARY KEY (`id`)
 )
     ENGINE = InnoDB

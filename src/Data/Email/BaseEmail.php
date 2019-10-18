@@ -71,12 +71,19 @@ class BaseEmail extends \atk4\data\Model {
     public function init() {
         parent::init();
         $this->addFields([
+            ['created_date',    'type' => 'datetime'],
             ['subject',         'type' => 'string'],
             ['message',         'type' => 'text'],
             ['attachments',     'type' => 'array', 'serialize' => 'json'],
         ]);
 
         $this->containsMany('email_recipient', [EmailRecipient::class]);
+
+        $this->addHook('beforeSave', function($m, $is_update) {
+            if(!$is_update) {
+                $m->set('created_date', new \DateTime());
+            }
+        });
 
         //try load default header and footer
         if(empty($this->header)) {
