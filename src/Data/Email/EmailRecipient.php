@@ -20,8 +20,5 @@ class EmailRecipient extends \atk4\data\Model {
             ['firstname',       'type' => 'string'],
             ['lastname',        'type' => 'string'],
         ]);
-
-        //id of the BaseEmail it belongs to
-        $this->hasOne('base_email_id', BaseEmail::class);
     }
 };
