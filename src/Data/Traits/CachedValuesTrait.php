@@ -57,8 +57,10 @@ trait CachedValuesTrait {
         }
         $s = new \PMRAtk\Data\CachedValue($this->db);
         //make sure its unique
-        $s->tryLoadBy('ident', $ident);
-        $s->set('ident', $ident);
+        $s->tryLoad($ident);
+        if(!$s->loaded()) {
+            $s->set('ident', $ident);
+        }
         $s->set('value', $value);
         $s->save();
         $this->_cachedValues[$ident] = clone $s;

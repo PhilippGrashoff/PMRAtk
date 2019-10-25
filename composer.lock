@@ -69,12 +69,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/atk4/core.git",
-                "reference": "3fd7171d04de7bc5c9a49feaf9273026dcc2d112"
+                "reference": "627972de06c003c6f5125992824dc15292d82fd8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/atk4/core/zipball/3fd7171d04de7bc5c9a49feaf9273026dcc2d112",
-                "reference": "3fd7171d04de7bc5c9a49feaf9273026dcc2d112",
+                "url": "https://api.github.com/repos/atk4/core/zipball/627972de06c003c6f5125992824dc15292d82fd8",
+                "reference": "627972de06c003c6f5125992824dc15292d82fd8",
                 "shasum": ""
             },
             "require": {
@@ -82,7 +82,11 @@
                 "php": ">=7.2.0",
                 "psr/log": "~1.0"
             },
+            "replace": {
+                "atk4/core": "self.version"
+            },
             "require-dev": {
+                "atk4/data": "dev-develop",
                 "codeclimate/php-test-reporter": "*",
                 "phpunit/phpunit": "*",
                 "satooshi/php-coveralls": "^1.0",
@@ -117,7 +121,7 @@
                 "php",
                 "trains"
             ],
-            "time": "2019-10-10T17:24:15+00:00"
+            "time": "2019-10-17T17:24:57+00:00"
         },
         {
             "name": "atk4/data",
@@ -125,12 +129,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/atk4/data.git",
-                "reference": "3b5d1797aba2752e5173907df66b3fc6fa797873"
+                "reference": "733274b64c301b919f636cc19827a74292db62d2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/atk4/data/zipball/3b5d1797aba2752e5173907df66b3fc6fa797873",
-                "reference": "3b5d1797aba2752e5173907df66b3fc6fa797873",
+                "url": "https://api.github.com/repos/atk4/data/zipball/733274b64c301b919f636cc19827a74292db62d2",
+                "reference": "733274b64c301b919f636cc19827a74292db62d2",
                 "shasum": ""
             },
             "require": {
@@ -177,7 +181,7 @@
                 "query",
                 "sql"
             ],
-            "time": "2019-10-07T04:56:17+00:00"
+            "time": "2019-10-16T07:25:19+00:00"
         },
         {
             "name": "atk4/dsql",
@@ -358,12 +362,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/atk4/ui.git",
-                "reference": "a6e4b3b83aa15e6d514e8eb470bea3557e3d40af"
+                "reference": "abeda03f030124031a659b5b9e47e01832945aeb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/atk4/ui/zipball/a6e4b3b83aa15e6d514e8eb470bea3557e3d40af",
-                "reference": "a6e4b3b83aa15e6d514e8eb470bea3557e3d40af",
+                "url": "https://api.github.com/repos/atk4/ui/zipball/abeda03f030124031a659b5b9e47e01832945aeb",
+                "reference": "abeda03f030124031a659b5b9e47e01832945aeb",
                 "shasum": ""
             },
             "require": {
@@ -415,7 +419,7 @@
                 "web",
                 "widget"
             ],
-            "time": "2019-10-15T19:48:35+00:00"
+            "time": "2019-10-18T12:55:49+00:00"
         },
         {
             "name": "container-interop/container-interop",
@@ -1079,16 +1083,16 @@
         },
         {
             "name": "zendframework/zend-mime",
-            "version": "2.7.1",
+            "version": "2.7.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-mime.git",
-                "reference": "52ae5fa9f12845cae749271034a2d594f0e4c6f2"
+                "reference": "c91e0350be53cc9d29be15563445eec3b269d7c1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-mime/zipball/52ae5fa9f12845cae749271034a2d594f0e4c6f2",
-                "reference": "52ae5fa9f12845cae749271034a2d594f0e4c6f2",
+                "url": "https://api.github.com/repos/zendframework/zend-mime/zipball/c91e0350be53cc9d29be15563445eec3b269d7c1",
+                "reference": "c91e0350be53cc9d29be15563445eec3b269d7c1",
                 "shasum": ""
             },
             "require": {
@@ -1106,8 +1110,8 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.7-dev",
-                    "dev-develop": "2.8-dev"
+                    "dev-master": "2.7.x-dev",
+                    "dev-develop": "2.8.x-dev"
                 }
             },
             "autoload": {
@@ -1120,13 +1124,12 @@
                 "BSD-3-Clause"
             ],
             "description": "Create and parse MIME messages and parts",
-            "homepage": "https://github.com/zendframework/zend-mime",
             "keywords": [
                 "ZendFramework",
                 "mime",
                 "zf"
             ],
-            "time": "2018-05-14T19:02:50+00:00"
+            "time": "2019-10-16T19:30:37+00:00"
         },
         {
             "name": "zendframework/zend-stdlib",
