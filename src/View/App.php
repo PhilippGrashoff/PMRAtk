@@ -136,22 +136,36 @@ class App extends \atk4\ui\App {
 
 
     /*
+     *
+     */
+    protected function _getCustomTemplateFromModel(string $name, array $customFromModels):?\PMRAtk\Data\Email\EmailTemplate {
+        $et = new \PMRAtk\Data\Email\EmailTemplate($this->db);
+        foreach($customFromModels as $model) {
+            if(!$model->loaded()) {
+                throw new atk4\data\Exception('Model needs to be loaded in '.__FUNCTION__);
+            }
+            $et->addCondition('model_class', get_class($model));
+            $et->addCondition('model_id', $model->get('id'));
+            $et->tryLoadBy('ident', $name);
+            if($et->loaded()) {
+                return clone $et;
+            }
+        }
+
+        return null;
+    }
+
+    /*
      * email templates get an extra function to load to distinguish
      * from HTML element templates
      */
-    public function loadEmailTemplate(string $name, bool $raw_template = false, string $model_class = '', $model_id = null) {
+    public function loadEmailTemplate(string $name, bool $raw_template = false, array $customFromModels = []) {
         $template = new \PMRAtk\View\Template();
         $template->app = $this;
-
-        $et = new \PMRAtk\Data\Email\EmailTemplate($this->db);
         //try to load From EmailTemplate per Model
-        if($model_class && $model_id) {
-            $et->addCondition('model_class', $model_class);
-            $et->addCondition('model_id', $model_id);
-            $et->tryLoadBy('ident', $name);
-        }
+        $et = $this->_getCustomTemplateFromModel($name, $customFromModels);
         //else try to load from DB
-        if(!$et->loaded()) {
+        if(!$et) {
             $et = new \PMRAtk\Data\Email\EmailTemplate($this->db);
             $et->addCondition('model_class', null);
             $et->addCondition('model_id', null);
