@@ -139,11 +139,11 @@ class App extends \atk4\ui\App {
      *
      */
     protected function _getCustomTemplateFromModel(string $name, array $customFromModels):?\PMRAtk\Data\Email\EmailTemplate {
-        $et = new \PMRAtk\Data\Email\EmailTemplate($this->db);
         foreach($customFromModels as $model) {
             if(!$model->loaded()) {
                 throw new atk4\data\Exception('Model needs to be loaded in '.__FUNCTION__);
             }
+            $et = new \PMRAtk\Data\Email\EmailTemplate($this->db);
             $et->addCondition('model_class', get_class($model));
             $et->addCondition('model_id', $model->get('id'));
             $et->tryLoadBy('ident', $name);
@@ -154,6 +154,7 @@ class App extends \atk4\ui\App {
 
         return null;
     }
+
 
     /*
      * email templates get an extra function to load to distinguish
