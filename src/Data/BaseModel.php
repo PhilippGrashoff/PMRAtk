@@ -254,9 +254,8 @@ class BaseModel extends \atk4\data\Model {
     public function loadedHasOneRef(string $ref_name) {
         $model = $this->ref($ref_name);
         if(!$model->loaded()) {
-            throw new \atk4\Data\Exception('HasOne Reference Model '.$ref_name.' with id '.$this->get($ref_name).' could not be loaded');
+            throw new \atk4\data\Exception('HasOne Reference Model '.$ref_name.' with id '.$this->get($ref_name).' could not be loaded');
         }
         return $model;
     }
-
 }
