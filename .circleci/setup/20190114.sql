@@ -33,6 +33,36 @@ CREATE TABLE IF NOT EXISTS `email`
     COLLATE = latin1_german1_ci;
 
 
+
+CREATE TABLE IF NOT EXISTS `message_for_user`
+(
+    `id`                 INT          NOT NULL AUTO_INCREMENT,
+    `last_updated`       DATETIME     NULL,
+    `created_date`       DATETIME     NULL,
+    `text`               LONGTEXT     NULL,
+    `title`              VARCHAR(255) NULL,
+    `needs_user_confirm` TINYINT      NULL,
+    `for_user_roles`     JSON         NULL,
+    PRIMARY KEY (`id`)
+)
+    ENGINE = InnoDB
+    DEFAULT CHARACTER SET = latin1
+    COLLATE = latin1_german1_ci;
+
+
+CREATE TABLE IF NOT EXISTS `message_for_user_to_user`
+(
+    `id`                  INT     NOT NULL AUTO_INCREMENT,
+    `user_id`             INT     NULL,
+    `message_for_user_id` INT     NULL,
+    `is_read`             TINYINT NULL,
+    PRIMARY KEY (`id`)
+)
+    ENGINE = InnoDB
+    DEFAULT CHARACTER SET = latin1
+    COLLATE = latin1_german1_ci;
+
+
 CREATE TABLE IF NOT EXISTS `audit`
 (
     `id`              INT          NOT NULL AUTO_INCREMENT,
@@ -83,15 +113,15 @@ CREATE TABLE IF NOT EXISTS `phone`
 
 CREATE TABLE IF NOT EXISTS `setting`
 (
-    `id`           INT          NOT NULL AUTO_INCREMENT,
-    `ident`        VARCHAR(255) NULL,
-    `name`         VARCHAR(255) NULL,
-    `created_date` DATETIME     NULL,
-    `last_updated` DATETIME     NULL,
-    `description`  TEXT         NULL,
-    `system`       TINYINT      NULL,
-    `value`        TEXT         NULL,
-    `setting_group_id` INT      NULL,
+    `id`               INT          NOT NULL AUTO_INCREMENT,
+    `ident`            VARCHAR(255) NULL,
+    `name`             VARCHAR(255) NULL,
+    `created_date`     DATETIME     NULL,
+    `last_updated`     DATETIME     NULL,
+    `description`      TEXT         NULL,
+    `system`           TINYINT      NULL,
+    `value`            TEXT         NULL,
+    `setting_group_id` INT          NULL,
     PRIMARY KEY (`id`)
 )
     ENGINE = InnoDB
@@ -254,12 +284,12 @@ CREATE TABLE IF NOT EXISTS `User`
 
 CREATE TABLE IF NOT EXISTS `base_email`
 (
-    `id`          INT  NOT NULL AUTO_INCREMENT,
-    `subject`     TEXT NULL,
-    `message`     TEXT NULL,
-    `attachments` JSON NULL,
-    `email_recipient` TEXT NULL,
-    `created_date` DATETIME NULL,
+    `id`              INT      NOT NULL AUTO_INCREMENT,
+    `subject`         TEXT     NULL,
+    `message`         TEXT     NULL,
+    `attachments`     JSON     NULL,
+    `email_recipient` TEXT     NULL,
+    `created_date`    DATETIME NULL,
     PRIMARY KEY (`id`)
 )
     ENGINE = InnoDB
@@ -269,13 +299,13 @@ CREATE TABLE IF NOT EXISTS `base_email`
 
 CREATE TABLE IF NOT EXISTS `email_account`
 (
-    `id`              INT  NOT NULL AUTO_INCREMENT,
-    `name`            VARCHAR(255) NULL,
-    `sender_name`     VARCHAR(255) NULL,
-    `details`         TEXT NULL,
-    `credentials`     TEXT NULL,
-    `last_updated`    DATETIME     NULL,
-    `created_date`    DATETIME     NULL,
+    `id`           INT          NOT NULL AUTO_INCREMENT,
+    `name`         VARCHAR(255) NULL,
+    `sender_name`  VARCHAR(255) NULL,
+    `details`      TEXT         NULL,
+    `credentials`  TEXT         NULL,
+    `last_updated` DATETIME     NULL,
+    `created_date` DATETIME     NULL,
     PRIMARY KEY (`id`)
 )
     ENGINE = InnoDB
