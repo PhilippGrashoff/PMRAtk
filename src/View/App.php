@@ -141,7 +141,7 @@ class App extends \atk4\ui\App {
     protected function _getCustomTemplateFromModel(string $name, array $customFromModels):?\PMRAtk\Data\Email\EmailTemplate {
         foreach($customFromModels as $model) {
             if(!$model->loaded()) {
-                throw new atk4\data\Exception('Model needs to be loaded in '.__FUNCTION__);
+                throw new \atk4\data\Exception('Model needs to be loaded in '.__FUNCTION__);
             }
             $et = new \PMRAtk\Data\Email\EmailTemplate($this->db);
             $et->addCondition('model_class', get_class($model));

@@ -1,5 +1,9 @@
 <?php
 
+use PMRAtk\tests\phpunit\Data\BaseModelA;
+use PMRAtk\tests\phpunit\Data\BaseModelB;
+
+
 class AppTest extends \PMRAtk\tests\phpunit\TestCase {
 
     /*
@@ -224,15 +228,30 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
         self::assertEquals('DugguWuggu', $app->loadEmailTemplate('testemailtemplate.html', true));
 
         //now save a custom template for a model. When loaded without these params,  it should still return the general one
-        $app->saveEmailTemplate('testemailtemplate.html', 'Migasalasa', 'SomeClass', 13);
+        $ba = new BaseModelA(self::$app->db);
+        $ba->save();
+        $app->saveEmailTemplate('testemailtemplate.html', 'Migasalasa', get_class($ba), $ba->get('id'));
         self::assertEquals('DugguWuggu', $app->loadEmailTemplate('testemailtemplate.html', true));
 
         //when loading with the model_class and model_id params it should find the one saved for the record
-        self::assertEquals('Migasalasa', $app->loadEmailTemplate('testemailtemplate.html', true, 'SomeClass', 13));
+        self::assertEquals('Migasalasa', $app->loadEmailTemplate('testemailtemplate.html', true, [$ba]));
 
         //when loading an invalid class or id, fall back to general one
-        self::assertEquals('DugguWuggu', $app->loadEmailTemplate('testemailtemplate.html', true, 'SomeNonExistantClass', 13));
-        self::assertEquals('DugguWuggu', $app->loadEmailTemplate('testemailtemplate.html', true, 'SomeClass', 155));
+        $bb = new BaseModelB(self::$app->db);
+        $bb->save();
+        self::assertEquals('DugguWuggu', $app->loadEmailTemplate('testemailtemplate.html', true, [$bb]));
+    }
+
+
+    /*
+     *
+     */
+    public function testLoadEmailTemplateExceptionModelNotLoaded() {
+        $app = new \PMRAtk\View\App(['nologin'], ['always_run' => false]);
+        $app->db = self::$app->db;
+        $bb = new BaseModelB(self::$app->db);
+        self::expectException(\atk4\data\Exception::class);
+        self::assertEquals('DugguWuggu', $app->loadEmailTemplate('testemailtemplate.html', true, [$bb]));
     }
 
 
@@ -243,19 +262,22 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
     public function testLoadEmailTemplateLoadFromFileIfInDBOnlyPerModel() {
         $app = new \PMRAtk\View\App(['nologin'], ['always_run' => false]);
         $app->db = self::$app->db;
-
+        $ba1 = new BaseModelA(self::$app->db);
+        $ba1->save();
+        $ba2 = new BaseModelA(self::$app->db);
+        $ba2->save();
         //initial state should be same as file, as file should be loaded
         self::assertEquals(file_get_contents(FILE_BASE_PATH.'/template/email/testemailtemplate.html'), $app->loadEmailTemplate('testemailtemplate.html', true));
 
         //now save a custom template for a model. When loaded without these params,  it should still return the general one
-        $app->saveEmailTemplate('testemailtemplate.html', 'Migasalasa', 'SomeClass', 13);
+        $app->saveEmailTemplate('testemailtemplate.html', 'Migasalasa', get_class($ba1), $ba1->get('id'));
         self::assertEquals(file_get_contents(FILE_BASE_PATH.'/template/email/testemailtemplate.html'), $app->loadEmailTemplate('testemailtemplate.html', true));
 
         //also for any other model id
-        self::assertEquals(file_get_contents(FILE_BASE_PATH.'/template/email/testemailtemplate.html'), $app->loadEmailTemplate('testemailtemplate.html', true, 'SomeClass', 12));
+        self::assertEquals(file_get_contents(FILE_BASE_PATH.'/template/email/testemailtemplate.html'), $app->loadEmailTemplate('testemailtemplate.html', true, [$ba2]));
 
         //but for that special ID return that custom one
-        self::assertEquals('Migasalasa', $app->loadEmailTemplate('testemailtemplate.html', true, 'SomeClass', 13));
+        self::assertEquals('Migasalasa', $app->loadEmailTemplate('testemailtemplate.html', true, [$ba1]));
     }
 
 
