@@ -12,6 +12,9 @@ class MessageForUser extends BaseModel {
 
     public $table = 'message_for_user';
 
+    //hack until all User models are sensibly rebased
+    public $roleFieldName = 'role';
+
     /*
      *
      */
@@ -36,6 +39,7 @@ class MessageForUser extends BaseModel {
      * Load all unread messages for the current logged in user
      */
     public function getUnreadMessagesForLoggedInUser():array {
+        $return = [];
         if(!$this->app->auth->user->loaded()) {
             throw new \atk4\data\Exception('A user needs to be loaded in App for '.__FUNCTION__);
         }
@@ -47,8 +51,8 @@ class MessageForUser extends BaseModel {
                                         ->action('count'), '<', 1);
         foreach($messages as $message) {
             if(in_array('ALL', $message->get('for_user_roles'))
-            || !$this->app->auth->user->hasField('role')
-            || in_array($this->app->auth->user->get('role'), $message->get('for_user_roles'))) {
+            || !$this->app->auth->user->hasField($this->roleFieldName)
+            || in_array($this->app->auth->user->get($this->roleFieldName), $message->get('for_user_roles'))) {
                 $return[] = clone $message;
             }
         }
