@@ -4,6 +4,7 @@ namespace PMRAtk\View;
 
 use atk4\ui\Exception;
 use atk4\ui\Template;
+use PMRAtk\Data\MessageForUser;
 
 class App extends \atk4\ui\App {
 
@@ -385,5 +386,22 @@ class App extends \atk4\ui\App {
         $email->send();
 
         return $email;
+    }
+
+
+    /*
+     *
+     */
+    protected function _displayMessagesForUser() {
+        //messsages already displayed in this session? do not bother user again
+        if($_SESSION['EOO_MESSAGES_FOR_USER_DISPLAYED'][$this->auth->user->get('id')] ?? false) {
+            return;
+        }
+        $unreadMessages = (new MessageForUser($this->db))->getUnreadMessagesForLoggedInUser();
+        if(count($unreadMessages < 1)) {
+            return;
+        }
+
+        $this->layout->add(new MessageForUserModal(['messages' => $unreadMessages]));
     }
 }
