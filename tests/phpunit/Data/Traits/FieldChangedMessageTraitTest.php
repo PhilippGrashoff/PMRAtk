@@ -108,7 +108,7 @@ class FieldChangedMessageTraitTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function testOldValueEqualsNewValueTypeStringDoesNothing() {
         $m = new FCMTraitTest($this->testApp->db);
-        $m->addFieldChangedMessage('name', '', '');
+        $m->addFieldChangedMessage('name', '', 'lalala');
         $m->addFieldsChangedUserMessage();
         $this->assertEquals(0, count($this->testApp->userMessages));
     }
