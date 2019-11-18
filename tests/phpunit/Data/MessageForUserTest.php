@@ -122,5 +122,25 @@ class MessageForUserTest extends \PMRAtk\tests\phpunit\TestCase
         self::assertFalse($message4->isReadByLoggedInUser());
     }
 
+
+
+    /*
+     *
+     */
+    public function testExceptionGetUnreadMessagesUserNotLoaded() {
+        $u = new User(self::$app->db);
+        $cache = self::$app->auth->user;
+        self::$app->auth->user = $u;
+        $exceptionFound = false;
+        try {
+            $m = new MessageForUser(self::$app->db);
+            $m->getUnreadMessagesForLoggedInUser();
+        }
+        catch(\atk4\data\Exception $e) {
+            $exceptionFound = true;
+        }
+        self::$app->auth->user = $cache;
+        self::assertTrue($exceptionFound);
+    }
     /**/
 }

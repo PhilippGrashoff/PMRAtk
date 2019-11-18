@@ -3,6 +3,8 @@
 namespace PMRAtk\tests\phpunit\Data\Traits;
 
 
+use atk4\ui\Persistence\UI;
+
 class EmailWithEncryptedField extends \PMRAtk\Data\Email {
 
     use \PMRAtk\Data\Traits\EncryptedFieldTrait;
@@ -43,6 +45,31 @@ class EncryptedFieldTraitTest extends \PMRAtk\tests\phpunit\TestCase {
         $e2->load($e->id);
         $this->assertNotEquals($e2->get('value'), 'Duggu');
         $this->assertTrue(strlen($e2->get('value')) > 50);
+    }
+
+
+    /*
+     *
+     */
+    public function testPersistenceUIReturnsValue() {
+        $e = new EmailWithEncryptedField(self::$app->db);
+        $e->set('value', 'Duggu');
+        $e->save();
+
+        $ui = new UI();
+        $res = $ui->typecastSaveField($e->getField('value'), $e->get('value'));
+        self::assertEquals('Duggu', $res);
+    }
+
+
+    /*
+     *
+     */
+    public function testNullValueConvertedToEmptyString() {
+        $e = new EmailWithEncryptedField(self::$app->db);
+        $e->set('value', null);
+        $e->save();
+        self::assertTrue(true);
     }
 
 

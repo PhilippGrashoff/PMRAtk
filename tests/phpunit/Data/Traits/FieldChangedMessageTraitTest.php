@@ -90,4 +90,26 @@ class FieldChangedMessageTraitTest extends \PMRAtk\tests\phpunit\TestCase {
         $this->expectException(\atk4\data\Exception::class);
         $m->addFieldChangedMessage('name', 'ha', 'ha');
     }
+
+
+    /*
+     *
+     */
+    public function testOldValueNullDoesNothing() {
+        $m = new FCMTraitTest($this->testApp->db);
+        $m->addFieldChangedMessage('name', null, 'peter');
+        $m->addFieldsChangedUserMessage();
+        $this->assertEquals(0, count($this->testApp->userMessages));
+    }
+
+
+    /*
+     *
+     */
+    public function testOldValueEqualsNewValueTypeStringDoesNothing() {
+        $m = new FCMTraitTest($this->testApp->db);
+        $m->addFieldChangedMessage('name', '', '');
+        $m->addFieldsChangedUserMessage();
+        $this->assertEquals(0, count($this->testApp->userMessages));
+    }
 }
