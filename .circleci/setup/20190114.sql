@@ -33,7 +33,6 @@ CREATE TABLE IF NOT EXISTS `email`
     COLLATE = latin1_german1_ci;
 
 
-
 CREATE TABLE IF NOT EXISTS `message_for_user`
 (
     `id`                 INT          NOT NULL AUTO_INCREMENT,
@@ -42,7 +41,10 @@ CREATE TABLE IF NOT EXISTS `message_for_user`
     `text`               LONGTEXT     NULL,
     `title`              VARCHAR(255) NULL,
     `needs_user_confirm` TINYINT      NULL,
-    `for_user_roles`     JSON         NULL,
+    `is_html`            TINYINT      NULL,
+    `param1`             VARCHAR(255) NULL,
+    `param2`             VARCHAR(255) NULL,
+    `param3`             VARCHAR(255) NULL,
     PRIMARY KEY (`id`)
 )
     ENGINE = InnoDB

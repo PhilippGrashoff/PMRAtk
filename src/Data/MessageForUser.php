@@ -12,9 +12,6 @@ class MessageForUser extends BaseModel {
 
     public $table = 'message_for_user';
 
-    //hack until all User models are sensibly rebased
-    public $roleFieldName = 'role';
-
     /*
      *
      */
@@ -23,12 +20,16 @@ class MessageForUser extends BaseModel {
         $this->addFields([
             //Message title, e.g. "UI Update"
             ['title',               'type' => 'string',  'caption' => 'Titel'],
-            //HTML Content of the message
+            //is text HTML?
+            ['is_html',             'type' => 'integer',  'caption' => 'Text ist HTML'],
+            //HTML or Text Content of the message
             ['text',                'type' => 'Text',    'caption' => 'Nachricht'],
             //can be used by UI to force user to click "I have read it!" button instead of just closing the modal
             ['needs_user_confirm',  'type' => 'integer', 'caption' => ''],
-            //array containing all user roles this message is meant for and the special value "ALL"
-            ['for_user_roles',      'type' => 'array',   'caption' => 'Für Benutzerrollen', 'serialize' => 'json'],
+            //extra parameters to further refine for whom this message is/is not
+            ['param1',              'type' => 'string'],
+            ['param2',              'type' => 'string'],
+            ['param3',              'type' => 'string'],
         ]);
 
         $this->hasMany('MessageForUserToUser', MessageForUserToUser::class);
@@ -38,26 +39,42 @@ class MessageForUser extends BaseModel {
     /*
      * Load all unread messages for the current logged in user
      */
-    public function getUnreadMessagesForLoggedInUser():array {
+    public function getUnreadMessagesForLoggedInUser($param1 = null, $param2 = null, $param3 = null):self {
         $return = [];
         if(!$this->app->auth->user->loaded()) {
             throw new \atk4\data\Exception('A user needs to be loaded in App for '.__FUNCTION__);
         }
+
         $messages = new self($this->persistence);
         //make sure there is no record for the current user with is set as read
         $messages->addCondition($messages->refLink('MessageForUserToUser')
-                                        ->addCondition('user_id', $this->app->auth->user->get('id'))
-                                        ->addCondition('is_read', '1')
-                                        ->action('count'), '<', 1);
-        foreach($messages as $message) {
-            if(in_array('ALL', $message->get('for_user_roles'))
-            || !$this->app->auth->user->hasField($this->roleFieldName)
-            || in_array($this->app->auth->user->get($this->roleFieldName), $message->get('for_user_roles'))) {
-                $return[] = clone $message;
-            }
-        }
+            ->addCondition('user_id', $this->app->auth->user->get('id'))
+            ->addCondition('is_read', '1')
+            ->action('count'), '<', 1);
+        $this->_addParamConditionToMessages($messages, $param1, 'param1');
+        $this->_addParamConditionToMessages($messages, $param2, 'param2');
+        $this->_addParamConditionToMessages($messages, $param3, 'param3');
 
-        return $return;
+        return $messages;
+    }
+
+
+    /**
+     * Add condition to messages if $param is not null
+     */
+    protected function _addParamConditionToMessages(self $messages, $param, string $fieldName) {
+        if($param === null) {
+            return;
+        }
+        elseif(is_callable($param)) {
+            call_user_func($param, $messages);
+        }
+        elseif(is_array($param)) {
+            $messages->addCondition($fieldName, 'in', $param);
+        }
+        else {
+            $messages->addCondition($fieldName, $param);
+        }
     }
 
 
@@ -65,21 +82,9 @@ class MessageForUser extends BaseModel {
      * mark all unread messages as read. Either pass an array with objects/ids of Messages, or null to use
      * getUnreadMessagesForLoggedInUser
      */
-    public function markMessagesAsRead(array $messages = null) {
-        if($messages === null) {
-            $messages = $this->getUnreadMessagesForLoggedInUser();
-        }
-
-        foreach($messages as $message) {
-            if(!$message instanceof self) {
-                $id = $message;
-                $message = new self($this->persistence);
-                $message->load($id);
-            }
-
-
-            $message->addUser($this->app->auth->user, ['is_read' => 1]);
-        }
+    public function markAsRead() {
+        $this->_exceptionIfThisNotLoaded();
+        $this->addUser($this->app->auth->user, ['is_read' => 1]);
     }
 
 
