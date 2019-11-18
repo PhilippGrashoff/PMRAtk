@@ -2,12 +2,14 @@
 
 namespace PMRAtk\tests\phpunit\Data\Traits;
 
-class AuditTraitTest extends \PMRAtk\tests\phpunit\TestCase {
+class AuditTraitTest extends \PMRAtk\tests\phpunit\TestCase
+{
 
     /*
      *
      */
-    public static function setUpBeforeClass():void {
+    public static function setUpBeforeClass(): void
+    {
         parent::setUpBeforeClass();
         $_ENV['CREATE_AUDIT'] = true;
     }
@@ -15,7 +17,8 @@ class AuditTraitTest extends \PMRAtk\tests\phpunit\TestCase {
     /*
      *
      */
-    public static function tearDownAfterClass():void {
+    public static function tearDownAfterClass(): void
+    {
         parent::tearDownAfterClass();
         $_ENV['CREATE_AUDIT'] = false;
     }
@@ -24,7 +27,8 @@ class AuditTraitTest extends \PMRAtk\tests\phpunit\TestCase {
     /*
      *
      */
-    public function testAuditCreatedForFields() {
+    public function testAuditCreatedForFields()
+    {
         $a = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
         $a->save();
         $this->assertEquals(1, $a->getAuditViewModel()->action('count')->getOne());
@@ -60,11 +64,11 @@ class AuditTraitTest extends \PMRAtk\tests\phpunit\TestCase {
         //make sure CREATE AND CHANGE Audits are there
         $change_found = false;
         $create_found = false;
-        foreach($a->getAuditViewModel() as $audit) {
-            if($audit->get('value') == 'CREATE') {
+        foreach ($a->getAuditViewModel() as $audit) {
+            if ($audit->get('value') == 'CREATE') {
                 $create_found = true;
             }
-            if($audit->get('value') == 'CHANGE') {
+            if ($audit->get('value') == 'CHANGE') {
                 $change_found = true;
             }
         }
@@ -76,7 +80,8 @@ class AuditTraitTest extends \PMRAtk\tests\phpunit\TestCase {
     /*
      * test create delete Audit
      */
-      public function testDeleteAudit() {
+    public function testDeleteAudit()
+    {
         $a = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
         $a->save();
         $initial_audit_count = (new \PMRAtk\Data\Audit(self::$app->db))->action('count')->getOne();
@@ -86,7 +91,7 @@ class AuditTraitTest extends \PMRAtk\tests\phpunit\TestCase {
         //make sure newest audit is of type delete
         $a = new \PMRAtk\Data\Audit(self::$app->db);
         $a->setOrder('id DESC');
-        $a->setLimit(0,1);
+        $a->setLimit(0, 1);
         $a->loadAny();
         $this->assertEquals('DELETE', $a->get('value'));
     }
@@ -95,7 +100,8 @@ class AuditTraitTest extends \PMRAtk\tests\phpunit\TestCase {
     /*
      * test secondary audit is created on EPA things
      */
-    public function testEPAAudit() {
+    public function testEPAAudit()
+    {
         $a = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
         $a->save();
         $initial_audit_count = (new \PMRAtk\Data\Audit(self::$app->db))->action('count')->getOne();
@@ -109,14 +115,14 @@ class AuditTraitTest extends \PMRAtk\tests\phpunit\TestCase {
         $change_found = false;
         $create_found = false;
         $delete_found = false;
-        foreach($a->getAuditViewModel() as $audit) {
-            if($audit->get('value') == 'ADD_EMAIL') {
+        foreach ($a->getAuditViewModel() as $audit) {
+            if ($audit->get('value') == 'ADD_EMAIL') {
                 $create_found = true;
             }
-            if($audit->get('value') == 'CHANGE_EMAIL') {
+            if ($audit->get('value') == 'CHANGE_EMAIL') {
                 $change_found = true;
             }
-            if($audit->get('value') == 'REMOVE_EMAIL') {
+            if ($audit->get('value') == 'REMOVE_EMAIL') {
                 $delete_found = true;
             }
         }
@@ -129,7 +135,8 @@ class AuditTraitTest extends \PMRAtk\tests\phpunit\TestCase {
     /*
      * test if Audit is not created
      */
-    public function testNoAuditCreatedOnSetting() {
+    public function testNoAuditCreatedOnSetting()
+    {
         $_ENV['CREATE_AUDIT'] = false;
         $initial_audit_count = (new \PMRAtk\Data\Audit(self::$app->db))->action('count')->getOne();
 
@@ -148,11 +155,67 @@ class AuditTraitTest extends \PMRAtk\tests\phpunit\TestCase {
     /*
      *
      */
-    public function testMToMAudit() {
+    public function testMToMAudit()
+    {
         $a = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
         $a->save();
         $initial_audit_count = (new \PMRAtk\Data\Audit(self::$app->db))->action('count')->getOne();
         $a->addMToMAudit('ADD', new \PMRAtk\tests\phpunit\Data\BaseModelB(self::$app->db));
         $this->assertEquals($initial_audit_count + 1, (new \PMRAtk\Data\Audit(self::$app->db))->action('count')->getOne());
+    }
+
+
+    /*
+     *
+     */
+    public function testNoAuditOnNoValueChange()
+    {
+        $a = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
+        $a->set('name', 'TEST');
+        $a->set('dd_test', 1);
+        $a->save();
+        $a->set('name', 'TEST');
+        $a->set('dd_test', 2);
+        $a->save();
+
+        $i = 0;
+        foreach ($a->ref('Audit') as $audit) {
+            $i++;
+            //first audit should carry name change
+            if ($i === 1) {
+                self::assertTrue(isset($audit->get('data')['name']));
+            } //second shouldnt
+            elseif ($i === 2) {
+                self::assertFalse(isset($audit->get('data')['name']));
+            }
+        }
+
+        //make sure it was 2
+        self::assertEquals(2, $i);
+    }
+
+
+    /*
+     *
+     */
+    public function testNoAuditOnNoValueChangeStringsLooseCompare()
+    {
+        $a = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
+        $a->set('name', '');
+        $a->set('dd_test', 1);
+        $a->save();
+        $a->set('name', null);
+        $a->set('dd_test', 2);
+        $a->save();
+
+        $i = 0;
+        foreach ($a->ref('Audit') as $audit) {
+            $i++;
+            self::assertFalse(isset($audit->get('data')['name']));
+
+        }
+
+        //make sure it was 2
+        self::assertEquals(2, $i);
     }
 }
