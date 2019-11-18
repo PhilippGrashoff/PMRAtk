@@ -171,4 +171,18 @@ class TemplateTest extends \PMRAtk\tests\phpunit\TestCase {
         $t->setTagsFromModel($model2, [], 'tour_');
         $this->assertEquals('Hallo BlaDU Test 3 Miau LALALALA, du ABC Hans 9 bist toll DEF!', $t->render());
     }
+
+
+    /*
+     *
+     */
+    public function testWithLineBreaks() {
+        $t = new \PMRAtk\View\Template();
+        $t->app = self::$app;
+        $t->loadTemplateFromString('Hallo {$with_line_break} Test');
+        $t->setWithLineBreaks('with_line_break', 'Hans'.PHP_EOL.'Neu');
+        $ex = 'Hallo Hans<br />'.PHP_EOL.'Neu Test';
+        self::assertEquals($ex, $t->render());
+    }
+
 }

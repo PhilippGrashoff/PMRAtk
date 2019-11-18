@@ -294,8 +294,10 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
         $s->set('ident', 'STD_EMAIL_NAME');
         $s->set('value', 'HANSI PETER');
         self::$app->addSetting($s);
-        $e = self::$app->sendEmailToAdmin('Test:LALA', 'Hans {$he} ist Super {$te}', ['he' => '22', 'te' => '33']);
-        self::assertTrue(strpos($e->phpMailer->getSentMIMEMessage(), 'Hans 22 ist Super 33') !== false);
+        $b = new BaseModelA(self::$app->db);
+        $b->set('name', 'Laduggu');
+        $e = self::$app->sendEmailToAdmin('Test:LALA', 'Hans {$he} ist Super {$te} {$basemodela_name}', ['he' => '22', 'te' => '33'], [$b]);
+        self::assertTrue(strpos($e->phpMailer->getSentMIMEMessage(), 'Hans 22 ist Super 33 Laduggu') !== false);
     }
 
 
@@ -341,6 +343,19 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
         self::$app->getSetting('LALA');
         self::$app->unloadSettings();
         self::assertThat(self::$app, self::attributeEqualTo('_settingsLoaded', false));
+    }
+
+
+    /*
+     *
+     */
+    public function testSettingExists() {
+        $s = new \PMRAtk\Data\Setting(self::$app->db);
+        $s->set('ident', 'SOMEEXISTINGSETTING');
+        $s->set('value', 'HALLOHALLO');
+        self::$app->addSetting($s);
+        self::assertTrue(self::$app->settingExists('SOMEEXISTINGSETTING'));
+        self::assertFalse(self::$app->settingExists('SOMEOTHERNONEXISTINGSETTING'));
     }
 
 
