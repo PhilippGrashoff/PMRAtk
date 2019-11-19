@@ -153,14 +153,41 @@ class MessageForUserTest extends \PMRAtk\tests\phpunit\TestCase
         $res = $message1->getUnreadMessagesForLoggedInUser('LALALA', null, '');
         self::assertEquals(0, $res->action('count')->getOne());
 
-        $res = $message1->getUnreadMessagesForLoggedInUser(null,null, null, (new \DateTime())->modify('-1 Month'));
-        self::assertEquals(1, $res->action('count')->getOne());
-
         $res = $message1->getUnreadMessagesForLoggedInUser(function($message) {
             $message->addCondition('param1', 'LIKE', '%geg%');
         });
         self::assertEquals(1, $res->action('count')->getOne());
     }
 
+    
+    /**
+     * 
+     */
+    public function testDateFilter() {
+        $message1 = new MessageForUser(self::$app->db);
+        $message1->save();
+
+        $message2 = new MessageForUser(self::$app->db);
+        $message2->set('created_date', (new \DateTime())->modify('-2 Month'));
+        $message2->save();
+        
+        $message3 = new MessageForUser(self::$app->db);
+        $message3->set('created_date',  (new \DateTime())->modify('-2 Month'));
+        $message3->save();
+
+        try {
+            $res = $message1->getUnreadMessagesForLoggedInUser(null, null, null, (new \DateTime())->modify('-1 Month'));
+            self::assertEquals(1, $res->action('count')->getOne());
+        }
+        catch(\Throwable $e) {
+            echo $e->getColorfulText();
+        }
+
+        $message3->set('never_invalid', 1);
+        $message3->save();
+        $res = $message1->getUnreadMessagesForLoggedInUser(null,null, null, (new \DateTime())->modify('-1 Month'));
+        self::assertEquals(2, $res->action('count')->getOne());
+    }
+    
     /**/
 }

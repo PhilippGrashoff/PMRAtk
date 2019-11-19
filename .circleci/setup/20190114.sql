@@ -41,6 +41,7 @@ CREATE TABLE IF NOT EXISTS `message_for_user`
     `text`               LONGTEXT     NULL,
     `title`              VARCHAR(255) NULL,
     `needs_user_confirm` TINYINT      NULL,
+    `never_invalid`      TINYINT      NULL,
     `is_html`            TINYINT      NULL,
     `param1`             VARCHAR(255) NULL,
     `param2`             VARCHAR(255) NULL,
