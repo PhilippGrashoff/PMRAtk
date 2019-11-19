@@ -12,7 +12,7 @@ class MessageForUserModal extends \atk4\ui\Modal
 
     public $messages = [];
 
-    public $labelMessageRead = 'Nachricht gelesen';
+    public $labelMessageRead = 'Benachrichtigung gelesen';
 
     //can the modal only be closed by the "Read it" button?
     public $forceApproveRead;

@@ -12,6 +12,8 @@ class MessageForUser extends BaseModel {
 
     public $table = 'message_for_user';
 
+    public $caption = 'Benachrichtigung';
+
     /*
      *
      */
