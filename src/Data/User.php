@@ -12,13 +12,12 @@ class User extends BaseModel {
         parent::init();
         $this->addfields([
             ['name',            'type' => 'string',  'caption' => 'Name'],
-            ['username',        'type' => 'string',  'caption' => 'Benutzername'],
+            ['username',        'type' => 'string',  'caption' => 'Benutzername',  'ui' => ['form' => ['inputAttr' => ['autocomplete' => 'new-password']]]],
         ]);
 
         //password field from atk login
         $p = new \atk4\login\Field\Password();
-        $this->addField('password', [$p, 'caption' => 'Passwort', 'system' => true]);
-
+        $this->addField('password', [$p, 'caption' => 'Passwort', 'system' => true,    'ui' => ['form' => ['inputAttr' => ['autocomplete' => 'new-password']]]]);
         $this->_addEPARefs();
      }
 
