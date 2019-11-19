@@ -39,8 +39,7 @@ class MessageForUser extends BaseModel {
     /*
      * Load all unread messages for the current logged in user
      */
-    public function getUnreadMessagesForLoggedInUser($param1 = null, $param2 = null, $param3 = null):self {
-        $return = [];
+    public function getUnreadMessagesForLoggedInUser($param1 = null, $param2 = null, $param3 = null, \DateTimeInterface $maxInPast = null):self {
         if(!$this->app->auth->user->loaded()) {
             throw new \atk4\data\Exception('A user needs to be loaded in App for '.__FUNCTION__);
         }
@@ -51,6 +50,9 @@ class MessageForUser extends BaseModel {
             ->addCondition('user_id', $this->app->auth->user->get('id'))
             ->addCondition('is_read', '1')
             ->action('count'), '<', 1);
+        if($maxInPast) {
+            $messages->addCondition('created_date', '>=', $maxInPast);
+        }
         $this->_addParamConditionToMessages($messages, $param1, 'param1');
         $this->_addParamConditionToMessages($messages, $param2, 'param2');
         $this->_addParamConditionToMessages($messages, $param3, 'param3');
