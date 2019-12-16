@@ -9,7 +9,7 @@
   },
   "require":{
     "atk4/ui": "dev-develop#988e16a as 1.7.1",
-    "atk4/data": "dev-develop#3b5d179",
+    "atk4/data": "dev-develop#3b5d179 as 2.0.0",
     "atk4/dsql": "dev-develop as 1.2.6",
     "atk4/core": "dev-develop#627972d",
     "atk4/login": "1.0.1",
