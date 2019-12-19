@@ -134,9 +134,13 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase {
         $hasname = 'has'.$shortname.'Relation';
         $addname = 'add'.$shortname;
         $removename = 'remove'.$shortname;
+        $getRelationName = 'get'.$shortname.'s';
         $this->assertFalse($o->$hasname($other));
         $this->assertTrue($o->$addname($other));
         $this->assertTrue($o->$hasname($other));
+        if(method_exists($o, $getRelationName)) {
+            self::assertEquals(1, $o->$getRelationName()->action('count')->getOne());
+        }
         $this->assertTrue($o->$removename($other));
         $this->assertFalse($o->$hasname($other));
     }
