@@ -267,25 +267,25 @@ trait AuditTrait {
     }
 
 
-    /*
-     * used to create a array containing the audit data for a boolean field
-     * saves "Yes" or "No" instead of 0 and 1 to Audit
+    /**
      *
-     * @param string  | the name of the field
-     * @param string  | the old value of this field
-     *
-     * @return array
      */
     private function _dropDownAudit(string $field_name, $dirty_field):array {
         $old_value = $new_value = '...';
-        if(isset($this->getField($field_name)->ui['form']['values'][$dirty_field])) {
+        if(isset($this->getField($field_name)->values[$dirty_field])) {
+            $old_value = $this->getField($field_name)->values[$dirty_field];
+        }
+        elseif(isset($this->getField($field_name)->ui['form']['values'][$dirty_field])) {
             $old_value = $this->getField($field_name)->ui['form']['values'][$dirty_field];
         }
         elseif(isset($this->getField($field_name)->ui['form']['empty'])) {
             $old_value = $this->getField($field_name)->ui['form']['empty'];
         }
 
-        if(isset($this->getField($field_name)->ui['form']['values'][$this->get($field_name)])) {
+        if(isset($this->getField($field_name)->values[$this->get($field_name)])) {
+            $new_value = $this->getField($field_name)->values[$this->get($field_name) ];
+        }
+        elseif(isset($this->getField($field_name)->ui['form']['values'][$this->get($field_name)])) {
             $new_value = $this->getField($field_name)->ui['form']['values'][$this->get($field_name) ];
         }
         elseif(isset($this->getField($field_name)->ui['form']['empty'])) {
