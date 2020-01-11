@@ -116,7 +116,7 @@ class CronManager extends \PMRAtk\Data\BaseModel {
         $this->_exceptionIfThisNotLoaded();
         $className = $this->get('name');
         if(!class_exists($className)) {
-            return;
+            return false;
         }
 
         $cronClass = new $className($this->app, is_array($this->get('defaults')) ? $this->get('defaults') : []);
