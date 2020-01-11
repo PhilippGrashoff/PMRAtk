@@ -34,7 +34,7 @@ class CronManager extends \PMRAtk\Data\BaseModel {
         $this->addFields([
             ['name',              'type' => 'string',    'caption' => 'Diesen Cronjob ausführen',                                                             'ui' => ['form' => ['DropDown', 'values' => $this->getAvailableCrons()]]],
             ['description',       'type' => 'text',      'caption' => 'Beschreibung'],
-            ['defaults',          'type' => 'array',     'caption' => 'Zusätzliche Optionen für Cronjob (Experteneinstellung)',  'serialize' => 'json'],
+            ['defaults',          'type' => 'array',     'caption' => 'Zusätzliche Optionen für Cronjob',  'serialize' => 'json'],
             ['is_active',         'type' => 'integer',   'caption' => 'Aktiv',                              'values' => [0 => 'Nein', 1 => 'Ja'],             'ui' => ['form' => ['DropDown']]],
             ['execute_daily',     'type' => 'integer',   'caption' => 'Täglich ausführen',                  'values' => [0 => 'Nein', 1 => 'Ja'],             'ui' => ['form' => ['DropDown']]],
             ['execute_hourly',    'type' => 'integer',   'caption' => 'Stündlich ausführen',                'values' => [0 => 'Nein', 1 => 'Ja'],             'ui' => ['form' => ['DropDown']]],
@@ -42,10 +42,36 @@ class CronManager extends \PMRAtk\Data\BaseModel {
             ['time_daily',        'type' => 'time',      'caption' => 'Ausführen um',                                                                         'ui' => ['form' => ['\PMRAtk\View\FormField\Time']]],
             ['minute_hourly',     'type' => 'integer',   'caption' => 'Zu dieser Minute ausführen (0-59)',                                                    'ui' => ['form' => ['\PMRAtk\View\FormField\Integer']]],
             ['interval_minutely', 'type' => 'string',    'caption' => 'Intervall',                          'values' => $this->intervalSettings,              'ui' => ['form' => ['DropDown']]],
-            ['offset_minutely',   'type' => 'integer',   'caption' => 'Verschiebung in Minuten (0-14)',                                                       'ui' => ['form' => ['\PMRAtk\View\FormField\Integer']]],
+            ['offset_minutely',   'type' => 'integer',   'caption' => 'Verschiebung in Minuten (0-14)',     'default' => 0,                                   'ui' => ['form' => ['\PMRAtk\View\FormField\Integer']]],
             ['last_executed',     'type' => 'datetime',  'caption' => 'Zuletzt ausgeführt',                 'system' => true],
         ]);
 
+        $this->addCalculatedField('schedule_info', [
+            function($record) {
+                if($record->get('execute_daily')
+                    && $record->get('time_daily')) {
+                    return 'Täglich um ' . $record->get('time_daily')->format('H:i');
+                }
+                if($record->get('execute_hourly')
+                    && $record->get('minute_hourly')) {
+                    return 'Stündlich zur '.$record->get('minute_hourly').'. Minute';
+                }
+                if($record->get('execute_minutely')
+                    && $record->get('interval_minutely')) {
+                    if($record->get('interval_minutely') == 'EVERY_MINUTE') {
+                        return 'Zu jeder Minute';
+                    }
+                    elseif($record->get('interval_minutely') == 'EVERY_FIFTH_MINUTE') {
+                        return '5-Minütig um '.(0 + $record->get('offset_minutely')).', '.(5 + $record->get('offset_minutely')).', ...';
+                    }
+                    elseif($record->get('interval_minutely') == 'EVERY_FIFTEENTH_MINUTE') {
+                        return 'Viertelstündlich um '.(0 + $record->get('offset_minutely')).', '.(15 + $record->get('offset_minutely')).', ...';
+                    }
+                }
+            },
+            'type' => 'string',
+            'caption' => 'wird ausgeführt',
+        ]);
 
         $this->addHook('beforeSave', function($m, $isUpdate) {
             if(!$m->isDirty('name')) {
