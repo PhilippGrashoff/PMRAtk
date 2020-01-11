@@ -353,7 +353,7 @@ CREATE TABLE IF NOT EXISTS `cron`
     `minute_hourly`     INT          NULL,
     `interval_minutely` VARCHAR(255) NULL,
     `offset_minutely`   INT          NULL,
-    `last_executed`     DATETIME     NULL,
+    `last_executed`     LONGTEXT     NULL,
     PRIMARY KEY (`id`)
 )
     ENGINE = InnoDB

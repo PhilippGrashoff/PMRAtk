@@ -34,7 +34,7 @@ class CronManager extends \PMRAtk\Data\BaseModel {
         $this->addFields([
             ['name',              'type' => 'string',    'caption' => 'Diesen Cronjob ausführen',                                                             'ui' => ['form' => ['DropDown', 'values' => $this->getAvailableCrons()]]],
             ['description',       'type' => 'text',      'caption' => 'Beschreibung'],
-            ['defaults',          'type' => 'array',     'caption' => 'Zusätzliche Optionen für Cronjob',  'serialize' => 'json'],
+            ['defaults',          'type' => 'array',     'caption' => 'Zusätzliche Optionen für Cronjob',   'serialize' => 'json'],
             ['is_active',         'type' => 'integer',   'caption' => 'Aktiv',                              'values' => [0 => 'Nein', 1 => 'Ja'],             'ui' => ['form' => ['DropDown']]],
             ['execute_daily',     'type' => 'integer',   'caption' => 'Täglich ausführen',                  'values' => [0 => 'Nein', 1 => 'Ja'],             'ui' => ['form' => ['DropDown']]],
             ['execute_hourly',    'type' => 'integer',   'caption' => 'Stündlich ausführen',                'values' => [0 => 'Nein', 1 => 'Ja'],             'ui' => ['form' => ['DropDown']]],
@@ -43,7 +43,7 @@ class CronManager extends \PMRAtk\Data\BaseModel {
             ['minute_hourly',     'type' => 'integer',   'caption' => 'Zu dieser Minute ausführen (0-59)',                                                    'ui' => ['form' => ['\PMRAtk\View\FormField\Integer']]],
             ['interval_minutely', 'type' => 'string',    'caption' => 'Intervall',                          'values' => $this->intervalSettings,              'ui' => ['form' => ['DropDown']]],
             ['offset_minutely',   'type' => 'integer',   'caption' => 'Verschiebung in Minuten (0-14)',     'default' => 0,                                   'ui' => ['form' => ['\PMRAtk\View\FormField\Integer']]],
-            ['last_executed',     'type' => 'datetime',  'caption' => 'Zuletzt ausgeführt',                 'system' => true],
+            ['last_executed',     'type' => 'array',     'system' => true,                                  'serialize' => 'json'],
         ]);
 
         $this->addCalculatedField('schedule_info', [
@@ -153,8 +153,11 @@ class CronManager extends \PMRAtk\Data\BaseModel {
         $time_start = microtime(true);
         ob_start();
         $cronClass->execute();
-        ob_end_clean();
         $info['execution_time'] = microtime(true) - $time_start;
+        $info['status']         = $cronClass->successful;
+        $info['last_executed']  = new \DateTime();
+        $info['ouput']          = ob_get_contents();
+        ob_end_clean();
 
         if(!isset($this->executedCrons[$this->get('name')])) {
             $this->executedCrons[$this->get('name')] = [$info];
@@ -163,10 +166,8 @@ class CronManager extends \PMRAtk\Data\BaseModel {
             $this->executedCrons[$this->get('name')][] = $info;
         }
 
-        if($cronClass->successful) {
-            $this->set('last_executed', new \DateTime());
-            $this->save();
-        }
+        $this->set('last_executed', $info);
+        $this->save();
 
         return $cronClass->successful;
     }
@@ -191,7 +192,7 @@ class CronManager extends \PMRAtk\Data\BaseModel {
 
                 $className = $namespace.'\\'.$file->getBasename('.php');
                 if(!class_exists($className)
-                || (new \ReflectionClass($className))->isAbstract()) {
+                    || (new \ReflectionClass($className))->isAbstract()) {
                     continue;
                 }
 
