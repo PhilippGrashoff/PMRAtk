@@ -48,6 +48,9 @@ class CronManager extends \PMRAtk\Data\BaseModel {
 
         $this->addCalculatedField('schedule_info', [
             function($record) {
+                if(!$record->get('is_active')) {
+                    return '';
+                }
                 if($record->get('execute_daily')
                     && $record->get('time_daily')) {
                     return 'Täglich um ' . $record->get('time_daily')->format('H:i');
