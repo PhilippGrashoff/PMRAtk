@@ -17,6 +17,10 @@ class CronManager extends \PMRAtk\Data\BaseModel {
         'src/Data/Cron' => 'PMRAtk\\Data\\Cron',
     ];
 
+    //files that should be ignored trying to load available Cronjobs
+    public $ignoreClassNames = [
+        __CLASS__
+    ];
 
     //array in which info about all executed crons are stored
     public $executedCrons = [];
@@ -144,16 +148,24 @@ class CronManager extends \PMRAtk\Data\BaseModel {
             if(!file_exists($dirName)) {
                 continue;
             }
+
             foreach(new \DirectoryIterator($dirName) as $file) {
                 if($file->getExtension() !== 'php') {
                     continue;
                 }
+
                 $className = $namespace.'\\'.$file->getBasename('.php');
                 if(!class_exists($className)
-                || (new \ReflectionClass($className))->isAbstract()
-                || strpos($className, __CLASS__) !== false) {
+                || (new \ReflectionClass($className))->isAbstract()) {
                     continue;
                 }
+
+                foreach($this->ignoreClassNames as $name) {
+                    if(strpos($className, $name) !== false) {
+                        continue 2;
+                    }
+                }
+
                 $class = new $className($this->app);
                 if(!$class instanceof \PMRAtk\Data\Cron\BaseCronJob) {
                     continue;
