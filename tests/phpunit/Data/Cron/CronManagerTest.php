@@ -207,4 +207,53 @@ class CronManagerTest extends \PMRAtk\tests\phpunit\TestCase {
         $cm->save();
         return $cm;
     }
+
+
+    /**
+     *
+     */
+    public function testNonExistantClassName() {
+        $cm = $this->_getRecord([]);
+        $desc = $cm->get('description');
+        $cm->set('name', 'LALADU');
+        $cm->save();
+        self::assertEquals($desc, $cm->get('description'));
+    }
+
+
+    /**
+     *
+     */
+    public function testNonActiveCronInRun() {
+        $cm = $this->_getRecord([]);
+        $cm->set('is_active', 0);
+        $cm->save();
+
+        $cm = new CronManager(self::$app->db);
+        $cm->run();
+        self::assertEquals(0, count($cm->executedCrons));
+    }
+
+
+    /**
+     *
+     */
+    public function testNonExistantClassNameReturnsFalseOnExecuteCron() {
+        $cm = $this->_getRecord([]);
+        $cm->set('name', 'LALALA');
+        self::assertFalse($cm->executeCron());
+    }
+
+
+    /***
+     *
+     */
+    public function testNonExistantFolderIsSkipped() {
+        $this->_addStandardEmailAccount();
+        $cm = new CronManager(self::$app->db, ['cronFilesPath' => [
+            'some/non/existant/path' => 'PMRAtk\\Data\\Cron',
+            'tests/phpunit/Data/Cron/TestClasses' => 'PMRAtk\\tests\\phpunit\\Data\\Cron\\TestClasses',
+        ]]);
+        self::assertEquals(1, count($cm->getAvailableCrons()));
+    }
 }
