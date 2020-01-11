@@ -6,7 +6,9 @@ class DBBackup extends BaseCronJob {
 
     public $name = 'Datenbank Backup';
 
-    /*
+    public $description = 'Erstellt ein Gzip komprimiertes Update der Datenbank';
+
+    /**
      *
      */
     public function execute() {

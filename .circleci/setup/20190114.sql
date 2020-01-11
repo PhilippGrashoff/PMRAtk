@@ -336,3 +336,26 @@ CREATE TABLE IF NOT EXISTS `file`
     DEFAULT CHARACTER SET = latin1
     COLLATE = latin1_german1_ci;
 
+CREATE TABLE IF NOT EXISTS `cron`
+(
+    `id`                INT          NOT NULL AUTO_INCREMENT,
+    `last_updated`      DATETIME     NULL,
+    `created_date`      DATETIME     NULL,
+    `created_by`        INT          NULL,
+    `name`              VARCHAR(255) NULL,
+    `description`       TEXT         NULL,
+    `defaults`          TEXT         NULL,
+    `is_active`         INT          NULL,
+    `execute_daily`     INT          NULL,
+    `execute_hourly`    INT          NULL,
+    `execute_minutely`  INT          NULL,
+    `time_daily`        TIME         NULL,
+    `minute_hourly`     INT          NULL,
+    `interval_minutely` VARCHAR(255) NULL,
+    `offset_minutely`   INT          NULL,
+    `last_executed`     DATETIME     NULL,
+    PRIMARY KEY (`id`)
+)
+    ENGINE = InnoDB
+    DEFAULT CHARACTER SET = latin1
+    COLLATE = latin1_german1_ci;

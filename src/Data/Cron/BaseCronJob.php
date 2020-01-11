@@ -17,31 +17,44 @@ abstract class BaseCronJob {
 
     //The name of the cronjob to display to a user
     public $name = '';
+
+    //some description explaining what the cron is doing
+    public $description = '';
+
     //to all these recipients the success/fail email will be sent.
     //Plain Email Addresses go in here
     public $recipients = [];
+
     //should Admin also recieve success email?
     public $addAdminToSuccessEmail = false;
 
     public $phpMailer;
+
     //indicates if the cronjob was successful
     public $successful = false;
 
 
-    /*
+    /**
      *
      */
     public function __construct(\atk4\ui\App $app, array $defaults = []) {
         $this->app = $app;
         $this->setDefaults($defaults);
         $this->phpMailer = new \PMRAtk\Data\Email\PHPMailer($this->app);
+    }
+
+
+    /**
+     *
+     */
+    public function execute() {
         //make sure execute exists, otherwise throw exception
-        if (!method_exists($this, 'execute')) {
-            throw new \atk4\data\Exception(__FUNCTION__ . ' needs to ne implemented in descendants of ' . __CLASS__);
+        if (!method_exists($this, '_execute')) {
+            throw new \atk4\data\Exception('_execute needs to ne implemented in descendants of ' . __CLASS__);
         }
         //try complete cronjob logic, exception leads to fail email to admin
         try {
-            $this->execute();
+            $this->_execute();
             $this->successful = true;
             echo 'Cronjob ' . $this->getName() . ' successful';
             $this->sendSuccessEmail();
@@ -51,7 +64,7 @@ abstract class BaseCronJob {
     }
 
 
-    /*
+    /**
      *
      */
     public function getName() {
@@ -62,7 +75,7 @@ abstract class BaseCronJob {
     }
 
 
-    /*
+    /**
      * sends an email if messages were set
      */
     public function sendSuccessEmail() {
