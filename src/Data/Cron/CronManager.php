@@ -112,7 +112,7 @@ class CronManager extends \PMRAtk\Data\BaseModel {
     /**
      *
      */
-    public function executeCron() {
+    public function executeCron():bool {
         $this->_exceptionIfThisNotLoaded();
         $className = $this->get('name');
         if(!class_exists($className)) {
@@ -122,7 +122,9 @@ class CronManager extends \PMRAtk\Data\BaseModel {
         $cronClass = new $className($this->app, is_array($this->get('defaults')) ? $this->get('defaults') : []);
         $info = ['name' => $className];
         $time_start = microtime(true);
+        ob_start();
         $cronClass->execute();
+        ob_end_clean();
         $info['execution_time'] = microtime(true) - $time_start;
 
         if(!isset($this->executedCrons[$this->get('name')])) {
@@ -132,8 +134,12 @@ class CronManager extends \PMRAtk\Data\BaseModel {
             $this->executedCrons[$this->get('name')][] = $info;
         }
 
-        $this->set('last_executed', new \DateTime());
-        $this->save();
+        if($cronClass->successful) {
+            $this->set('last_executed', new \DateTime());
+            $this->save();
+        }
+
+        return $cronClass->successful;
     }
 
 
