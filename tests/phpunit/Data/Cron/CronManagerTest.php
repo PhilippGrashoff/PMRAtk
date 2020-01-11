@@ -141,7 +141,7 @@ class CronManagerTest extends \PMRAtk\tests\phpunit\TestCase {
         $cm->run();
 
         $cm0->reload();
-        self::assertEquals((new \DateTime())->format('YmdHis'), $cm0->get('last_executed')->format('YmdHis'));
+        self::assertEquals((new \DateTime())->format('d.m.Y H:i:s'), $cm0->get('last_executed')['last_executed']);
     }
 
 

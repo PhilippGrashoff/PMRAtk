@@ -155,8 +155,8 @@ class CronManager extends \PMRAtk\Data\BaseModel {
         $cronClass->execute();
         $info['execution_time'] = microtime(true) - $time_start;
         $info['status']         = $cronClass->successful;
-        $info['last_executed']  = new \DateTime();
-        $info['ouput']          = ob_get_contents();
+        $info['last_executed']  = (new \DateTime())->format('d.m.Y H:i:s');
+        $info['output']         = ob_get_contents();
         ob_end_clean();
 
         if(!isset($this->executedCrons[$this->get('name')])) {
