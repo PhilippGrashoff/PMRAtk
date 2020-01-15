@@ -21,7 +21,6 @@ class PHPMailerTest extends \PMRAtk\tests\phpunit\TestCase {
     public function testCustomEmailAccount() {
         $this->_addStandardEmailAccount();
         $pm = new \PMRAtk\Data\Email\PHPMailer(self::$app);
-        self::assertEquals($pm->Host, EMAIL_HOST);
 
         $ea = new \PMRAtk\Data\Email\EmailAccount(self::$app->db);
         $ea->set('name',        'DUDU');
@@ -36,6 +35,7 @@ class PHPMailerTest extends \PMRAtk\tests\phpunit\TestCase {
         $ea->save();
 
         $pm = new \PMRAtk\Data\Email\PHPMailer(self::$app, ['emailAccount' => $ea]);
+        $this->callProtected($pm, '_setEmailAccount');
         self::assertEquals('DUDU', $pm->Host);
     }
 
@@ -46,7 +46,6 @@ class PHPMailerTest extends \PMRAtk\tests\phpunit\TestCase {
     public function testCustomEmailAccountById() {
         $this->_addStandardEmailAccount();
         $pm = new \PMRAtk\Data\Email\PHPMailer(self::$app);
-        self::assertEquals($pm->Host, EMAIL_HOST);
 
         $ea = new \PMRAtk\Data\Email\EmailAccount(self::$app->db);
         $ea->set('name',        'DUDU');
@@ -61,6 +60,7 @@ class PHPMailerTest extends \PMRAtk\tests\phpunit\TestCase {
         $ea->save();
 
         $pm = new \PMRAtk\Data\Email\PHPMailer(self::$app, ['emailAccount' => $ea->get('id')]);
+        $this->callProtected($pm, '_setEmailAccount');
         self::assertEquals('DUDU', $pm->Host);
     }
 }

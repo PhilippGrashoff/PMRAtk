@@ -294,7 +294,7 @@ class BaseEmailTest extends \PMRAtk\tests\phpunit\TestCase {
     public function testEmailSendFail() {
         $this->_addStandardEmailAccount();
         $be = new \PMRAtk\Data\Email\BaseEmail(self::$app->db);
-        $be->phpMailer = new class extends \PHPMailer\PHPMailer\PHPMailer { public function send() {return false;}};
+        $be->phpMailer = new class(self::$app) extends \PMRAtk\Data\Email\PHPMailer { public function send():bool {return false;}};
         $be->addRecipient('test2@easyoutdooroffice.com');
         $be->set('subject', __FUNCTION__);
         $be->save();
@@ -339,5 +339,33 @@ class BaseEmailTest extends \PMRAtk\tests\phpunit\TestCase {
         $be = new \PMRAtk\Data\Email\BaseEmail(self::$app->db);
         $be->model = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
         self::assertEquals(['BMACAPTION' => ['basemodela_name' => 'Name', 'basemodela_firstname' => 'Vorname']], $be->getTemplateEditVars());
+    }
+
+
+    /**
+     *
+     */
+    public function testSendFromOtherEmailAccount() {
+        $this->_addStandardEmailAccount();
+
+        $ea = new \PMRAtk\Data\Email\EmailAccount(self::$app->db);
+        $ea->set('name',        STD_EMAIL);
+        $ea->set('sender_name', 'TESTSENDERNAME');
+        $ea->set('user',        EMAIL_USERNAME);
+        $ea->set('password',    EMAIL_PASSWORD);
+        $ea->set('smtp_host',   EMAIL_HOST);
+        $ea->set('smtp_port',   EMAIL_PORT);
+        $ea->set('imap_host',   IMAP_HOST);
+        $ea->set('imap_port',   IMAP_PORT);
+        $ea->set('imap_sent_folder', IMAP_SENT_FOLDER);
+        $ea->save();
+
+        $be = new \PMRAtk\Data\Email\BaseEmail(self::$app->db);
+        $be->addRecipient('test3@easyoutdooroffice.com');
+        $be->set('email_account_id', $ea->get('id'));
+        $be->set('subject', __FUNCTION__);
+
+        self::assertTrue($be->send());
+        self::assertEquals('TESTSENDERNAME', $be->phpMailer->FromName);
     }
 }
