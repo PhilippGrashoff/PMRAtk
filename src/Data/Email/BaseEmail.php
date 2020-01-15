@@ -337,7 +337,7 @@ class BaseEmail extends \atk4\data\Model {
      *
      * @return bool   true if at least one send was successful, false otherwise
      */
-     public function send():bool {
+    public function send():bool {
         //superimportant, due to awful behaviour of ref() function we need to make
         //sure $this is loaded
         if(!$this->loaded()) {
@@ -462,5 +462,18 @@ class BaseEmail extends \atk4\data\Model {
      */
     public function getTemplateEditVars():array {
         return [$this->model->getModelCaption() => $this->getModelVars($this->model, strtolower((new \ReflectionClass($this->model))->getShortName()).'_')];
+    }
+
+
+    /**
+     * can be implemented in descendants. Can be used to set a standard Email Account to send from when more than one is available
+     */
+    public function getDefaultEmailAccountId():?int {
+        $ea = new EmailAccount($this->persistence);
+        $ea->tryLoadAny();
+        if($ea->loaded()) {
+            return $ea->get('id');
+        }
+        return null;
     }
 }

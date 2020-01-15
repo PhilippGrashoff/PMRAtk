@@ -1,5 +1,8 @@
 <?php
 
+use PMRAtk\Data\Email\BaseEmail;
+
+
 class Signature extends \PMRAtk\Data\User {
     public function getSignature() {
         return 'TestSignature';
@@ -7,7 +10,7 @@ class Signature extends \PMRAtk\Data\User {
 }
 
 
-class EditPerRecipient extends \PMRAtk\Data\Email\BaseEmail {
+class EditPerRecipient extends BaseEmail {
     public function loadInitialTemplate() {
         $this->set('subject', 'Bla{$testsubject}');
         $this->set('message', 'Bla{$testbody}');
@@ -22,7 +25,7 @@ class BaseEmailTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function testAddRecipient() {
         $this->_addStandardEmailAccount();
-        $base_email = new \PMRAtk\Data\Email\BaseEmail(self::$app->db);
+        $base_email = new BaseEmail(self::$app->db);
         $base_email->save();
 
         //pass a Guide, should have an email set
@@ -99,11 +102,11 @@ class BaseEmailTest extends \PMRAtk\tests\phpunit\TestCase {
     public function testSend() {
         $this->_addStandardEmailAccount();
         //no recipients, should return false
-        $base_email = new \PMRAtk\Data\Email\BaseEmail(self::$app->db);
+        $base_email = new BaseEmail(self::$app->db);
         $this->assertFalse($base_email->send());
 
         //one recipient, should return true
-        $base_email = new \PMRAtk\Data\Email\BaseEmail(self::$app->db);
+        $base_email = new BaseEmail(self::$app->db);
         $base_email->set('subject', 'Hello from PHPUnit');
         $base_email->set('message', 'Hello from PHPUnit');
         $this->assertTrue($base_email->addRecipient('test2@easyoutdooroffice.com'));
@@ -116,7 +119,7 @@ class BaseEmailTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function testloadInitialValues() {
         $this->_addStandardEmailAccount();
-        $base_email = new \PMRAtk\Data\Email\BaseEmail(self::$app->db);
+        $base_email = new BaseEmail(self::$app->db);
         $base_email->loadInitialValues();
         $this->assertTrue(true);
     }
@@ -127,7 +130,7 @@ class BaseEmailTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function testAttachments() {
         $this->_addStandardEmailAccount();
-        $base_email = new \PMRAtk\Data\Email\BaseEmail(self::$app->db);
+        $base_email = new BaseEmail(self::$app->db);
         $base_email->save();
         $file = $this->createTestFile('test.jpg');
         $base_email->addAttachment($file->get('id'));
@@ -143,7 +146,7 @@ class BaseEmailTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function testSendAttachments() {
         $this->_addStandardEmailAccount();
-        $base_email = new \PMRAtk\Data\Email\BaseEmail(self::$app->db);
+        $base_email = new BaseEmail(self::$app->db);
         $base_email->save();
         $file = $this->createTestFile('test.jpg');
         $base_email->addAttachment($file->get('id'));
@@ -157,7 +160,7 @@ class BaseEmailTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function testInitialTemplateLoading() {
         $this->_addStandardEmailAccount();
-        $base_email = new \PMRAtk\Data\Email\BaseEmail(self::$app->db, ['template' => 'testemailtemplate.html']);
+        $base_email = new BaseEmail(self::$app->db, ['template' => 'testemailtemplate.html']);
         $base_email->loadInitialValues();
         $this->assertEquals($base_email->get('subject'), 'TestBetreff');
         $this->assertTrue(strpos($base_email->get('message'), 'TestInhalt') !== false);
@@ -169,7 +172,7 @@ class BaseEmailTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function testInitialTemplateLoadingByString() {
         $this->_addStandardEmailAccount();
-        $base_email = new \PMRAtk\Data\Email\BaseEmail(self::$app->db, ['template' => '{Subject}Hellow{/Subject}Magada']);
+        $base_email = new BaseEmail(self::$app->db, ['template' => '{Subject}Hellow{/Subject}Magada']);
         $base_email->loadInitialValues();
         $this->assertEquals($base_email->get('subject'), 'Hellow');
         $this->assertTrue(strpos($base_email->get('message'), 'Magada') !== false);
@@ -183,7 +186,7 @@ class BaseEmailTest extends \PMRAtk\tests\phpunit\TestCase {
         $this->_addStandardEmailAccount();
         $initial = self::$app->auth->user;
         self::$app->auth->user = new Signature(self::$app->db);
-        $base_email = new \PMRAtk\Data\Email\BaseEmail(self::$app->db, ['template' => '{Subject}Hellow{/Subject}Magada{Signature}{/Signature}']);
+        $base_email = new BaseEmail(self::$app->db, ['template' => '{Subject}Hellow{/Subject}Magada{Signature}{/Signature}']);
         $base_email->loadInitialValues();
         $this->assertTrue(strpos($base_email->get('message'), 'TestSignature') !== false);
         self::$app->auth->user = $initial;
@@ -196,7 +199,7 @@ class BaseEmailTest extends \PMRAtk\tests\phpunit\TestCase {
     public function testloadSignatureBySetting() {
         $this->_addStandardEmailAccount();
         $_ENV['STD_EMAIL_SIGNATURE'] = 'TestSigSetting';
-        $base_email = new \PMRAtk\Data\Email\BaseEmail(self::$app->db, ['template' => '{Subject}Hellow{/Subject}Magada{Signature}{/Signature}']);
+        $base_email = new BaseEmail(self::$app->db, ['template' => '{Subject}Hellow{/Subject}Magada{Signature}{/Signature}']);
         $base_email->loadInitialValues();
         $this->assertTrue(strpos($base_email->get('message'), 'TestSigSetting') !== false);
     }
@@ -207,7 +210,7 @@ class BaseEmailTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function testSMTPKeepAlive() {
         $this->_addStandardEmailAccount();
-        $base_email = new \PMRAtk\Data\Email\BaseEmail(self::$app->db, ['template' => '{Subject}TestMoreThanOneRecipient{/Subject}TestMoreThanOneRecipient{Signature}{/Signature}']);
+        $base_email = new BaseEmail(self::$app->db, ['template' => '{Subject}TestMoreThanOneRecipient{/Subject}TestMoreThanOneRecipient{Signature}{/Signature}']);
         $base_email->loadInitialValues();
         $base_email->save();
         $this->assertTrue($base_email->addRecipient('test1@easyoutdooroffice.com'));
@@ -241,7 +244,7 @@ class BaseEmailTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function testProcessMessageFunction() {
         $this->_addStandardEmailAccount();
-        $base_email = new \PMRAtk\Data\Email\BaseEmail(self::$app->db, ['template' => '{Subject}BlaDu{$testsubject}{/Subject}BlaDu{$testbody}']);
+        $base_email = new BaseEmail(self::$app->db, ['template' => '{Subject}BlaDu{$testsubject}{/Subject}BlaDu{$testbody}']);
         $base_email->processMessageTemplate = function($template, $model) {
             $template->set('testbody', 'HALLELUJA');
         };
@@ -259,7 +262,7 @@ class BaseEmailTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function testOnSuccessFunction() {
         $this->_addStandardEmailAccount();
-        $base_email = new \PMRAtk\Data\Email\BaseEmail(self::$app->db, ['template' => '{Subject}BlaDu{$testsubject}{/Subject}BlaDu{$testbody}']);
+        $base_email = new BaseEmail(self::$app->db, ['template' => '{Subject}BlaDu{$testsubject}{/Subject}BlaDu{$testbody}']);
         $base_email->loadInitialValues();
         $base_email->model = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
         $base_email->onSuccess = function($model) {
@@ -279,11 +282,11 @@ class BaseEmailTest extends \PMRAtk\tests\phpunit\TestCase {
     public function testNonLoadedBaseEmailHasNoRefEmailRecipients() {
         $this->_addStandardEmailAccount();
         //first create a baseEmail and some EmailRecipients
-        $be1 = new \PMRAtk\Data\Email\BaseEmail(self::$app->db);
+        $be1 = new BaseEmail(self::$app->db);
         $be1->save();
         //this baseEmail should not be sent. $be2->ref('email_recipient') will reference
         //the 2 EmailRecipients above as $be2->loaded() = false. BaseEmail needs to check this!
-        $be2 = new \PMRAtk\Data\Email\BaseEmail(self::$app->db);
+        $be2 = new BaseEmail(self::$app->db);
         $this->assertFalse($be2->send());
     }
 
@@ -293,7 +296,7 @@ class BaseEmailTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function testEmailSendFail() {
         $this->_addStandardEmailAccount();
-        $be = new \PMRAtk\Data\Email\BaseEmail(self::$app->db);
+        $be = new BaseEmail(self::$app->db);
         $be->phpMailer = new class(self::$app) extends \PMRAtk\Data\Email\PHPMailer { public function send():bool {return false;}};
         $be->addRecipient('test2@easyoutdooroffice.com');
         $be->set('subject', __FUNCTION__);
@@ -311,7 +314,7 @@ class BaseEmailTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function testGetModelVars() {
         $this->_addStandardEmailAccount();
-        $be = new \PMRAtk\Data\Email\BaseEmail(self::$app->db);
+        $be = new BaseEmail(self::$app->db);
         $res = $be->getModelVars(new \PMRAtk\tests\phpunit\Data\BaseModelB(self::$app->db));
         $this->assertEquals(['name' => 'AName', 'time_test' => 'Startzeit', 'date_test' => 'Startdatum'], $res);
 
@@ -325,7 +328,7 @@ class BaseEmailTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function testGetModelVarsPrefix() {
         $this->_addStandardEmailAccount();
-        $be = new \PMRAtk\Data\Email\BaseEmail(self::$app->db);
+        $be = new BaseEmail(self::$app->db);
         $res = $be->getModelVars(new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db), 'tour_');
         $this->assertEquals(['tour_name' => 'Name', 'tour_firstname' => 'Vorname'], $res);
     }
@@ -336,7 +339,7 @@ class BaseEmailTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function testgetTemplateEditVars() {
         $this->_addStandardEmailAccount();
-        $be = new \PMRAtk\Data\Email\BaseEmail(self::$app->db);
+        $be = new BaseEmail(self::$app->db);
         $be->model = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
         self::assertEquals(['BMACAPTION' => ['basemodela_name' => 'Name', 'basemodela_firstname' => 'Vorname']], $be->getTemplateEditVars());
     }
@@ -360,12 +363,23 @@ class BaseEmailTest extends \PMRAtk\tests\phpunit\TestCase {
         $ea->set('imap_sent_folder', IMAP_SENT_FOLDER);
         $ea->save();
 
-        $be = new \PMRAtk\Data\Email\BaseEmail(self::$app->db);
+        $be = new BaseEmail(self::$app->db);
         $be->addRecipient('test3@easyoutdooroffice.com');
         $be->set('email_account_id', $ea->get('id'));
         $be->set('subject', __FUNCTION__);
 
         self::assertTrue($be->send());
         self::assertEquals('TESTSENDERNAME', $be->phpMailer->FromName);
+    }
+    
+    
+    /**
+     * 
+     */
+    public function testGetDefaultEmailAccountId() {
+        $be = new BaseEmail(self::$app->db);
+        self::assertNull($be->getDefaultEmailAccountId());
+        $this->_addStandardEmailAccount();
+        self::assertIsInt($be->getDefaultEmailAccountId());
     }
 }
