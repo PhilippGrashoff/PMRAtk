@@ -287,12 +287,13 @@ CREATE TABLE IF NOT EXISTS `User`
 
 CREATE TABLE IF NOT EXISTS `base_email`
 (
-    `id`              INT      NOT NULL AUTO_INCREMENT,
-    `subject`         TEXT     NULL,
-    `message`         TEXT     NULL,
-    `attachments`     JSON     NULL,
-    `email_recipient` TEXT     NULL,
-    `created_date`    DATETIME NULL,
+    `id`               INT      NOT NULL AUTO_INCREMENT,
+    `subject`          TEXT     NULL,
+    `message`          TEXT     NULL,
+    `attachments`      JSON     NULL,
+    `email_recipient`  TEXT     NULL,
+    `created_date`     DATETIME NULL,
+    `email_account_id` INT      NULL,
     PRIMARY KEY (`id`)
 )
     ENGINE = InnoDB

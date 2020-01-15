@@ -28,12 +28,6 @@ class PHPMailer extends \PHPMailer\PHPMailer\PHPMailer {
         $this->isSMTP();
         $this->SMTPDebug = 0;
         $this->SMTPAuth = true;
-        $this->_setEmailAccount();
-        $this->Host = $this->emailAccount->get('smtp_host');
-        $this->Port = $this->emailAccount->get('smtp_port');
-        $this->Username = $this->emailAccount->get('user');
-        $this->Password = $this->emailAccount->get('password');
-        $this->setFrom($this->emailAccount->get('name'), $this->emailAccount->get('sender_name'));
 
         parent::__construct();
 
@@ -62,6 +56,7 @@ class PHPMailer extends \PHPMailer\PHPMailer\PHPMailer {
             $this->Subject .= $this->app->getSetting('TEST_EMAIL_UUID');
         }
 
+        $this->_setEmailAccount();
         return parent::send();
     }
 
@@ -72,6 +67,7 @@ class PHPMailer extends \PHPMailer\PHPMailer\PHPMailer {
     protected function _setEmailAccount() {
         if($this->emailAccount instanceof \PMRAtk\Data\Email\EmailAccount
         && $this->emailAccount->loaded()) {
+            $this->_copySettingsFromEmailAccount();
             return;
         }
         //maybe just the ID of the emailaccount was passed?
@@ -81,6 +77,7 @@ class PHPMailer extends \PHPMailer\PHPMailer\PHPMailer {
             if ($val) {
                 $this->emailAccount->tryLoad($val);
                 if ($this->emailAccount->loaded()) {
+                    $this->_copySettingsFromEmailAccount();
                     return;
                 }
             }
@@ -89,9 +86,23 @@ class PHPMailer extends \PHPMailer\PHPMailer\PHPMailer {
         //none found? load default
         $this->emailAccount = new \PMRAtk\Data\Email\EmailAccount($this->app->db);
         $this->emailAccount->tryLoadAny();
+
         if(!$this->emailAccount->loaded()) {
             throw new \atk4\core\Exception('No EmailAccount to send from found!');
         }
+        $this->_copySettingsFromEmailAccount();
+    }
+
+
+    /**
+     *
+     */
+    protected function _copySettingsFromEmailAccount() {
+        $this->Host = $this->emailAccount->get('smtp_host');
+        $this->Port = $this->emailAccount->get('smtp_port');
+        $this->Username = $this->emailAccount->get('user');
+        $this->Password = $this->emailAccount->get('password');
+        $this->setFrom($this->emailAccount->get('name'), $this->emailAccount->get('sender_name'));
     }
 
 

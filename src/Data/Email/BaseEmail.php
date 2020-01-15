@@ -21,6 +21,9 @@ class BaseEmail extends \atk4\data\Model {
     //PHPMailer instance which takes care of the actual sending
     public $phpMailer;
 
+    //The ID of the Email Account to send from
+    public $emailAccountId;
+
     //HTML header
     public $header = '';
 
@@ -76,6 +79,12 @@ class BaseEmail extends \atk4\data\Model {
             ['attachments',     'type' => 'array', 'serialize' => 'json'],
         ]);
 
+        $this->hasOne('email_account_id', [
+            EmailAccount::class,
+            'type' => 'integer',
+            'ui' => ['form' => ['DropDown']]
+        ]);
+
         $this->containsMany('email_recipient', [EmailRecipient::class]);
 
         $this->addHook('beforeSave', function($m, $is_update) {
@@ -91,8 +100,6 @@ class BaseEmail extends \atk4\data\Model {
         if(empty($this->footer)) {
             $this->footer = $this->app->loadEmailTemplate('default_footer.html', true);
         }
-
-        $this->phpMailer = new PHPMailer($this->app);
     }
 
 
@@ -336,6 +343,11 @@ class BaseEmail extends \atk4\data\Model {
         if(!$this->loaded()) {
             $this->save();
         }
+
+        if(!$this->phpMailer instanceof PHPMailer) {
+            $this->phpMailer = new PHPMailer($this->app);
+        }
+        $this->phpMailer->emailAccount = $this->get('email_account_id');
 
         //create a template from message so tags set in message like
         //{$firstname} can be filled
