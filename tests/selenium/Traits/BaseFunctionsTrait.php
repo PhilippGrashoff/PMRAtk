@@ -69,6 +69,7 @@ trait BaseFunctionsTrait {
     }
 
 
+
     /*
      * start webdriver session
      */

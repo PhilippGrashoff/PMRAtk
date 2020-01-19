@@ -48,7 +48,7 @@ function insertCCCode(string $filename) {
 $coverage = new \SebastianBergmann\CodeCoverage\CodeCoverage();
 $coverage->setProcessUncoveredFilesFromWhitelist(true);
 $coverage->filter()->addDirectoryToWhitelist(\''.__DIR__.'/src/View\');
-$coverage->filter()->addFileToWhitelist(\''.__DIR__.'/'.$filename.'\');
+$coverage->filter()->addDirectoryToWhitelist(\''.__DIR__.'/src/App\');
 $coverage->start(uniqid(\'\', true));
 ', $content);
     $content = str_replace('###CCEND', '
