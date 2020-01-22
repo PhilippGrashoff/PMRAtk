@@ -95,4 +95,19 @@ class PHPMailerTest extends \PMRAtk\tests\phpunit\TestCase {
         self::assertTrue($pm->send());
         self::assertTrue($pm->addSentEmailByIMAP());
     }
+
+
+    /**
+     *
+     */
+    public function testAllowSelfSignedSSLCertificate() {
+        $ea = $this->_addStandardEmailAccount();
+        $ea->set('allow_self_signed_ssl', 1);
+        $ea->save();
+        $pm = new \PMRAtk\Data\Email\PHPMailer(self::$app, ['emailAccount' => $ea->get('id')]);
+        $pm->addAddress($ea->get('name'));
+        $pm->setBody('ssltest');
+        $pm->Subject = 'ssltest';
+        self::assertTrue($pm->send());
+    }
 }

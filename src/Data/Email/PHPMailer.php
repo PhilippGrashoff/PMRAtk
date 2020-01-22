@@ -103,6 +103,16 @@ class PHPMailer extends \PHPMailer\PHPMailer\PHPMailer {
         $this->Username = $this->emailAccount->get('user');
         $this->Password = $this->emailAccount->get('password');
         $this->setFrom($this->emailAccount->get('name'), $this->emailAccount->get('sender_name'));
+
+        if($this->emailAccount->get('allow_self_signed_ssl')) {
+            $this->SMTPOptions = [
+                'ssl' => [
+                    'verify_peer' => false,
+                    'verify_peer_name' => false,
+                    'allow_self_signed' => true
+                ]
+            ];
+        }
     }
 
 
