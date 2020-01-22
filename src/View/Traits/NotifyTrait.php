@@ -7,38 +7,38 @@ trait NotifyTrait {
     /*
      *
      */
-    public function successNotify(string $text):\atk4\ui\jsToast {
+    public function successNotify(string $text, int $displayTime = 3000):\atk4\ui\jsToast {
         return new \atk4\ui\jsToast([
             'message' => $text,
             'position' => 'bottom right',
             'showProgress' => 'bottom',
             'class' => 'success',
-            'displayTime' => 3000]);
+            'displayTime' => $displayTime]);
     }
 
 
     /*
      *
      */
-    public function failNotify(string $text):\atk4\ui\jsToast {
+    public function failNotify(string $text, int $displayTime = 10000):\atk4\ui\jsToast {
         return new \atk4\ui\jsToast([
             'message' => $text,
             'position' => 'bottom right',
             'showProgress' => 'bottom',
             'class' => 'error',
-            'displayTime' => 8000]);
+            'displayTime' => $displayTime]);
     }
 
 
     /*
      *
      */
-    public function warningNotify(string $text):\atk4\ui\jsToast {
+    public function warningNotify(string $text, int $displayTime = 7000):\atk4\ui\jsToast {
         return new \atk4\ui\jsToast([
             'message' => $text,
             'position' => 'bottom right',
             'showProgress' => 'bottom',
             'class' => 'warning',
-            'displayTime' => 8000]);
+            'displayTime' => $displayTime]);
     }
 }
