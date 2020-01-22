@@ -181,6 +181,8 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase {
         $ea->set('imap_port',   IMAP_PORT);
         $ea->set('imap_sent_folder', IMAP_SENT_FOLDER);
         $ea->save();
+
+        return $ea;
     }
 
 

@@ -106,18 +106,29 @@ class PHPMailer extends \PHPMailer\PHPMailer\PHPMailer {
     }
 
 
-    /*
+    /**
      * add Email to IMAP if set
      * TODO: Find some nice Lib for this
-     * TODO: See if IMAP is configured, only then do so
      */
-    public function addSentEmailByIMAP() {
+    public function addSentEmailByIMAP():bool {
+        $this->_setEmailAccount();
+        if(!$this->emailAccount->get('imap_host')
+        || !$this->emailAccount->get('imap_port')) {
+            return false;
+        }
         $imap_mailbox = '{'.$this->emailAccount->get('imap_host').':'.$this->emailAccount->get('imap_port').'/imap/ssl}'.$this->emailAccount->get('imap_sent_folder');
-        $imapStream = imap_open(
-            $imap_mailbox,
-            $this->emailAccount->get('user'),
-            $this->emailAccount->get('password'));
-        $result = imap_append($imapStream, $imap_mailbox, $this->getSentMIMEMessage());
-        imap_close($imapStream);
+
+        try {
+            $imapStream = imap_open(
+                $imap_mailbox,
+                $this->emailAccount->get('user'),
+                $this->emailAccount->get('password'));
+            $res = imap_append($imapStream, $imap_mailbox, $this->getSentMIMEMessage());
+            imap_close($imapStream);
+            return $res;
+        }
+        catch (\Throwable $e) {
+            return false;
+        }
     }
 }

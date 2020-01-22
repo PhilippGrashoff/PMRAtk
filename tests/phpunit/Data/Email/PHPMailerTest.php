@@ -63,4 +63,36 @@ class PHPMailerTest extends \PMRAtk\tests\phpunit\TestCase {
         $this->callProtected($pm, '_setEmailAccount');
         self::assertEquals('DUDU', $pm->Host);
     }
+
+
+    /**
+     *
+     */
+    public function testaddSentEmailByIMAP()
+    {
+        $ea = $this->_addStandardEmailAccount();
+        $imapHost = $ea->get('imap_host');
+
+        //first unset some needed Imap field
+        $ea->set('imap_host', '');
+        $ea->save();
+        $pm = new \PMRAtk\Data\Email\PHPMailer(self::$app, ['emailAccount' => $ea->get('id')]);
+        self::assertFalse($pm->addSentEmailByIMAP());
+
+        //now set it to some false value
+        $ea->set('imap_host', 'fsdfd');
+        $ea->save();
+        $pm = new \PMRAtk\Data\Email\PHPMailer(self::$app, ['emailAccount' => $ea->get('id')]);
+        self::assertFalse($pm->addSentEmailByIMAP());
+
+        //now back to initial value, should work
+        $ea->set('imap_host', $imapHost);
+        $ea->save();
+        $pm = new \PMRAtk\Data\Email\PHPMailer(self::$app, ['emailAccount' => $ea->get('id')]);
+        $pm->addAddress($ea->get('name'));
+        $pm->setBody('JJAA');
+        $pm->Subject = 'KKAA';
+        self::assertTrue($pm->send());
+        self::assertTrue($pm->addSentEmailByIMAP());
+    }
 }
