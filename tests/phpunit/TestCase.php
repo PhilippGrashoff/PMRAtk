@@ -122,7 +122,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase {
     /*
      *
      */
-    protected function _testMToM(\PMRAtk\Data\BaseModel $o, \PMRAtk\Data\BaseModel $other) {
+    protected function _testMToM(\atk4\data\Model $o, \atk4\data\Model $other) {
         if(!$o->loaded()) {
             $o->save();
         }
