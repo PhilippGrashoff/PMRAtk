@@ -7,6 +7,14 @@ class CronManager extends \PMRAtk\Data\BaseModel {
     public $table = 'cron';
 
     public $intervalSettings = [
+        'YEARLY' => 'Jährlich',
+        'MONTHLY' => 'Monatlich',
+        'DAILY' => 'Täglich',
+        'HOURLY' => 'Stündlich',
+        'MINUTELY' => 'Minütlich'
+    ];
+
+    public $minutelyIntervalSettings = [
         'EVERY_MINUTE'           => 'Jede Minute',
         'EVERY_FIFTH_MINUTE'     => 'Alle 5 Minuten',
         'EVERY_FIFTEENTH_MINUTE' => 'Alle 15 Minuten'
@@ -36,14 +44,14 @@ class CronManager extends \PMRAtk\Data\BaseModel {
             ['description',       'type' => 'text',      'caption' => 'Beschreibung'],
             ['defaults',          'type' => 'array',     'caption' => 'Zusätzliche Optionen für Cronjob',   'serialize' => 'json'],
             ['is_active',         'type' => 'integer',   'caption' => 'Aktiv',                              'values' => [0 => 'Nein', 1 => 'Ja'],             'ui' => ['form' => ['DropDown']]],
-            ['interval',          'type' => 'string',    'caption' => 'Intervall',                          'values' => ['YEARLY' => 'Jährlich', 'MONTHLY' => 'Monatlich', 'DAILY' => 'Täglich', 'HOURLY' => 'Stündlich', 'MINUTELY' => 'Minütlich']],
+            ['interval',          'type' => 'string',    'caption' => 'Ausführungshäufigkeit',              'values' => $this->intervalSettings,              'ui' => ['form' => ['DropDown']]],
             ['date_yearly',       'type' => 'date',      'caption' => 'am diesem Datum (Jahr wird ignoriert)'],
             ['time_yearly',       'type' => 'time',      'caption' => 'zu dieser Uhrzeit'],
             ['day_monthly',       'type' => 'integer',   'caption' => 'am diesem Tag (1-28)'],
             ['time_monthly',      'type' => 'time',      'caption' => 'zu dieser Uhrzeit'],
             ['time_daily',        'type' => 'time',      'caption' => 'Ausführen um',                                                                         'ui' => ['form' => ['\PMRAtk\View\FormField\Time']]],
             ['minute_hourly',     'type' => 'integer',   'caption' => 'Zu dieser Minute ausführen (0-59)',                                                    'ui' => ['form' => ['\PMRAtk\View\FormField\Integer']]],
-            ['interval_minutely', 'type' => 'string',    'caption' => 'Intervall',                          'values' => $this->intervalSettings,              'ui' => ['form' => ['DropDown']]],
+            ['interval_minutely', 'type' => 'string',    'caption' => 'Intervall',                          'values' => $this->minutelyIntervalSettings,              'ui' => ['form' => ['DropDown']]],
             ['offset_minutely',   'type' => 'integer',   'caption' => 'Verschiebung in Minuten (0-14)',     'default' => 0,                                   'ui' => ['form' => ['\PMRAtk\View\FormField\Integer']]],
             ['last_executed',     'type' => 'array',     'system' => true,                                  'serialize' => 'json'],
         ]);
