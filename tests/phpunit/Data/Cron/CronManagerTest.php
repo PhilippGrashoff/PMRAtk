@@ -26,7 +26,7 @@ class CronManagerTest extends \PMRAtk\tests\phpunit\TestCase {
     public function testExecuteCron() {
         $this->_addStandardEmailAccount();
         $cm = $this->_getRecord([
-            'execute_minutely' => 1,
+            'interval' => 'MINUTELY',
             'interval_minutely' => 'EVERY_MINUTE',
         ]);
         $cm->executeCron();
@@ -40,21 +40,103 @@ class CronManagerTest extends \PMRAtk\tests\phpunit\TestCase {
     /**
      *
      */
+    public function testRunYearly() {
+        $this->_addStandardEmailAccount();
+        $testTime = new \DateTime('2020-05-05');
+        $testTime->setTime(3,3);
+        //this one should be executed
+        $cm1 = $this->_getRecord([
+            'interval'    => 'YEARLY',
+            'date_yearly' => '2020-05-05',
+            'time_yearly' => '03:03',
+        ]);
+        $cm2 = $this->_getRecord([
+            'interval'    => 'YEARLY',
+            'date_yearly' => '2020-05-05',
+            'time_yearly' => '03:04',
+        ]);
+        $cm3 = $this->_getRecord([
+            'interval'    => 'YEARLY',
+            'date_yearly' => '2020-05-05',
+            'time_yearly' => '03:02',
+        ]);
+        $cm3 = $this->_getRecord([
+            'interval'    => 'YEARLY',
+            'date_yearly' => '2020-05-06',
+            'time_yearly' => '03:03',
+        ]);
+        $cm3 = $this->_getRecord([
+            'interval'    => 'YEARLY',
+            'date_yearly' => '2020-06-05',
+            'time_yearly' => '03:03',
+        ]);
+
+        //only one should be executed
+        $cm = new CronManager(self::$app->db);
+        $cm->run($testTime);
+        self::assertEquals(1, count($cm->executedCrons['PMRAtk\tests\phpunit\Data\Cron\TestClasses\SampleCron']));
+    }
+
+
+    /**
+     *
+     */
+    public function testRunMonthly() {
+        $this->_addStandardEmailAccount();
+        $testTime = new \DateTime('2020-05-05');
+        $testTime->setTime(3,3);
+        //this one should be executed
+        $cm1 = $this->_getRecord([
+            'interval'     => 'MONTHLY',
+            'day_monthly'  => 5,
+            'time_monthly' => '03:03',
+        ]);
+        $cm2 = $this->_getRecord([
+            'interval'     => 'MONTHLY',
+            'day_monthly'  => 5,
+            'time_monthly' => '03:02',
+        ]);
+        $cm3 = $this->_getRecord([
+            'interval'     => 'MONTHLY',
+            'day_monthly'  => 5,
+            'time_monthly' => '03:04',
+        ]);
+        $cm3 = $this->_getRecord([
+            'interval'     => 'MONTHLY',
+            'day_monthly'  => 4,
+            'time_monthly' => '03:03',
+        ]);
+        $cm3 = $this->_getRecord([
+            'interval'     => 'MONTHLY',
+            'day_monthly'  => 6,
+            'time_monthly' => '03:03',
+        ]);
+
+        //only one should be executed
+        $cm = new CronManager(self::$app->db);
+        $cm->run($testTime);
+        self::assertEquals(1, count($cm->executedCrons['PMRAtk\tests\phpunit\Data\Cron\TestClasses\SampleCron']));
+    }
+
+
+    /**
+     *
+     */
     public function testRunDaily() {
         $this->_addStandardEmailAccount();
         $testTime = new \DateTime();
         $testTime->setTime(3,3);
         //this one should be executed
         $cm1 = $this->_getRecord([
-            'execute_daily' => 1,
+            'interval' => 'DAILY',
             'time_daily' => '03:03',
         ]);
         $cm2 = $this->_getRecord([
-            'execute_daily' => 1,
+            'interval' => 'DAILY',
             'time_daily' => '03:02',
         ]);
         $cm3 = $this->_getRecord([
-            'execute_daily' => 1,
+            'interval' => 'DAILY',
             'time_daily' => '03:04',
         ]);
 
@@ -74,20 +156,20 @@ class CronManagerTest extends \PMRAtk\tests\phpunit\TestCase {
         $testTime->setTime(3,3);
         //this one should be executed
         $cm0 = $this->_getRecord([
-            'execute_hourly' => 1,
+            'interval' => 'HOURLY',
             'minute_hourly' => 3,
         ]);
         //this one should be executed
         $cm1 = $this->_getRecord([
-            'execute_hourly' => 1,
+            'interval' => 'HOURLY',
             'minute_hourly' => 3,
         ]);
         $cm2 = $this->_getRecord([
-            'execute_hourly' => 1,
+            'interval' => 'HOURLY',
             'minute_hourly' => 2,
         ]);
         $cm3 = $this->_getRecord([
-            'execute_hourly' => 1,
+            'interval' => 'HOURLY',
             'minute_hourly' => 4,
         ]);
 
@@ -107,15 +189,15 @@ class CronManagerTest extends \PMRAtk\tests\phpunit\TestCase {
         $testTime->setTime(3,16);
         //this one should be executed
         $cm0 = $this->_getRecord([
-            'execute_minutely' => 1,
+            'interval' => 'MINUTELY',
             'interval_minutely' => 'EVERY_MINUTE',
         ]);
         $cm1 = $this->_getRecord([
-            'execute_minutely' => 1,
+            'interval' => 'MINUTELY',
             'interval_minutely' => 'EVERY_FIFTH_MINUTE',
         ]);
         $cm3 = $this->_getRecord([
-            'execute_minutely' => 1,
+            'interval' => 'MINUTELY',
             'interval_minutely' => 'EVERY_FIFTEENTH_MINUTE',
         ]);
 
@@ -133,7 +215,7 @@ class CronManagerTest extends \PMRAtk\tests\phpunit\TestCase {
         $this->_addStandardEmailAccount();
         //this one should be executed
         $cm0 = $this->_getRecord([
-            'execute_minutely' => 1,
+            'interval' => 'MINUTELY',
             'interval_minutely' => 'EVERY_MINUTE',
         ]);
 
@@ -154,22 +236,22 @@ class CronManagerTest extends \PMRAtk\tests\phpunit\TestCase {
         $testTime->setTime(3,18);
         //this one should be executed
         $cm1 = $this->_getRecord([
-            'execute_minutely' => 1,
+            'interval' => 'MINUTELY',
             'interval_minutely' => 'EVERY_FIFTH_MINUTE',
             'offset_minutely'   => 3,
         ]);
         //this one should be executed
         $cm3 = $this->_getRecord([
-            'execute_minutely' => 1,
+            'interval' => 'MINUTELY',
             'interval_minutely' => 'EVERY_FIFTEENTH_MINUTE',
             'offset_minutely'   => 3,
         ]);
         $cm2 = $this->_getRecord([
-            'execute_minutely' => 1,
+            'interval' => 'MINUTELY',
             'interval_minutely' => 'EVERY_FIFTH_MINUTE',
         ]);
         $cm4 = $this->_getRecord([
-            'execute_minutely' => 1,
+            'interval' => 'MINUTELY',
             'interval_minutely' => 'EVERY_FIFTEENTH_MINUTE',
         ]);
 

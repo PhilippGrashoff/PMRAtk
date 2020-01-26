@@ -36,9 +36,11 @@ class CronManager extends \PMRAtk\Data\BaseModel {
             ['description',       'type' => 'text',      'caption' => 'Beschreibung'],
             ['defaults',          'type' => 'array',     'caption' => 'Zusätzliche Optionen für Cronjob',   'serialize' => 'json'],
             ['is_active',         'type' => 'integer',   'caption' => 'Aktiv',                              'values' => [0 => 'Nein', 1 => 'Ja'],             'ui' => ['form' => ['DropDown']]],
-            ['execute_daily',     'type' => 'integer',   'caption' => 'Täglich ausführen',                  'values' => [0 => 'Nein', 1 => 'Ja'],             'ui' => ['form' => ['DropDown']]],
-            ['execute_hourly',    'type' => 'integer',   'caption' => 'Stündlich ausführen',                'values' => [0 => 'Nein', 1 => 'Ja'],             'ui' => ['form' => ['DropDown']]],
-            ['execute_minutely',  'type' => 'integer',   'caption' => 'Minütlich ausführen',                'values' => [0 => 'Nein', 1 => 'Ja'],             'ui' => ['form' => ['DropDown']]],
+            ['interval',          'type' => 'string',    'caption' => 'Intervall',                          'values' => ['YEARLY' => 'Jährlich', 'MONTHLY' => 'Monatlich', 'DAILY' => 'Täglich', 'HOURLY' => 'Stündlich', 'MINUTELY' => 'Minütlich']],
+            ['date_yearly',       'type' => 'date',      'caption' => 'am diesem Datum (Jahr wird ignoriert)'],
+            ['time_yearly',       'type' => 'time',      'caption' => 'zu dieser Uhrzeit'],
+            ['day_monthly',       'type' => 'integer',   'caption' => 'am diesem Tag (1-28)'],
+            ['time_monthly',      'type' => 'time',      'caption' => 'zu dieser Uhrzeit'],
             ['time_daily',        'type' => 'time',      'caption' => 'Ausführen um',                                                                         'ui' => ['form' => ['\PMRAtk\View\FormField\Time']]],
             ['minute_hourly',     'type' => 'integer',   'caption' => 'Zu dieser Minute ausführen (0-59)',                                                    'ui' => ['form' => ['\PMRAtk\View\FormField\Integer']]],
             ['interval_minutely', 'type' => 'string',    'caption' => 'Intervall',                          'values' => $this->intervalSettings,              'ui' => ['form' => ['DropDown']]],
@@ -51,16 +53,26 @@ class CronManager extends \PMRAtk\Data\BaseModel {
                 if(!$record->get('is_active')) {
                     return '';
                 }
-                if($record->get('execute_daily')
-                    && $record->get('time_daily')) {
+                if($record->get('interval') == 'YEARLY'
+                && $record->get('date_yearly')
+                && $record->get('time_yearly')) {
+                    return 'Jährlich am ' .$record->get('date_yearly')->format('d.m.Y') . ' um ' . $record->get('time_yearly')->format('H:i');
+                }
+                if($record->get('interval') == 'MONTHLY'
+                && $record->get('day_monthly')
+                && $record->get('time_monthly')) {
+                    return 'Monatlich am ' .$record->get('day_monthly') . '. um ' . $record->get('time_monthly')->format('H:i');
+                }
+                if($record->get('interval') == 'DAILY'
+                && $record->get('time_daily')) {
                     return 'Täglich um ' . $record->get('time_daily')->format('H:i');
                 }
-                if($record->get('execute_hourly')
-                    && $record->get('minute_hourly')) {
+                if($record->get('interval') == 'HOURLY'
+                && $record->get('minute_hourly')) {
                     return 'Stündlich zur '.$record->get('minute_hourly').'. Minute';
                 }
-                if($record->get('execute_minutely')
-                    && $record->get('interval_minutely')) {
+                if($record->get('interval') == 'MINUTELY'
+                && $record->get('interval_minutely')) {
                     if($record->get('interval_minutely') == 'EVERY_MINUTE') {
                         return 'Zu jeder Minute';
                     }
@@ -103,22 +115,50 @@ class CronManager extends \PMRAtk\Data\BaseModel {
             if(!$cron->get('is_active')) {
                 continue;
             }
+            $currentDate   = $dateTime->format('m-d');
+            $currentDay    = $dateTime->format('m');
             $currentTime   = $dateTime->format('H:i');
             $currentMinute = $dateTime->format('i');
+            //yearly execution
+            if($cron->get('interval') == 'YEARLY') {
+                if(!$cron->get('date_yearly') instanceof \DateTimeInterface
+                || !$cron->get('time_yearly') instanceof  \DateTimeInterface) {
+                    continue;
+                }
+                if($currentDate !== $cron->get('date_yearly')->format('m-d')
+                || $currentTime !== $cron->get('time_yearly')->format('H:i')) {
+                    continue;
+                }
+                $cron->executeCron();
+            }
+            //monthly execution
+            elseif($cron->get('interval') == 'MONTHLY') {
+                if($cron->get('day_monthly') < 1
+                || $cron->get('day_monthly') > 28
+                || !$cron->get('time_monthly') instanceof \DateTimeInterface) {
+                    continue;
+                }
+                if(intval($currentDay) !== $cron->get('day_monthly')
+                || $currentTime !== $cron->get('time_monthly')->format('H:i')) {
+                    continue;
+                }
+                $cron->executeCron();
+            }
             //daily execution
-            if($cron->get('execute_daily')) {
+            elseif($cron->get('interval') == 'DAILY') {
                 if($currentTime !== $cron->get('time_daily')->format('H:i')) {
                     continue;
                 }
                 $cron->executeCron();
             }
-            elseif($cron->get('execute_hourly')) {
+            //hourly
+            elseif($cron->get('interval') == 'HOURLY') {
                 if(intval($currentMinute) !== $cron->get('minute_hourly')) {
                     continue;
                 }
                 $cron->executeCron();
             }
-            elseif($cron->get('execute_minutely')) {
+            elseif($cron->get('interval') == 'MINUTELY') {
                 if($this->get('offset_minutely') > 0) {
                     $currentMinute = (clone $dateTime)->modify('-'.$this->get('offset_minutely').' Minutes')->format('i');
                 }
