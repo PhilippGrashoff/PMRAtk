@@ -11,7 +11,7 @@ class DBBackup extends BaseCronJob {
     /**
      *
      */
-    public function execute() {
+    public function _execute() {
         $sql_file = FILE_BASE_PATH.CRON_FILE_PATH.substr(DB_STRING, strrpos(DB_STRING, '=') + 1)."_".date('Ymd_Hi').".sql";
         $output = [];
         $return_var = null;
