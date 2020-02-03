@@ -382,4 +382,13 @@ class BaseEmailTest extends \PMRAtk\tests\phpunit\TestCase {
         $this->_addStandardEmailAccount();
         self::assertIsInt($be->getDefaultEmailAccountId());
     }
+
+
+    /**
+     * TODO
+     */
+    /*public function testSignatureUsesLineBreaks() {
+    }
+
+    /**/
 }
