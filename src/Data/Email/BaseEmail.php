@@ -180,13 +180,13 @@ class BaseEmail extends \atk4\data\Model {
         //use EOOUser signature if available
         if(!empty($this->app->auth->user->getSignature())) {
             $template->del('Signature');
-            $template->append('Signature', $this->app->auth->user->getSignature());
+            $template->appendHTML('Signature', nl2br(htmlspecialchars($this->app->auth->user->getSignature())));
         }
 
         //if not, use standard signature if set
         elseif($this->app->getSetting('STD_EMAIL_SIGNATURE')) {
             $template->del('Signature');
-            $template->append('Signature', $this->app->getSetting('STD_EMAIL_SIGNATURE'));
+            $template->appendHTML('Signature', nl2br(htmlspecialchars($this->app->getSetting('STD_EMAIL_SIGNATURE'))));
         }
     }
 
