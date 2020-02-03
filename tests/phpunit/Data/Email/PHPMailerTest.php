@@ -112,4 +112,34 @@ class PHPMailerTest extends \PMRAtk\tests\phpunit\TestCase {
         self::assertTrue($pm->send());
         self::assertNotEmpty($pm->SMTPOptions);
     }
+
+
+    /**
+     *
+     */
+    public function testExceptionNoEmailAccountAvailable() {
+        $pm = new \PMRAtk\Data\Email\PHPMailer(self::$app);
+        self::expectException(\atk4\core\Exception::class);
+        $this->callProtected($pm, '_setEmailAccount');
+    }
+
+
+    /**
+     *
+     */
+    public function testIMAPCollectImapDebugInfo()
+    {
+        $ea = $this->_addStandardEmailAccount();
+        //now back to initial value, should work
+        $ea->set('imap_sent_folder', 'SomeNonExistantFolder');
+        $ea->save();
+        $pm = new \PMRAtk\Data\Email\PHPMailer(self::$app, ['emailAccount' => $ea->get('id')]);
+        $pm->addAddress($ea->get('name'));
+        $pm->addImapDebugInfo = true;
+        $pm->setBody('JJAA');
+        $pm->Subject = 'KKAA';
+        self::assertTrue($pm->send());
+        self::assertFalse($pm->addSentEmailByIMAP());
+        self::assertTrue(count($pm->imapErrors) > 0);
+    }
 }
