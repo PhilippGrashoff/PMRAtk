@@ -16,6 +16,10 @@ class PHPMailer extends \PHPMailer\PHPMailer\PHPMailer {
     public $footerTemplate  = 'default_footer.html';
 
 
+    public $addImapDebugInfo = false;
+    public $imapErrors = [];
+    public $appendedByIMAP = false;
+
 
     /*
      *
@@ -52,7 +56,7 @@ class PHPMailer extends \PHPMailer\PHPMailer\PHPMailer {
      */
     public function send():bool {
         if($this->app->getSetting('IS_TEST_MODE')
-        && $this->app->getSetting('TEST_EMAIL_UUID')) {
+            && $this->app->getSetting('TEST_EMAIL_UUID')) {
             $this->Subject .= $this->app->getSetting('TEST_EMAIL_UUID');
         }
 
@@ -66,7 +70,7 @@ class PHPMailer extends \PHPMailer\PHPMailer\PHPMailer {
      */
     protected function _setEmailAccount() {
         if($this->emailAccount instanceof \PMRAtk\Data\Email\EmailAccount
-        && $this->emailAccount->loaded()) {
+            && $this->emailAccount->loaded()) {
             $this->_copySettingsFromEmailAccount();
             return;
         }
@@ -122,8 +126,9 @@ class PHPMailer extends \PHPMailer\PHPMailer\PHPMailer {
     public function addSentEmailByIMAP():bool {
         $this->_setEmailAccount();
         if(!$this->emailAccount->get('imap_host')
-        || !$this->emailAccount->get('imap_port')) {
-            return false;
+            || !$this->emailAccount->get('imap_port')) {
+            $this->appendedByIMAP = false;
+            return $this->appendedByIMAP;
         }
         $imap_mailbox = '{'.$this->emailAccount->get('imap_host').':'.$this->emailAccount->get('imap_port').'/imap/ssl}'.$this->emailAccount->get('imap_sent_folder');
 
@@ -132,12 +137,27 @@ class PHPMailer extends \PHPMailer\PHPMailer\PHPMailer {
                 $imap_mailbox,
                 $this->emailAccount->get('user'),
                 $this->emailAccount->get('password'));
-            $res = imap_append($imapStream, $imap_mailbox, $this->getSentMIMEMessage());
+            $this->appendedByIMAP = imap_append($imapStream, $imap_mailbox, $this->getSentMIMEMessage());
+            if($this->addImapDebugInfo) {
+                $imapErrors = imap_errors();
+                $imapNotices = imap_alerts();
+                if($imapErrors) {
+                    $this->imapErrors = $imapErrors;
+                }
+                if($imapNotices) {
+                    $this->imapErrors = array_merge($this->imapErrors, $imapNotices);
+                }
+                $mailboxes = imap_list($imapStream, '{'.$this->emailAccount->get('imap_host').':'.$this->emailAccount->get('imap_port').'/imap/ssl}', '*');
+                if(is_array($mailboxes)) {
+                    $this->imapErrors[] = 'Vorhandene Mailboxen: '.implode(', ', $mailboxes);
+                }
+            }
             imap_close($imapStream);
-            return $res;
         }
         catch (\Throwable $e) {
-            return false;
+            $this->appendedByIMAP = false;
         }
+
+        return $this->appendedByIMAP;
     }
 }

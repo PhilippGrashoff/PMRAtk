@@ -47,7 +47,7 @@ abstract class BaseCronJob {
     /**
      *
      */
-    public function execute() {
+    final public function execute() {
         //make sure execute exists, otherwise throw exception
         if (!method_exists($this, '_execute')) {
             throw new \atk4\data\Exception('_execute needs to ne implemented in descendants of ' . __CLASS__);
