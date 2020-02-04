@@ -107,6 +107,15 @@ class CronManager extends \PMRAtk\Data\BaseModel {
             $cronClass = new $className($m->app, is_array($m->get('defaults')) ? $m->get('defaults') : []);
             $m->set('description', $cronClass->description);
         });
+
+        //execute yearly first, minutely last!
+        $this->setOrder([
+            ["interval = 'YEARLY' DESC"],
+            ["interval = 'MONTHLY' DESC"],
+            ["interval = 'DAILY' DESC"],
+            ["interval = 'HOURLY' DESC"],
+            ["interval = 'MINUTELY' DESC"],
+        ]);
     }
 
 

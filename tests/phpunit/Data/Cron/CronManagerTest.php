@@ -376,4 +376,57 @@ class CronManagerTest extends \PMRAtk\tests\phpunit\TestCase {
         ]]);
         self::assertEquals(1, count($cm->getAvailableCrons()));
     }
+
+
+    /**
+     *
+     */
+    public function testSorting() {
+        $this->_addStandardEmailAccount();
+        $this->_getRecord([
+            'interval' => 'DAILY',
+        ]);
+        $this->_getRecord([
+            'interval' => 'MINUTELY',
+        ]);
+        $this->_getRecord([
+            'interval' => 'YEARLY',
+        ]);
+        $this->_getRecord([
+            'interval' => 'MONTHLY',
+        ]);
+        $this->_getRecord([
+            'interval' => 'MONTHLY',
+        ]);
+        $this->_getRecord([
+            'interval' => 'DAILY',
+        ]);
+        $this->_getRecord([
+            'interval' => null,
+        ]);
+        $this->_getRecord([
+            'interval' => 'YEARLY',
+        ]);
+        $this->_getRecord([
+            'interval' => 'HOURLY',
+        ]);
+
+        $orderArray = [
+            1 => 'YEARLY',
+            2 => 'YEARLY',
+            3 => 'MONTHLY',
+            4 => 'MONTHLY',
+            5 => 'DAILY',
+            6 => 'DAILY',
+            7 => 'HOURLY',
+            8 => 'MINUTELY',
+            9 => null,
+        ];
+
+        $counter = 0;
+        foreach((new CronManager(self::$app->db)) as $cm) {
+            $counter++;
+            self::assertEquals($orderArray[$counter], $cm->get('interval'));
+        }
+    }
 }
