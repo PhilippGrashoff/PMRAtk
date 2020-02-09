@@ -150,7 +150,7 @@ trait AuditTrait {
     /*
      * creates an Audit for adding/removing MToM Relations
      */
-    public function addMToMAudit(string $type, \PMRAtk\Data\BaseModel $model) {
+    public function addMToMAudit(string $type, \PMRAtk\Data\BaseModel $model, $nameField = 'name') {
         if(!$this->_auditEnabled()) {
             return;
         }
@@ -158,7 +158,7 @@ trait AuditTrait {
         $audit = new \PMRAtk\Data\Audit($this->persistence, ['parentObject' => $this]);
         $audit->set('value', $type.'_'.strtoupper((new \ReflectionClass($model))->getShortName()));
 
-        $data = ['id' => $model->get('id'), 'name' => $model->get('name'), 'model' => get_class($model)];
+        $data = ['id' => $model->get('id'), 'name' => $model->get($nameField), 'model' => get_class($model)];
 
         $audit->set('data', $data);
         $audit->save();
