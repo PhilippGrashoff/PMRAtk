@@ -140,7 +140,7 @@ class EPARelationsTraitTest extends \PMRAtk\tests\phpunit\TestCase {
     }
 
 
-    /*
+    /**
      * tests convenience functions for EPA
      */
     public function testaddEPAExpressions() {
@@ -166,7 +166,34 @@ class EPARelationsTraitTest extends \PMRAtk\tests\phpunit\TestCase {
     }
 
 
-    /*
+    /**
+     * tests convenience functions for EPA
+     */
+    public function testExportEPAsAsArray() {
+        $m = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
+        $m->save();
+
+        $m->addEmail('lara1');
+        $m->addEmail('lara2');
+        $m->addPhone('mimi1');
+        $m->addPhone('mimi2');
+        $m->addAddress('gege1');
+        $m->addAddress('gege2');
+
+        $emails    = $m->getEmailsAsArray();
+        $phones    = $m->getPhonesAsArray();
+        $addresses = $m->getAddressesAsArray();
+
+        self::assertTrue(in_array('lara1', $emails));
+        self::assertTrue(in_array('lara2', $emails));
+        self::assertTrue(in_array('mimi1', $phones));
+        self::assertTrue(in_array('mimi2', $phones));
+        self::assertTrue(in_array('gege1', $addresses));
+        self::assertTrue(in_array('gege2', $addresses));
+    }
+
+
+    /**
      * tests if EPA creation works also if model has no id yet
      */
     public function testCreateEPAHook() {
