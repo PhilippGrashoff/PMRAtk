@@ -32,6 +32,8 @@ trait EncryptedFieldTrait {
             function($value, $field, $persistence) use ($key) {
                 $decoded = base64_decode($value);
                 if(mb_strlen($decoded, '8bit') < (SODIUM_CRYPTO_SECRETBOX_NONCEBYTES + SODIUM_CRYPTO_SECRETBOX_MACBYTES)) {
+                    //temporary for migrating EOO settings
+                    return $value;
                     throw new \atk4\data\Exception('An error occured decrypting an encrypted field: '.$field->short_name);
                 }
                 $nonce = mb_substr($decoded, 0, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES, '8bit');
@@ -39,6 +41,8 @@ trait EncryptedFieldTrait {
 
                 $plain = sodium_crypto_secretbox_open($ciphertext, $nonce, $key);
                 if($plain === false) {
+                    //temporary for migrating EOO settings
+                    return $value;
                     throw new \atk4\data\Exception('An error occured decrypting an encrypted field: '.$field->short_name);
                 }
                 sodium_memzero($ciphertext);
