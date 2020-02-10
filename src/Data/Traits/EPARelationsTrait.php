@@ -10,10 +10,13 @@ namespace PMRAtk\Data\Traits;
 trait EPARelationsTrait
 {
 
+    protected $_epaRefModelClass;
+    protected $_epaRefModelIdField = 'id';
+
     /*
      * use this in init() to quickly setup email, phone and address relations
      */
-    protected function _addEPARefs()
+    protected function _addEPARefs(bool $addDelete = true)
     {
         $this->hasMany(
             'Phone',
@@ -21,10 +24,11 @@ trait EPARelationsTrait
                 function () {
                     return (new \PMRAtk\Data\Phone($this->persistence, ['parentObject' => $this]))->addCondition(
                         'model_class',
-                        get_class($this)
+                        ($this->_epaRefModelClass ? : get_class($this))
                     );
                 },
-                'their_field' => 'model_id'
+                'their_field' => 'model_id',
+                'our_field'   => $this->_epaRefModelIdField,
             ]
         );
         $this->hasMany(
@@ -33,10 +37,11 @@ trait EPARelationsTrait
                 function () {
                     return (new \PMRAtk\Data\Email($this->persistence, ['parentObject' => $this]))->addCondition(
                         'model_class',
-                        get_class($this)
+                        ($this->_epaRefModelClass ? : get_class($this))
                     );
                 },
-                'their_field' => 'model_id'
+                'their_field' => 'model_id',
+                'our_field'   => $this->_epaRefModelIdField,
             ]
         );
         $this->hasMany(
@@ -45,21 +50,24 @@ trait EPARelationsTrait
                 function () {
                     return (new \PMRAtk\Data\Address($this->persistence, ['parentObject' => $this]))->addCondition(
                         'model_class',
-                        get_class($this)
+                        ($this->_epaRefModelClass ? : get_class($this))
                     );
                 },
-                'their_field' => 'model_id'
+                'their_field' => 'model_id',
+                'our_field'   => $this->_epaRefModelIdField,
             ]
         );
 
-        $this->addHook(
-            'beforeDelete',
-            function ($m) {
-                $m->deleteHasMany('Phone');
-                $m->deleteHasMany('Email');
-                $m->deleteHasMany('Address');
-            }
-        );
+        if($addDelete) {
+            $this->addHook(
+                'beforeDelete',
+                function ($m) {
+                    $m->deleteHasMany('Phone');
+                    $m->deleteHasMany('Email');
+                    $m->deleteHasMany('Address');
+                }
+            );
+        }
     }
 
 
@@ -216,24 +224,26 @@ trait EPARelationsTrait
         //if $this has no ID yet, use afterSave hook
         if (!$this->loaded()) {
             $this->addHook(
-                'afterInsert',
-                function ($m, $id) use ($classname, $value) {
-                    //create a new Instance, set value and reference field, save
-                    $new_epa = new $classname($m->persistence, ['parentObject' => $m]);
-                    $new_epa->set('model_id', $id);
-                    $new_epa->set('value', $value);
-                    $new_epa->save();
-                    if (method_exists($m, 'addSecondaryAudit')) {
-                        $m->addSecondaryAudit('ADD', $new_epa);
+                'afterSave',
+                function ($m, $isUpdate) use ($type, $value) {
+                    if($isUpdate) {
+                        return;
                     }
+                    $m->createEPA($type, $value);
                 }
             );
             return null;
-        } //if ID is available, do now
+        }
+        //if ID is available, do now
         else {
-            $new_epa = new $classname($this->persistence, ['parentObject' => $this]);
-            //create a new Instance, set value and reference field, save
+            $new_epa = new $classname($this->persistence);
             $new_epa->set('value', $value);
+            $new_epa->set('model_class', $this->_epaRefModelClass ? : get_class($this));
+            $new_epa->set('model_id', $this->get($this->_epaRefModelIdField ? : 'id'));
+            if(!$new_epa->get('model_id')
+                || !$new_epa->get('model_class')) {
+                throw new \atk4\data\Exception('Both model_class and model_id need to have a value');
+            }
             $new_epa->save();
             if (method_exists($this, 'addSecondaryAudit')) {
                 $this->addSecondaryAudit('ADD', $new_epa);
