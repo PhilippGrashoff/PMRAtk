@@ -2,6 +2,10 @@
 
 namespace PMRAtk\tests\phpunit\Data\Traits;
 
+use PMRAtk\Data\Email;
+use PMRAtk\tests\phpunit\Data\BaseModelA;
+use PMRAtk\tests\phpunit\Data\BaseModelB;
+
 class AuditTraitTest extends \PMRAtk\tests\phpunit\TestCase
 {
 
@@ -255,5 +259,28 @@ class AuditTraitTest extends \PMRAtk\tests\phpunit\TestCase
         $au = $instance->ref('Audit')->loadAny();
         $data = $au->get('data');
         self::assertTrue(isset($data['dd_test']));
+    }
+
+
+    /**
+     *
+     */
+    public function testAddSecondaryAudit() {
+        $baseModelA = new BaseModelA(self::$app->db);
+        $baseModelA->save();
+        
+        $baseModelB = new BaseModelB(self::$app->db);
+        $baseModelB->save();
+        
+        $email = new Email(self::$app->db);
+        $email->set('value', 'SOMEEMAIL');
+        $email->save();
+
+        //with 2 params, standard
+        $baseModelA->addSecondaryAudit('ADD', $email);
+        $baseModelA->addSecondaryAudit('CHANGE', $email, 'value', BaseModelB::class, $baseModelB->get('id'));
+
+        self::assertEquals(2, $baseModelA->ref('Audit')->action('count')->getOne());
+        self::assertEquals(2, $baseModelB->ref('Audit')->action('count')->getOne());
     }
 }

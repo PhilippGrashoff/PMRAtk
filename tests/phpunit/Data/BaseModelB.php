@@ -21,6 +21,7 @@ class BaseModelB extends \PMRAtk\Data\BaseModel {
         ]);
 
         $this->_addEPARefs();
+        $this->_addAuditRef();
         $this->_addFileRef();
 
         $this->hasMany('MToMModel', new MToMModel());

@@ -131,8 +131,8 @@ trait AuditTrait {
         string $type,
         \PMRAtk\Data\SecondaryBaseModel $model,
         string $field = 'value',
-        string $modelClass,
-        int $modelId
+        string $modelClass = null,
+        int $modelId = null
     ) {
         if(!$this->_auditEnabled()) {
             return;
