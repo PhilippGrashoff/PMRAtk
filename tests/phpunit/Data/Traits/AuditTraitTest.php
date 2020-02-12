@@ -165,7 +165,7 @@ class AuditTraitTest extends \PMRAtk\tests\phpunit\TestCase
     }
 
 
-    /*
+    /**
      *
      */
     public function testNoAuditOnNoValueChange()
@@ -195,7 +195,7 @@ class AuditTraitTest extends \PMRAtk\tests\phpunit\TestCase
     }
 
 
-    /*
+    /**
      *
      */
     public function testNoAuditOnNoValueChangeStringsLooseCompare()
@@ -217,5 +217,43 @@ class AuditTraitTest extends \PMRAtk\tests\phpunit\TestCase
 
         //make sure it was 2
         self::assertEquals(2, $i);
+    }
+
+
+    /**
+     * This case shouldnt happen, but that line makes sense. Test it here
+     */
+    public function testContinueIfDirtyValueEqualsNewValue() {
+        $a = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
+        $a->dirty = ['dd_test' => 1];
+        $a->set('dd_test', 1);
+        $a->set('name', 'SomeName');
+        $a->save();
+        self::assertEquals(1, $a->ref('Audit')->action('count')->getOne());
+        $au = $a->ref('Audit')->loadAny();
+        $data = $au->get('data');
+        self::assertFalse(isset($data['dd_test']));
+    }
+
+
+    /**
+     *
+     */
+    public function testFieldsValuePropertyIsCorrectlyAudited() {
+        $withValues = new class extends  \PMRAtk\tests\phpunit\Data\BaseModelA {
+
+            public function init() {
+                parent::init();
+                $this->getField('dd_test')->values = [0 => 'Nein', 1 => 'Ja'];
+            }
+        };
+
+        $instance = new $withValues(self::$app->db);
+        $instance->set('dd_test', 1);
+        $instance->save();
+        self::assertEquals(1, $instance->ref('Audit')->action('count')->getOne());
+        $au = $instance->ref('Audit')->loadAny();
+        $data = $au->get('data');
+        self::assertTrue(isset($data['dd_test']));
     }
 }
