@@ -6,10 +6,15 @@ use PMRAtk\Data\Email;
 use PMRAtk\tests\phpunit\Data\BaseModelA;
 use PMRAtk\tests\phpunit\Data\BaseModelB;
 
+
+/**
+ * Class AuditTraitTest
+ * @package PMRAtk\tests\phpunit\Data\Traits
+ */
 class AuditTraitTest extends \PMRAtk\tests\phpunit\TestCase
 {
 
-    /*
+    /**
      *
      */
     public static function setUpBeforeClass(): void
@@ -18,7 +23,8 @@ class AuditTraitTest extends \PMRAtk\tests\phpunit\TestCase
         $_ENV['CREATE_AUDIT'] = true;
     }
 
-    /*
+
+    /**
      *
      */
     public static function tearDownAfterClass(): void
@@ -28,7 +34,7 @@ class AuditTraitTest extends \PMRAtk\tests\phpunit\TestCase
     }
 
 
-    /*
+    /**
      *
      */
     public function testAuditCreatedForFields()
@@ -81,7 +87,7 @@ class AuditTraitTest extends \PMRAtk\tests\phpunit\TestCase
     }
 
 
-    /*
+    /**
      * test create delete Audit
      */
     public function testDeleteAudit()
@@ -101,7 +107,7 @@ class AuditTraitTest extends \PMRAtk\tests\phpunit\TestCase
     }
 
 
-    /*
+    /**
      * test secondary audit is created on EPA things
      */
     public function testEPAAudit()
@@ -136,7 +142,7 @@ class AuditTraitTest extends \PMRAtk\tests\phpunit\TestCase
     }
 
 
-    /*
+    /**
      * test if Audit is not created
      */
     public function testNoAuditCreatedOnSetting()
@@ -156,7 +162,7 @@ class AuditTraitTest extends \PMRAtk\tests\phpunit\TestCase
     }
 
 
-    /*
+    /**
      *
      */
     public function testMToMAudit()
@@ -229,8 +235,8 @@ class AuditTraitTest extends \PMRAtk\tests\phpunit\TestCase
      */
     public function testContinueIfDirtyValueEqualsNewValue() {
         $a = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
-        $a->dirty = ['dd_test' => 1];
         $a->set('dd_test', 1);
+        $a->dirty = ['dd_test' => 1];
         $a->set('name', 'SomeName');
         $a->save();
         self::assertEquals(1, $a->ref('Audit')->action('count')->getOne());
@@ -255,10 +261,13 @@ class AuditTraitTest extends \PMRAtk\tests\phpunit\TestCase
         $instance = new $withValues(self::$app->db);
         $instance->set('dd_test', 1);
         $instance->save();
-        self::assertEquals(1, $instance->ref('Audit')->action('count')->getOne());
-        $au = $instance->ref('Audit')->loadAny();
-        $data = $au->get('data');
-        self::assertTrue(isset($data['dd_test']));
+        $instance->set('dd_test', 0);
+        $instance->save();
+        self::assertEquals(2, $instance->ref('Audit')->action('count')->getOne());
+        foreach ($instance->ref('Audit') as $au) {
+            $data = $au->get('data');
+            self::assertTrue(isset($data['dd_test']));
+        }
     }
 
 
