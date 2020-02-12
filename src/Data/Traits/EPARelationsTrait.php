@@ -238,15 +238,17 @@ trait EPARelationsTrait
         else {
             $new_epa = new $classname($this->persistence);
             $new_epa->set('value', $value);
-            $new_epa->set('model_class', $this->_epaRefModelClass ? : get_class($this));
-            $new_epa->set('model_id', $this->get($this->_epaRefModelIdField ? : 'id'));
+            $modelClass = $this->_epaRefModelClass ? : get_class($this);
+            $modelId = $this->get($this->_epaRefModelIdField ? : 'id');
+            $new_epa->set('model_class', $modelClass);
+            $new_epa->set('model_id', $modelId);
             if(!$new_epa->get('model_id')
                 || !$new_epa->get('model_class')) {
                 throw new \atk4\data\Exception('Both model_class and model_id need to have a value');
             }
             $new_epa->save();
             if (method_exists($this, 'addSecondaryAudit')) {
-                $this->addSecondaryAudit('ADD', $new_epa);
+                $this->addSecondaryAudit('ADD', $new_epa, 'value', $modelClass, $modelId);
             }
 
             return clone $new_epa;
@@ -282,9 +284,10 @@ trait EPARelationsTrait
         if (preg_replace('~\r\n?~', "\n", $value) !== preg_replace('~\r\n?~', "\n", $epa->get('value'))) {
             $epa->set('value', $value);
             if (method_exists($this, 'addSecondaryAudit')) {
-                $this->addSecondaryAudit('CHANGE', $epa);
+                $modelClass = $this->_epaRefModelClass ? : get_class($this);
+                $modelId = $this->get($this->_epaRefModelIdField ? : 'id');
+                $this->addSecondaryAudit('CHANGE', $epa, 'value', $modelClass, $modelId);
             }
-
             $epa->save();
         }
 
@@ -317,7 +320,9 @@ trait EPARelationsTrait
         $clone = clone $epa;
         $epa->delete();
         if (method_exists($this, 'addSecondaryAudit')) {
-            $this->addSecondaryAudit('REMOVE', $clone);
+            $modelClass = $this->_epaRefModelClass ? : get_class($this);
+            $modelId = $this->get($this->_epaRefModelIdField ? : 'id');
+            $this->addSecondaryAudit('REMOVE', $clone, 'value', $modelClass, $modelId);
         }
 
         return true;

@@ -73,6 +73,7 @@ class BaseModel extends \atk4\data\Model {
 
 
     /*
+     * TODO: Check if used anywhere, else delete. EOO doesnt use it any more.
      * loads all available values from given ID if found including Emails,
      * Addresses and Phone numbers. Does not Copy Files or MtoMs (Tours, Guests)
      *

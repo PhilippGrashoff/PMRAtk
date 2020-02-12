@@ -127,13 +127,23 @@ trait AuditTrait {
     /*
      * creates an Audit for secondary models like emails, if it was added, changed or removed
      */
-    public function addSecondaryAudit(string $type, \PMRAtk\Data\SecondaryBaseModel $model, string $field = 'value') {
+    public function addSecondaryAudit(
+        string $type,
+        \PMRAtk\Data\SecondaryBaseModel $model,
+        string $field = 'value',
+        string $modelClass,
+        int $modelId
+    ) {
         if(!$this->_auditEnabled()) {
             return;
         }
 
         $audit = new \PMRAtk\Data\Audit($this->persistence, ['parentObject' => $this]);
         $audit->set('value', $type.'_'.strtoupper((new \ReflectionClass($model))->getShortName()));
+        if($modelClass && $modelId) {
+            $audit->set('model_class', $modelClass);
+            $audit->set('model_id', $modelId);
+        }
 
         $data = [];
         //only save if some value is there or some change happened
