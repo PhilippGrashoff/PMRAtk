@@ -226,9 +226,6 @@ trait EPARelationsTrait
             $this->addHook(
                 'afterSave',
                 function ($m, $isUpdate) use ($type, $value) {
-                    if($isUpdate) {
-                        return;
-                    }
                     $m->createEPA($type, $value);
                 }
             );

@@ -1,7 +1,10 @@
 <?php
 
-class EPARelationsTraitTest extends \PMRAtk\tests\phpunit\TestCase {
 
+/**
+ * Class EPARelationsTraitTest
+ */
+class EPARelationsTraitTest extends \PMRAtk\tests\phpunit\TestCase {
 
     /*
      * Tests adding of new Email, Phone, Address, altering it and then deleting it
@@ -306,5 +309,48 @@ class EPARelationsTraitTest extends \PMRAtk\tests\phpunit\TestCase {
         $m->save();
         $this->expectException(\atk4\data\Exception::class);
         $m->getEmailById(111);
+    }
+
+
+    /**
+     *
+     */
+    public function testModelClassAndModelIdPropertiesCanBeUsedToSaveToDifferentModel() {
+        $bmb = new \PMRAtk\tests\phpunit\Data\BaseModelB(self::$app->db);
+        $bmb->save();
+
+        $saveToDifferentModel = new class extends \PMRAtk\tests\phpunit\Data\BaseModelA {
+            protected $_epaRefModelClass = 'PMRAtk\tests\phpunit\Data\BaseModelB';
+            protected $_epaRefModelIdField = 'BaseModelB_id';
+        };
+
+        $instance = new $saveToDifferentModel(self::$app->db);
+        $instance->set('BaseModelB_id', $bmb->get('id'));
+        $instance->save();
+        $instance->addEmail('someEmailJAJA');
+
+        self::assertEquals(1, $bmb->ref('Email')->action('count')->getOne());
+        foreach($bmb->ref('Email') as $email) {
+            self::assertEquals('someEmailJAJA', $email->get('value'));
+        }
+    }
+
+
+    /**
+     *
+     */
+    public function testExceptionOnCreateIfNoModelIdIsPassed() {
+        $bmb = new \PMRAtk\tests\phpunit\Data\BaseModelB(self::$app->db);
+        $bmb->save();
+
+        $saveToDifferentModel = new class extends \PMRAtk\tests\phpunit\Data\BaseModelA {
+            protected $_epaRefModelClass = 'PMRAtk\tests\phpunit\Data\BaseModelB';
+            protected $_epaRefModelIdField = 'name';
+        };
+
+        $instance = new $saveToDifferentModel(self::$app->db);
+        $instance->save();
+        self::expectException(\atk4\core\Exception::class);
+        $instance->addEmail('someEmailJAJA');
     }
 }
