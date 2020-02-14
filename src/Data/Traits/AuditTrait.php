@@ -57,6 +57,7 @@ trait AuditTrait {
         }
 
         $audit = new \PMRAtk\Data\Audit($this->persistence, ['parentObject' => $this]);
+        $audit->reload_after_save = false;
         $audit->set('value', $type);
 
         $data = [];
@@ -119,6 +120,7 @@ trait AuditTrait {
             return;
         }
         $audit = new \PMRAtk\Data\Audit($this->persistence, ['parentObject' => $this]);
+        $audit->reload_after_save = false;
         $audit->set('value', 'DELETE');
         $audit->save();
     }
@@ -139,6 +141,7 @@ trait AuditTrait {
         }
 
         $audit = new \PMRAtk\Data\Audit($this->persistence, ['parentObject' => $this]);
+        $audit->reload_after_save = false;
         $audit->set('value', $type.'_'.strtoupper((new \ReflectionClass($model))->getShortName()));
         if($modelClass && $modelId) {
             $audit->set('model_class', $modelClass);
@@ -166,6 +169,7 @@ trait AuditTrait {
         }
 
         $audit = new \PMRAtk\Data\Audit($this->persistence, ['parentObject' => $this]);
+        $audit->reload_after_save = false;
         $audit->set('value', $type.'_'.strtoupper((new \ReflectionClass($model))->getShortName()));
 
         $data = ['id' => $model->get('id'), 'name' => $model->get($nameField), 'model' => get_class($model)];
@@ -183,6 +187,7 @@ trait AuditTrait {
             return;
         }
         $audit = new \PMRAtk\Data\Audit($this->persistence, ['parentObject' => $this]);
+        $audit->reload_after_save = false;
         $audit->set('value', $type);
         $audit->set('data', $data);
         $audit->save();
