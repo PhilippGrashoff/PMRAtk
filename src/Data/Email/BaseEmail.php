@@ -66,8 +66,7 @@ class BaseEmail extends \atk4\data\Model {
     public $customTemplateModels = [];
 
 
-
-    /*
+    /**
      * define fields and references
      */
     public function init() {
@@ -103,7 +102,7 @@ class BaseEmail extends \atk4\data\Model {
     }
 
 
-    /*
+    /**
      * loads initial recipients, subject, message and attachments
      */
     public function loadInitialValues() {
@@ -113,19 +112,19 @@ class BaseEmail extends \atk4\data\Model {
     }
 
 
-    /*
+    /**
      * overload in child classes
      */
     public function loadInitialRecipients() {}
 
 
-    /*
+    /**
      * overload in child classes
      */
     public function loadInitialAttachments() {}
 
 
-    /*
+    /**
      *
      */
     public function loadInitialTemplate() {
@@ -347,7 +346,8 @@ class BaseEmail extends \atk4\data\Model {
         if(!$this->phpMailer instanceof PHPMailer) {
             $this->phpMailer = new PHPMailer($this->app);
         }
-        $this->phpMailer->emailAccount = $this->get('email_account_id');
+
+        $this->phpMailer->emailAccount = ($this->get('email_account_id') ? : $this->getDefaultEmailAccountId());
 
         //create a template from message so tags set in message like
         //{$firstname} can be filled
