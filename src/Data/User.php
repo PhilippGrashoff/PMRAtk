@@ -2,9 +2,12 @@
 
 namespace PMRAtk\Data;
 
+use PMRAtk\Data\Traits\MaxFailedLoginsTrait;
+
 class User extends BaseModel {
 
     use \PMRAtk\Data\Traits\EPARelationsTrait;
+    use MaxFailedLoginsTrait;
 
     public $table = 'User';
 
@@ -14,6 +17,7 @@ class User extends BaseModel {
             ['name',            'type' => 'string',  'caption' => 'Name'],
             ['username',        'type' => 'string',  'caption' => 'Benutzername',  'ui' => ['form' => ['inputAttr' => ['autocomplete' => 'new-password']]]],
         ]);
+        $this->_addFailedLoginsField();
 
         //password field from atk login
         $p = new \atk4\login\Field\Password();

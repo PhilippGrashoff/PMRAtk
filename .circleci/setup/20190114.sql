@@ -271,12 +271,13 @@ CREATE TABLE IF NOT EXISTS `token`
 
 CREATE TABLE IF NOT EXISTS `User`
 (
-    `id`           INT          NOT NULL AUTO_INCREMENT,
-    `last_updated` DATETIME     NULL,
-    `created_date` DATETIME     NULL,
-    `name`         VARCHAR(255) NULL,
-    `username`     VARCHAR(255) NULL,
-    `password`     VARCHAR(255) NULL,
+    `id`            INT          NOT NULL AUTO_INCREMENT,
+    `last_updated`  DATETIME     NULL,
+    `created_date`  DATETIME     NULL,
+    `name`          VARCHAR(255) NULL,
+    `username`      VARCHAR(255) NULL,
+    `password`      VARCHAR(255) NULL,
+    `failed_logins` INT          NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC)
 )
