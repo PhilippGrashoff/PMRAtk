@@ -132,7 +132,7 @@ class App extends \atk4\ui\App {
             }
         }
 
-        throw new \atk4\ui\Exception(['Can not find template file', 'name'=>$name, 'template_dir'=>$this->template_dir]);
+        throw new \atk4\ui\Exception(['Can not find template file: '.$name, 'name' => $name, 'template_dir' => $this->template_dir]);
     }
 
 
