@@ -17,6 +17,7 @@ trait MaxFailedLoginsTrait {
                 'type' => 'integer',
                 'caption' => 'Gescheiterte Login-Versuche seit letztem erfolgreichen Login',
                 'default' => 0,
+                'system' => true,
             ]
         );
     }
