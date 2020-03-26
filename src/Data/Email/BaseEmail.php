@@ -476,4 +476,41 @@ class BaseEmail extends \atk4\data\Model {
         }
         return null;
     }
+
+
+    /**
+     * return an instance of each found implementation of BaseEmail in the given folder(s)
+     * parameter array: key is the dir to check for classes, value is the namespace
+     */
+    public function getAllImplementations(array $dirs):array {
+        $result = [];
+
+        foreach($dirs as $dir => $namespace) {
+            foreach(new \DirectoryIterator($dir) as $file) {
+                if($file->getExtension() !== 'php') {
+                    continue;
+                }
+                $className = $namespace . $file->getBasename('.php');
+                if(!class_exists($className)) {
+                    continue;
+                }
+                try {
+                    $instance = new $className($this->app->db, ['process' => false]);
+                }
+                catch (\Throwable $e) {
+                    continue;
+                }
+                if(
+                    !$instance instanceof BaseEmail
+                    || get_class($instance) === BaseEmail::class
+                ) {
+                    continue;
+                }
+
+                $result[$className] = clone $instance;
+            }
+        }
+
+        return $result;
+    }
 }

@@ -385,6 +385,21 @@ class BaseEmailTest extends \PMRAtk\tests\phpunit\TestCase {
 
 
     /**
+     *
+     */
+    public function testGetAllImplementations() {
+        $res = (new BaseEmail(self::$app->db))->getAllImplementations(
+            [
+                FILE_BASE_PATH.'tests/BaseEmailTestClasses' => '\\PMRAtk\tests\\BaseEmailTestClasses\\'
+            ]
+        );
+
+        self::assertEquals(1, count($res));
+        self::assertTrue($res['\PMRAtk\tests\BaseEmailTestClasses\SomeBaseEmailImplementation'] instanceof \PMRAtk\tests\BaseEmailTestClasses\SomeBaseEmailImplementation);
+    }
+
+
+    /**
      * TODO
      */
     /*public function testSignatureUsesLineBreaks() {
