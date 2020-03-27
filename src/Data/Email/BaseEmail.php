@@ -12,6 +12,12 @@ class BaseEmail extends \atk4\data\Model {
     //like title, but more descriptive: What is this email for
     public $description = '';
 
+    //can it have multiple templates, e.g. per Activity?
+    public $canHaveMultipleTemplates = false;
+
+    //can be filled per Implementation and used for filtering. Values like "customers", "administrators" for example
+    public $recipientCategories = [];
+
     //usually an Email is per Model record, e.g. per Group. Save in here to make work easier
     public $model;
 

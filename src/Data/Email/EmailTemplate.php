@@ -6,7 +6,8 @@ class EmailTemplate extends \PMRAtk\Data\SecondaryBaseModel {
 
     public $table = 'email_template';
 
-    /*
+
+    /**
      *
      */
     public function init() {
@@ -15,5 +16,7 @@ class EmailTemplate extends \PMRAtk\Data\SecondaryBaseModel {
         $this->addFields([
             ['ident',        'type' => 'string'],
         ]);
+
+        $this->setOrder('ident');
     }
 }
