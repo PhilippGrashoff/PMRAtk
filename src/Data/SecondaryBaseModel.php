@@ -10,8 +10,8 @@ class SecondaryBaseModel extends \atk4\data\Model {
         parent::init();
 
         $this->addFields([
-            ['model_class',     'type'=>'text'],
-            ['model_id',        'type'=>'integer'],
+            ['model_class',     'type'=>'text',       'system' => true],
+            ['model_id',        'type'=>'integer',    'system' => true],
             ['value',           'type'=>'text'],
             ['created_date',    'type' => 'datetime', 'persist_timezone' => 'Europe/Berlin', 'system' => true],
             ['last_updated',    'type' => 'datetime', 'persist_timezone' => 'Europe/Berlin', 'system' => true],

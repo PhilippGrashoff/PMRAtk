@@ -14,7 +14,7 @@ class EmailTemplate extends \PMRAtk\Data\SecondaryBaseModel {
         parent::init();
 
         $this->addFields([
-            ['ident',        'type' => 'string'],
+            ['ident',        'type' => 'string', 'system' => true],
         ]);
 
         $this->setOrder('ident');
