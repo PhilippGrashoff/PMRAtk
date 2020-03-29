@@ -400,6 +400,29 @@ class BaseEmailTest extends \PMRAtk\tests\phpunit\TestCase {
 
 
     /**
+     *
+     */
+    public function testTestMode() {
+        //first check without test mode
+        $be = new \PMRAtk\tests\BaseEmailTestClasses\SomeBaseEmailImplementation(self::$app->db);
+        $be->loadInitialValues();
+        self::assertEquals(2, $be->ref('email_recipient')->action('count')->getOne());
+
+        //now with test mode. should remove the 2 initial recipients
+
+        self::$app->auth->user->addEmail('test444@easyoutdooroffice.com');
+        $be = new \PMRAtk\tests\BaseEmailTestClasses\SomeBaseEmailImplementation(self::$app->db, ['isTestMode' => true]);
+        $be->loadInitialValues();
+        self::assertEquals(1, $be->ref('email_recipient')->action('count')->getOne());
+        //persistence does not support loadAny() yet, so hack
+        foreach($be->ref('email_recipient') as $er) {
+            $email = $er->get('email');
+        }
+        self::assertEquals(self::$app->auth->user->getFirstEmail(), $email);
+    }
+
+
+    /**
      * TODO
      */
     /*public function testSignatureUsesLineBreaks() {

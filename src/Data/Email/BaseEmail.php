@@ -21,6 +21,10 @@ class BaseEmail extends \atk4\data\Model {
     //usually an Email is per Model record, e.g. per Group. Save in here to make work easier
     public $model;
 
+    //in test mode, all initial recipients are removed and only the logged in user added
+    //this functionality is used for easily being able to write test emails with real life data
+    public $isTestMode = false;
+
     //the template to load to get initial subject and message
     public $template;
 
@@ -112,7 +116,21 @@ class BaseEmail extends \atk4\data\Model {
      * loads initial recipients, subject, message and attachments
      */
     public function loadInitialValues() {
-        $this->loadInitialRecipients();
+        if($this->isTestMode) {
+            foreach($this->ref('email_recipient') as $r) {
+                $r->delete();
+            }
+            if(
+                isset($this->app->auth->user)
+                && $this->app->auth->user->loaded()
+            ) {
+                $this->addRecipient($this->app->auth->user);
+            }
+        }
+        else {
+            $this->loadInitialRecipients();
+        }
+
         $this->loadInitialAttachments();
         $this->loadInitialTemplate();
     }
