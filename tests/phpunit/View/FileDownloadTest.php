@@ -54,7 +54,7 @@ class FileDownloadTest extends \PMRAtk\tests\phpunit\TestCase
 
 
     /**
-     *
+     * @runInSeparateProcess
      */
     public function testSendFileByCryptId()
     {
@@ -77,8 +77,9 @@ class FileDownloadTest extends \PMRAtk\tests\phpunit\TestCase
         unset($_REQUEST[$fd->paramNameForCryptID]);
     }
 
+
     /**
-     *
+     * @runInSeparateProcess
      */
     public function testSendInlineFileByCryptId()
     {
@@ -103,7 +104,7 @@ class FileDownloadTest extends \PMRAtk\tests\phpunit\TestCase
 
 
     /**
-     *
+     * @runInSeparateProcess
      */
     public function testSendFileByFilePath()
     {
@@ -115,6 +116,31 @@ class FileDownloadTest extends \PMRAtk\tests\phpunit\TestCase
         ob_start();
         $fd = new FileDownLoad(self::$app);
         $_REQUEST[$fd->paramNameForFileURL] = 'tests/demo_file.txt';
+        @$fd->sendFile();
+        self::assertNotFalse(
+            strpos(
+                ob_get_contents(),
+                file_get_contents($file->getFullFilePath())
+            )
+        );
+        ob_end_clean();
+        unset($_REQUEST[$fd->paramNameForFileURL]);
+    }
+
+
+    /**
+     * @runInSeparateProcess
+     */
+    public function testSendFileByFilePathWithFullPath()
+    {
+        $file = new \PMRAtk\Data\File(self::$app->db);
+        $file->set('value', 'demo_file.txt');
+        $file->set('path', 'tests/');
+        $file->save();
+
+        ob_start();
+        $fd = new FileDownLoad(self::$app);
+        $_REQUEST[$fd->paramNameForFileURL] = urlencode(self::$app->getSetting('URL_BASE_PATH')) . 'tests/demo_file.txt';
         @$fd->sendFile();
         self::assertNotFalse(
             strpos(

@@ -44,7 +44,13 @@ class FileDownload
             $this->_sendFile();
         } elseif (isset($_REQUEST[$this->paramNameForFileURL])) {
             //try to load file from file system
-            $this->currentFilePath = $this->app->getSetting('FILE_BASE_PATH') . $_REQUEST[$this->paramNameForFileURL];
+            if(strpos(urldecode($_REQUEST[$this->paramNameForFileURL]), $this->app->getSetting('URL_BASE_PATH')) !== false) {
+
+                $this->currentFilePath = $this->app->getSetting('FILE_BASE_PATH') . str_replace($this->app->getSetting('URL_BASE_PATH'), '', urldecode($_REQUEST[$this->paramNameForFileURL]));
+            }
+            else {
+                $this->currentFilePath = $this->app->getSetting('FILE_BASE_PATH') . $_REQUEST[$this->paramNameForFileURL];
+            }
             if (!file_exists($this->currentFilePath)) {
                 $this->_failure();
                 return;
