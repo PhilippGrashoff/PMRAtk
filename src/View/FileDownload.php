@@ -2,58 +2,90 @@
 
 namespace PMRAtk\View;
 
-class FileDownload {
+use atk4\core\AppScopeTrait;
+use PMRAtk\Data\File;
 
-    public $paramName = 'fileid';
+class FileDownload
+{
+    use AppScopeTrait;
 
-    public $app;
+    public $paramNameForCryptID = 'fileid';
 
-    public $file;
+    public $paramNameForFileURL = 'file';
+
+    public $currentFileName = '';
+
+    public $currentFilePath = '';
 
 
-    public function __construct(\atk4\ui\App $app) {
+    /**
+     * FileDownload constructor.
+     */
+    public function __construct(\atk4\ui\App $app)
+    {
         $this->app = $app;
-    }
-
-    /*
-     *
-     */
-    public function sendFile() {
-        if(!isset($_REQUEST[$this->paramName])) {
-            return $this->_failure();
-        }
-        $this->file = new \PMRAtk\Data\File($this->app->db);
-        $this->file->tryLoadBy('crypt_id', $_REQUEST[$this->paramName]);
-        if(!$this->file->loaded()) {
-            return $this->_failure();
-        }
-        
-        $this->_sendHeaders();
-
-        @readfile($this->file->getFullFilePath());
-    }
-
-
-    /*
-     *
-     */
-    protected function _failure() {
-
     }
 
 
     /**
-     * @codeCoverageIgnore
+     *
      */
-    protected function _sendHeaders() {
+    public function sendFile()
+    {
+        if (isset($_REQUEST[$this->paramNameForCryptID])) {
+            $file = new File($this->app->db);
+            $file->tryLoadBy('crypt_id', $_REQUEST[$this->paramNameForCryptID]);
+            if (!$file->loaded()) {
+                $this->_failure();
+                return;
+            }
+            $this->currentFilePath = $file->getFullFilePath();
+            $this->currentFileName = $file->get('value');
+            $this->_sendFile();
+        } elseif (isset($_REQUEST[$this->paramNameForFileURL])) {
+            //try to load file from file system
+            $this->currentFilePath = $this->app->getSetting('FILE_BASE_PATH') . $_REQUEST[$this->paramNameForFileURL];
+            if (!file_exists($this->currentFilePath)) {
+                $this->_failure();
+                return;
+            }
+            $this->currentFileName = substr(
+                $_REQUEST[$this->paramNameForFileURL],
+                strrpos($this->currentFilePath, DIRECTORY_SEPARATOR)
+            );
+
+            $this->_sendFile();
+        } else {
+            $this->_failure();
+        }
+    }
+
+
+    /**
+     *
+     */
+    protected function _failure(int $errorCode = 404): void
+    {
+        http_response_code($errorCode);
+        return;
+    }
+
+
+    /**
+     *
+     */
+    protected function _sendFile()
+    {
         header("Pragma: public");
         header("Expires: 0");
         header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
         header("Cache-Control: public");
         header("Content-Description: File Transfer");
         header("Content-Type: application/octet-stream");
-        header("Content-Disposition: attachment; filename=\"".$this->file->get('value')."\"");
+        header("Content-Disposition: attachment; filename=\"" . $this->currentFileName . "\"");
         header("Content-Transfer-Encoding: binary");
-        header("Content-Length: ".filesize($this->file->getFullFilePath()));
+        header("Content-Length: " . filesize($this->currentFilePath));
+
+        @readfile($this->currentFilePath);
     }
 }
