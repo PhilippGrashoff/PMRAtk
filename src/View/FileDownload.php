@@ -11,8 +11,6 @@ class FileDownload
 
     public $paramNameForCryptID = 'fileid';
 
-    public $paramNameForFileURL = 'file';
-
     public $currentFileName = '';
 
     public $currentFilePath = '';
@@ -41,25 +39,6 @@ class FileDownload
             }
             $this->currentFilePath = $file->getFullFilePath();
             $this->currentFileName = $file->get('value');
-            $this->_sendFile();
-        } elseif (isset($_REQUEST[$this->paramNameForFileURL])) {
-            //try to load file from file system
-            if(strpos(urldecode($_REQUEST[$this->paramNameForFileURL]), $this->app->getSetting('URL_BASE_PATH')) !== false) {
-
-                $this->currentFilePath = $this->app->getSetting('FILE_BASE_PATH') . str_replace($this->app->getSetting('URL_BASE_PATH'), '', urldecode($_REQUEST[$this->paramNameForFileURL]));
-            }
-            else {
-                $this->currentFilePath = $this->app->getSetting('FILE_BASE_PATH') . $_REQUEST[$this->paramNameForFileURL];
-            }
-            if (!file_exists($this->currentFilePath)) {
-                $this->_failure();
-                return;
-            }
-            $this->currentFileName = substr(
-                $_REQUEST[$this->paramNameForFileURL],
-                strrpos($this->currentFilePath, DIRECTORY_SEPARATOR)
-            );
-
             $this->_sendFile();
         } else {
             $this->_failure();
