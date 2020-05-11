@@ -126,6 +126,19 @@ class FileTest extends \PMRAtk\tests\phpunit\TestCase {
     }
 
 
+    /**
+     * @throws \atk4\data\Exception
+     */
+    public function testFileTypeSetIfNotThere()
+    {
+        $g = new \PMRAtk\Data\File(self::$app->db);
+        $g->set('value', 'demo_file.txt');
+        $g->set('path', 'tests');
+        $g->save();
+        self::assertEquals('txt', $g->get('filetype'));
+    }
+
+
     /*
      * File id = 2 should be saved after load due to missing crypt_id, but file does not exist.
      * Should be deleted and a message added to app

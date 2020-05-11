@@ -53,15 +53,28 @@ class File extends SecondaryBaseModel
         $this->addHook(
             'beforeSave',
             function ($m) {
+                //add / to path
                 if (
                     $m->get('path')
                     && substr($m->get('path'), -1) !== DIRECTORY_SEPARATOR
                 ) {
                     $m->set('path', $m->get('path') . DIRECTORY_SEPARATOR);
                 }
+
+                //If file does not exist, dont save this in DB
                 if (!$m->checkFileExists()) {
                     throw new \atk4\data\Exception('The file to be saved does not exist: ' . $this->getFullFilePath());
                 }
+
+                //add filetype if not there
+                if(
+                    !$m->get('filetype')
+                    && $m->get('value')
+                ) {
+                    $m->set('filetype', pathinfo($m->get('value'), PATHINFO_EXTENSION));
+                }
+
+                //file needs Crypt ID
                 $m->setCryptId('crypt_id');
             }
         );
