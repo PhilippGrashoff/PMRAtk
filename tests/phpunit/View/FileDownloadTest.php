@@ -35,7 +35,7 @@ class FileDownloadTest extends \PMRAtk\tests\phpunit\TestCase
         unset($_REQUEST[$fd->paramNameForCryptID]);
         self::assertEquals(http_response_code(), 404);
     }
-    
+
 
     /**
      * @runInSeparateProcess

@@ -116,7 +116,7 @@ class FileTest extends \PMRAtk\tests\phpunit\TestCase {
     /**
      * @throws \atk4\data\Exception
      */
-    public function testDirectorySeperatorAddedToPath()
+    public function testDirectorySeparatorAddedToPath()
     {
         $g = new \PMRAtk\Data\File(self::$app->db);
         $g->set('value', 'demo_file.txt');

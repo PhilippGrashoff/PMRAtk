@@ -323,6 +323,7 @@ CREATE TABLE IF NOT EXISTS `file`
 (
     `id`             INT          NOT NULL AUTO_INCREMENT,
     `crypt_id`       VARCHAR(255) NULL,
+    `sort`           VARCHAR(255) NULL,
     `value`          TEXT         NULL,
     `model_id`       INT          NULL,
     `model_class`    VARCHAR(255) NULL,
