@@ -96,7 +96,7 @@ class App extends \atk4\ui\App {
             throw new \atk4\data\Exception('Token could not be found', 401);
         }
         if(!$user = $token->getParentObject()) {
-            throw new \atk4\data\Exception('No matching User for Token found', 401);
+            throw new \atk4\data\Exception('No matching User for Token found', 403);
         }
 
         $this->auth->user = $user;

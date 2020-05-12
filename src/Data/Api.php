@@ -37,7 +37,7 @@ class Api extends \atk4\api\Api {
     public function tokenLogin(string $login_field = 'token') {
         try {
             if(!isset($_REQUEST[$login_field])) {
-                throw new \atk4\data\Exception('The required authentication '.$login_field.' was not send in request', 405);
+                throw new \atk4\data\Exception('The required authentication '.$login_field.' was not send in request', 401);
             }
             //throws Exception if user couldnt be loaded by Token
             $this->app->loadUserByToken($_REQUEST[$login_field]);
