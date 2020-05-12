@@ -5,7 +5,7 @@ namespace PMRAtk\Data\Traits;
 /*
  * Probides functions to store the value of a field encrypted to persistence.
  * Useful for storing credentials that are needed in clear text at some point
- * like API Tokens
+ * like Api Tokens
  */
 trait EncryptedFieldTrait {
 

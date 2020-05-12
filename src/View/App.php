@@ -30,7 +30,7 @@ class App extends \atk4\ui\App {
     //read-only usage otherwise caching may cause trouble
     protected $_cachedModels = [];
 
-    //if API uses App, it sets this property to true
+    //if Api uses App, it sets this property to true
     public $isApiRequest = false;
 
     //the dir in which the email templates are stored
@@ -93,10 +93,10 @@ class App extends \atk4\ui\App {
         $token = new \PMRAtk\Data\Token($this->db);
         $token->tryLoadBy('value', $token_string);
         if(!$token->loaded()) {
-            throw new \atk4\data\Exception('Token could not be found');
+            throw new \atk4\data\Exception('Token could not be found', 401);
         }
         if(!$user = $token->getParentObject()) {
-            throw new \atk4\data\Exception('No matching User for Token found');
+            throw new \atk4\data\Exception('No matching User for Token found', 401);
         }
 
         $this->auth->user = $user;

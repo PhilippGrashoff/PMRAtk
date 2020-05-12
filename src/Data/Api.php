@@ -1,7 +1,8 @@
 <?php
+
 namespace PMRAtk\Data;
 
-class API extends \atk4\api\Api {
+class Api extends \atk4\api\Api {
 
     // to have normal data-level user rights, user has to be added to app
     public $app;
