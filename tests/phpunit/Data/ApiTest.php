@@ -13,7 +13,8 @@ class NoDateTime extends \atk4\data\Model {
 
 class ApiTest extends \PMRAtk\tests\phpunit\TestCase {
 
-    /*
+
+    /**
      *
      */
     public function testApiNoTokenInRequest() {
@@ -26,7 +27,9 @@ class ApiTest extends \PMRAtk\tests\phpunit\TestCase {
 
         $this->assertTrue(true);
     }
-    /*
+
+
+    /**
      *
      */
     public function testApiNoTokenMatch() {
@@ -42,7 +45,7 @@ class ApiTest extends \PMRAtk\tests\phpunit\TestCase {
     }
 
 
-    /*
+    /**
      * test token login
      */
     public function testTokenLogin() {
