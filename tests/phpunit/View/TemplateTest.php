@@ -1,29 +1,18 @@
 <?php
 
-class TestModel extends \atk4\data\Model {
-    public $table = 'blalba';
+namespace PMRAtk\tests\phpunit\View;
 
-    public function init() {
-        parent::init();
-        $this->addFields([
-            ['name',     'type' => 'string'],
-            ['value',    'type' => 'integer'],
-            ['text',     'type' => 'text'],
-            ['datetime', 'type' => 'datetime'],
-            ['date',     'type' => 'date'],
-            ['time',     'type' => 'time'],
-        ]);
-    }
-}
+use atk4\data\Model;
+use PMRAtk\tests\phpunit\TestCase;
+use PMRAtk\View\Template;
 
-
-class TemplateTest extends \PMRAtk\tests\phpunit\TestCase {
+class TemplateTest extends TestCase {
 
     /*
      *
      */
     public function testSTDValues() {
-        $t = new \PMRAtk\View\Template();
+        $t = new Template();
         $t->app = self::$app;
         $s = new \PMRAtk\Data\Setting(self::$app->db);
         $s->set('ident', 'STD_DADAPRA');
@@ -40,7 +29,7 @@ class TemplateTest extends \PMRAtk\tests\phpunit\TestCase {
      * see this page is passed
      */
     public function testSetGermanList() {
-        $t = new \PMRAtk\View\Template();
+        $t = new Template();
         $t->app = self::$app;
         $t->loadTemplateFromString('Hallo {$DADA} Test');
         $t->setGermanList('DADA', ['Hansi', '', 'Peter', 'Klaus']);
@@ -48,16 +37,40 @@ class TemplateTest extends \PMRAtk\tests\phpunit\TestCase {
     }
 
 
+    /**
+     *
+     */
+    protected function getTestModel(): Model {
+        $class = new class extends Model {
+            public $table = 'blalba';
+
+            public function init() {
+                parent::init();
+                $this->addFields([
+                                     ['name',     'type' => 'string'],
+                                     ['value',    'type' => 'integer'],
+                                     ['text',     'type' => 'text'],
+                                     ['datetime', 'type' => 'datetime'],
+                                     ['date',     'type' => 'date'],
+                                     ['time',     'type' => 'time'],
+                                 ]);
+            }
+        };
+
+        return new $class(self::$app->db);
+    }
+
+
     /*
      *
      */
     public function testSetTagsFromModel() {
-        $model = new TestModel(self::$app->db);
+        $model = $this->getTestModel();
         $model->set('name', 'BlaDU');
         $model->set('value', 3);
         $model->set('text', 'LALALALA');
 
-        $t = new \PMRAtk\View\Template();
+        $t = new Template();
         $t->app = self::$app;
         $t->loadTemplateFromString('Hallo {$name} Test {$value} Miau {$text}!');
         $t->setTagsFromModel($model, ['name', 'value', 'text']);
@@ -68,12 +81,12 @@ class TemplateTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testSetTagsFromModelWithNonExistingTagAndField() {
-        $model = new TestModel(self::$app->db);
+        $model = $this->getTestModel();
         $model->set('name', 'BlaDU');
         $model->set('value', 3);
         $model->set('text', 'LALALALA');
 
-        $t = new \PMRAtk\View\Template();
+        $t = new Template();
         $t->app = self::$app;
         $t->loadTemplateFromString('Hallo {$name} Test {$value} Miau {$nottext}!');
         $t->setTagsFromModel($model, ['name', 'value', 'text', 'nilla']);
@@ -85,13 +98,13 @@ class TemplateTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testSetTagsFromModelWithDates() {
-        $model = new TestModel(self::$app->db);
+        $model = $this->getTestModel();
         $dt = \DateTime::createFromFormat('Y-m-d H:i:s', '2019-05-05 10:30:00');
         $model->set('datetime', clone $dt);
         $model->set('date',     clone $dt);
         $model->set('time',     clone $dt);
 
-        $t = new \PMRAtk\View\Template();
+        $t = new Template();
         $t->app = self::$app;
         $t->loadTemplateFromString('Hallo {$datetime} Test {$date} Miau {$time}!');
         $t->setTagsFromModel($model, ['datetime', 'date', 'time']);
@@ -103,12 +116,12 @@ class TemplateTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testSetTagsFromModelWithLimitedFields() {
-        $model = new TestModel(self::$app->db);
+        $model = $this->getTestModel();
         $model->set('name', 'BlaDU');
         $model->set('value', 3);
         $model->set('text', 'LALALALA');
 
-        $t = new \PMRAtk\View\Template();
+        $t = new Template();
         $t->app = self::$app;
         $t->loadTemplateFromString('Hallo {$name} Test {$value} Miau {$text}!');
         $t->setTagsFromModel($model, ['name', 'value']);
@@ -120,12 +133,12 @@ class TemplateTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testSetTagsFromModelWithEmptyFieldArray() {
-        $model = new TestModel(self::$app->db);
+        $model = $this->getTestModel();
         $model->set('name', 'BlaDU');
         $model->set('value', 3);
         $model->set('text', 'LALALALA');
 
-        $t = new \PMRAtk\View\Template();
+        $t = new Template();
         $t->app = self::$app;
         $t->loadTemplateFromString('Hallo {$name} Test {$value} Miau {$text}!');
         $t->setTagsFromModel($model, []);
@@ -137,12 +150,12 @@ class TemplateTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testSetTagsFromModelWithPrefix() {
-        $model = new TestModel(self::$app->db);
+        $model = $this->getTestModel();
         $model->set('name', 'BlaDU');
         $model->set('value', 3);
         $model->set('text', 'LALALALA');
 
-        $t = new \PMRAtk\View\Template();
+        $t = new Template();
         $t->app = self::$app;
         $t->loadTemplateFromString('Hallo {$group_name} Test {$group_value} Miau {$group_text}!');
         $t->setTagsFromModel($model, [], 'group_');
@@ -154,17 +167,17 @@ class TemplateTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testSetTagsFromModelWithTwoModelsWithPrefix() {
-        $model = new TestModel(self::$app->db);
+        $model = $this->getTestModel();
         $model->set('name', 'BlaDU');
         $model->set('value', 3);
         $model->set('text', 'LALALALA');
 
-        $model2 = new TestModel(self::$app->db);
+        $model2 = $this->getTestModel();
         $model2->set('name', 'ABC');
         $model2->set('value', 9);
         $model2->set('text', 'DEF');
 
-        $t = new \PMRAtk\View\Template();
+        $t = new Template();
         $t->app = self::$app;
         $t->loadTemplateFromString('Hallo {$group_name} Test {$group_value} Miau {$group_text}, du {$tour_name} Hans {$tour_value} bist toll {$tour_text}!');
         $t->setTagsFromModel($model, [], 'group_');
@@ -173,11 +186,11 @@ class TemplateTest extends \PMRAtk\tests\phpunit\TestCase {
     }
 
 
-    /*
+    /**
      *
      */
     public function testWithLineBreaks() {
-        $t = new \PMRAtk\View\Template();
+        $t = new Template();
         $t->app = self::$app;
         $t->loadTemplateFromString('Hallo {$with_line_break} Test');
         $t->setWithLineBreaks('with_line_break', 'Hans'.PHP_EOL.'Neu');
@@ -185,4 +198,25 @@ class TemplateTest extends \PMRAtk\tests\phpunit\TestCase {
         self::assertEquals($ex, $t->render());
     }
 
+
+    /**
+     *
+     */
+    public function testReplaceHTML() {
+        $t = new Template();
+        $t->app = self::$app;
+        $t->loadTemplateFromString('Hallo {SomeRegion}{/SomeRegion} Test');
+
+        $t->appendHTML('SomeRegion', '<div>Buzz</div>');
+        self::assertSame(
+            'Hallo <div>Buzz</div> Test',
+            $t->render()
+        );
+
+        $t->replaceHTML('SomeRegion', '<span>Wizz</span>');
+        self::assertSame(
+          'Hallo <span>Wizz</span> Test',
+          $t->render()
+        );
+    }
 }
