@@ -1,37 +1,61 @@
-<?php
+<?php declare(strict_types=1);
 
-class TCADTest extends \atk4\ui\View {
+namespace PMRAtk\tests\phpunit\View\Traits;
 
-    use \PMRAtk\View\Traits\SubTemplateCloneDeleteTrait;
-
-    public $_tLala;
-    public $_tDada;
-}
-
+use atk4\ui\View;
 
 class SubTemplateCloneDeleteTraitTest extends \PMRAtk\tests\phpunit\TestCase {
 
-    /*
+    /**
      *
      */
     public function testtemplateCloneAndDelete() {
-        $t = new TCADTest();
-        $t->template = new \atk4\ui\Template();
-        $t->template->loadTemplateFromString('Hans{Lala}test1{/Lala}{Dada}test2{/Dada}');
-        $t->templateCloneAndDelete(['Lala', 'Dada']);
-        $this->assertEquals('test1', $t->_tLala->render());
-        $this->assertEquals('test2', $t->_tDada->render());
+        $view = $this->getTCADTestClass();
+        $view->template = new \atk4\ui\Template();
+        $view->template->loadTemplateFromString('Hans{Lala}test1{/Lala}{Dada}test2{/Dada}');
+        $view->templateCloneAndDelete(['Lala', 'Dada']);
+        $this->assertEquals('test1', $view->_tLala->render());
+        $this->assertEquals('test2', $view->_tDada->render());
     }
 
 
-    /*
+    /**
      *
      */
-    public function testtemplateCloneAndDeleteExceptionNonExistantRegion() {
-        $t = new TCADTest();
-        $t->template = new \atk4\ui\Template();
-        $t->template->loadTemplateFromString('Hans{Lala}test1{/Lala}{Dada}test2{/Dada}');
-        $this->expectException(\atk4\data\Exception::class);
-        $t->templateCloneAndDelete(['Lala', 'Dada', 'NonExistantRegion']);
+    public function testtemplateCloneAndDeleteWithoutArgs() {
+        $view = $this->getTCADTestClass();
+        $view->template = new \atk4\ui\Template();
+        $view->template->loadTemplateFromString('Hans{Lala}test1{/Lala}{Dada}test2{/Dada}');
+        $view->templateCloneAndDelete();
+        $this->assertEquals('test1', $view->_tLala->render());
+        $this->assertEquals('test2', $view->_tDada->render());
+    }
+
+
+    /**
+     *
+     */
+    public function testwithNonExistantRegion() {
+        $view = $this->getTCADTestClass();
+        $view->template = new \atk4\ui\Template();
+        $view->template->loadTemplateFromString('Hans{Lala}test1{/Lala}{Dada}test2{/Dada}');
+        $view->templateCloneAndDelete(['Lala', 'Dada', 'NonExistantRegion']);
+        $this->assertEquals('test1', $view->_tLala->render());
+        $this->assertEquals('test2', $view->_tDada->render());
+    }
+
+
+    /**
+     *
+     */
+    protected function getTCADTestClass(): View {
+        $class = new class extends View {
+            use \PMRAtk\View\Traits\SubTemplateCloneDeleteTrait;
+
+            public $_tLala;
+            public $_tDada;
+        };
+
+        return new $class();
     }
 }
