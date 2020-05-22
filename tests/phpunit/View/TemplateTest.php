@@ -3,6 +3,7 @@
 namespace PMRAtk\tests\phpunit\View;
 
 use atk4\data\Model;
+use PMRAtk\tests\phpunit\Data\BaseModelA;
 use PMRAtk\tests\phpunit\TestCase;
 use PMRAtk\View\Template;
 
@@ -73,7 +74,7 @@ class TemplateTest extends TestCase {
         $t = new Template();
         $t->app = self::$app;
         $t->loadTemplateFromString('Hallo {$name} Test {$value} Miau {$text}!');
-        $t->setTagsFromModel($model, ['name', 'value', 'text']);
+        $t->setTagsFromModel($model, ['name', 'value', 'text'], '');
         $this->assertEquals('Hallo BlaDU Test 3 Miau LALALALA!', $t->render());
     }
 
@@ -89,7 +90,7 @@ class TemplateTest extends TestCase {
         $t = new Template();
         $t->app = self::$app;
         $t->loadTemplateFromString('Hallo {$name} Test {$value} Miau {$nottext}!');
-        $t->setTagsFromModel($model, ['name', 'value', 'text', 'nilla']);
+        $t->setTagsFromModel($model, ['name', 'value', 'text', 'nilla'], '');
         $this->assertEquals('Hallo BlaDU Test 3 Miau !', $t->render());
     }
 
@@ -107,7 +108,7 @@ class TemplateTest extends TestCase {
         $t = new Template();
         $t->app = self::$app;
         $t->loadTemplateFromString('Hallo {$datetime} Test {$date} Miau {$time}!');
-        $t->setTagsFromModel($model, ['datetime', 'date', 'time']);
+        $t->setTagsFromModel($model, ['datetime', 'date', 'time'], '');
         $this->assertEquals('Hallo 05.05.2019 10:30 Test 05.05.2019 Miau 10:30!', $t->render());
     }
 
@@ -124,7 +125,7 @@ class TemplateTest extends TestCase {
         $t = new Template();
         $t->app = self::$app;
         $t->loadTemplateFromString('Hallo {$name} Test {$value} Miau {$text}!');
-        $t->setTagsFromModel($model, ['name', 'value']);
+        $t->setTagsFromModel($model, ['name', 'value'], '');
         $this->assertEquals('Hallo BlaDU Test 3 Miau !', $t->render());
     }
 
@@ -141,7 +142,7 @@ class TemplateTest extends TestCase {
         $t = new Template();
         $t->app = self::$app;
         $t->loadTemplateFromString('Hallo {$name} Test {$value} Miau {$text}!');
-        $t->setTagsFromModel($model, []);
+        $t->setTagsFromModel($model, [], '');
         $this->assertEquals('Hallo BlaDU Test 3 Miau LALALALA!', $t->render());
     }
 
@@ -160,6 +161,23 @@ class TemplateTest extends TestCase {
         $t->loadTemplateFromString('Hallo {$group_name} Test {$group_value} Miau {$group_text}!');
         $t->setTagsFromModel($model, [], 'group_');
         $this->assertEquals('Hallo BlaDU Test 3 Miau LALALALA!', $t->render());
+    }
+
+
+    /*
+     *
+     */
+    public function testSetTagsFromModelWithOnlyOneParameter() {
+        $model = new BaseModelA(self::$app->db);
+        $model->set('name', 'BlaDU');
+        $model->set('firstname', 'GuGuGu');
+        $model->set('lastname', 'LALALALA');
+
+        $t = new Template();
+        $t->app = self::$app;
+        $t->loadTemplateFromString('Hallo {$basemodela_name} Test {$basemodela_firstname} Miau {$basemodela_lastname}!');
+        $t->setTagsFromModel($model);
+        $this->assertEquals('Hallo BlaDU Test GuGuGu Miau LALALALA!', $t->render());
     }
 
 

@@ -2,14 +2,16 @@
 
 namespace PMRAtk\View;
 
-class Template extends \atk4\ui\Template {
+class Template extends \atk4\ui\Template
+{
 
     use \PMRAtk\Data\Traits\DateTimeHelpersTrait;
 
     /*
      *
      */
-    public function setSTDValues() {
+    public function setSTDValues()
+    {
         $this->trySet($this->app->getAllSTDSettings());
     }
 
@@ -17,22 +19,21 @@ class Template extends \atk4\ui\Template {
     /*
      *
      */
-    public function setGermanList(string $tag, array $a) {
+    public function setGermanList(string $tag, array $a)
+    {
         $string = '';
         $counter = 0;
-        foreach($a as $item) {
+        foreach ($a as $item) {
             $counter++;
-            if(empty($item)) {
+            if (empty($item)) {
                 continue;
             }
-            if($counter === 1) {
+            if ($counter === 1) {
                 $string .= $item;
-            }
-            elseif($counter === count($a)) {
-                $string .= ' und '.$item;
-            }
-            else {
-                $string .= ', '.$item;
+            } elseif ($counter === count($a)) {
+                $string .= ' und ' . $item;
+            } else {
+                $string .= ', ' . $item;
             }
         }
         $this->set($tag, $string);
@@ -42,32 +43,57 @@ class Template extends \atk4\ui\Template {
     /*
      * Tries to set each passed tag with its value from passed model
      */
-    public function setTagsFromModel(\atk4\data\Model $model, array $tags = [], string $prefix = '') {
-        if(!$tags) {
+    public function setTagsFromModel(\atk4\data\Model $model, array $tags = [], string $prefix = null)
+    {
+        if (!$tags) {
             $tags = array_keys($model->getFields());
         }
+        if ($prefix === null) {
+            $prefix = strtolower((new \ReflectionClass($model))->getShortName()) . '_';
+        }
 
-        foreach($tags as $tag) {
-            if(!$model->hasField($tag)) {
+        foreach ($tags as $tag) {
+            if (!$model->hasField($tag)) {
                 continue;
             }
-            if(!$this->hasTag($prefix.$tag)) {
+            if (!$this->hasTag($prefix . $tag)) {
                 continue;
             }
 
             //try converting non-scalar values
-            if(!is_scalar($model->get($tag))) {
-                if($model->get($tag) instanceof \DateTimeInterFace) {
-                    $this->set($prefix.$tag, $this->castDateTimeToGermanString($model->get($tag), $model->getField($tag)->type, true));
+            if (!is_scalar($model->get($tag))) {
+                if ($model->get($tag) instanceof \DateTimeInterFace) {
+                    $this->set(
+                        $prefix . $tag,
+                        $this->castDateTimeToGermanString($model->get($tag), $model->getField($tag)->type, true)
+                    );
+                } else {
+                    $this->set($prefix . $tag, $model->getField($tag)->toString());
                 }
-                else {
-                    $this->set($prefix.$tag, $model->getField($tag)->toString());
-                }
-            }
-            else {
-                switch($model->getField($tag)->type) {
-                    case 'text': $this->setHTML($prefix.$tag, nl2br(htmlspecialchars($this->app->ui_persistence->typecastSaveField($model->getField($tag), $model->get($tag))))); break;
-                    default: $this->set($prefix.$tag, $this->app->ui_persistence->typecastSaveField($model->getField($tag), $model->get($tag))); break;
+            } else {
+                switch ($model->getField($tag)->type) {
+                    case 'text':
+                        $this->setHTML(
+                            $prefix . $tag,
+                            nl2br(
+                                htmlspecialchars(
+                                    $this->app->ui_persistence->typecastSaveField(
+                                        $model->getField($tag),
+                                        $model->get($tag)
+                                    )
+                                )
+                            )
+                        );
+                        break;
+                    default:
+                        $this->set(
+                            $prefix . $tag,
+                            $this->app->ui_persistence->typecastSaveField(
+                                $model->getField($tag),
+                                $model->get($tag)
+                            )
+                        );
+                        break;
                 }
             }
         }
@@ -77,7 +103,8 @@ class Template extends \atk4\ui\Template {
     /**
      *
      */
-    public function setWithLineBreaks(string $tag, string $value) {
+    public function setWithLineBreaks(string $tag, string $value)
+    {
         $this->setHTML($tag, nl2br(htmlspecialchars($value)));
     }
 
@@ -85,7 +112,8 @@ class Template extends \atk4\ui\Template {
     /**
      *
      */
-    public function replaceHTML(string $region, string $content)  {
+    public function replaceHTML(string $region, string $content)
+    {
         $this->del($region);
         $this->appendHTML($region, $content);
     }
