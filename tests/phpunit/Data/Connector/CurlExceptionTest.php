@@ -16,7 +16,7 @@ class CurlExceptionTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function testConstructWithDataSent() {
         $e = new \PMRAtk\Data\Connector\CurlException('SomeMessage', 404, '{error:"SomeError"}', 'SomeDataSent');
-        $this->assertEquals($e->getParams(), ['response' => '{error:"SomeError"}']);
+        $this->assertEquals($e->getParams()['data sent in body'], 'SomeDataSent');
     }
 
 
