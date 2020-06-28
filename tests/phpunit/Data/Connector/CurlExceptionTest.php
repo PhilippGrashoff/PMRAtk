@@ -2,7 +2,7 @@
 
 class CurlExceptionTest extends \PMRAtk\tests\phpunit\TestCase {
 
-    /*
+    /**
      *
      */
     public function testConstruct() {
@@ -11,7 +11,16 @@ class CurlExceptionTest extends \PMRAtk\tests\phpunit\TestCase {
     }
 
 
-    /*
+    /**
+     *
+     */
+    public function testConstructWithDataSent() {
+        $e = new \PMRAtk\Data\Connector\CurlException('SomeMessage', 404, '{error:"SomeError"}', 'SomeDataSent');
+        $this->assertEquals($e->getParams(), ['response' => '{error:"SomeError"}']);
+    }
+
+
+    /**
      *
      */
     public function testGetErrorMessageWithJSON() {
@@ -24,7 +33,7 @@ class CurlExceptionTest extends \PMRAtk\tests\phpunit\TestCase {
     }
 
 
-    /*
+    /**
      *
      */
     public function testGetErrorMessageResponseAlreadyDecodedToObject() {
@@ -35,7 +44,7 @@ class CurlExceptionTest extends \PMRAtk\tests\phpunit\TestCase {
     }
 
 
-    /*
+    /**
      *
      */
     public function testGetErrorMessageWithJSONNoValidKey() {
@@ -48,7 +57,7 @@ class CurlExceptionTest extends \PMRAtk\tests\phpunit\TestCase {
     }
 
 
-    /*
+    /**
      *
      */
     public function testGetErrorMessageWithNestedJSON() {
@@ -63,7 +72,7 @@ class CurlExceptionTest extends \PMRAtk\tests\phpunit\TestCase {
     }
 
 
-    /*
+    /**
      *
      */
     public function testGetErrorMessageWithString() {

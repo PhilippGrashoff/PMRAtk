@@ -47,4 +47,20 @@ class CurlTraitTest extends \PMRAtk\tests\phpunit\TestCase {
         $this->expectException(\PMRAtk\Data\Connector\CurlException::class);
         $sc->returnCurlResponse();
     }
+
+    /**
+     *
+     */
+    public function testReturnCurlResponseWithDataSent() {
+        $sc = new SomeConnector();
+        $sc->curl->response = 'LALA';
+        $sc->curl->error = 'SomeNot200Response';
+        $data = ['fsdfs' => 'dsfsf'];
+        try {
+            $sc->returnCurlResponse($data);
+        }
+        catch (\PMRAtk\Data\Connector\CurlException $e) {
+            self::assertArrayHasKey("data sent in body", $e->params);
+        }
+    }
 }

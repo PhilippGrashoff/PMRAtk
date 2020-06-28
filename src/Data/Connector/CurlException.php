@@ -13,8 +13,11 @@ class CurlException extends \atk4\core\Exception {
     /*
      * constructor gets params array as third param
      */
-    public function __construct(string $message, int $error_code, $response, \Throwable $previous = null) {
+    public function __construct(string $message, int $error_code, $response, $dataSent = null, \Throwable $previous = null) {
         parent::__construct($message, $error_code, $previous);
+        if($dataSent) {
+            $this->addMoreInfo('data sent in body', $dataSent);
+        }
         $this->addMoreInfo('response', $response);
     }
 

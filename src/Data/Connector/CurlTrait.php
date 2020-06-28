@@ -18,7 +18,7 @@ trait CurlTrait {
      *
      * @return mixed
      */
-    public function returnCurlResponse() {
+    public function returnCurlResponse($dataSent = null) {
         //if curl could not succeed (e.g. timeout), throw exception
         if($this->curl->curlError) {
             throw new \PMRAtk\Data\Connector\CurlException('The Api request in '.debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,2)[1]['function']. 'was not successful', 0, 'Verbindungsfehler');
@@ -32,7 +32,7 @@ trait CurlTrait {
             }
             $message .= ' in '.debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,2)[1]['function'];
 
-            throw new \PMRAtk\Data\Connector\CurlException($message, ($this->curl->httpStatusCode ? : 1), $this->curl->response);
+            throw new \PMRAtk\Data\Connector\CurlException($message, ($this->curl->httpStatusCode ? : 1), $this->curl->response, $dataSent);
         }
 
         //else, return response

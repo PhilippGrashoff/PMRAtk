@@ -13,6 +13,10 @@ class Audit extends SecondaryBaseModel {
             ['data',            'type'      => 'array',       'serialize' => 'serialize'],
             ['created_by_name', 'type'      => 'string'],
             ['created_by',      'type'      => 'integer'],
+            /*
+             * TODO: Either kick created_by or add field created_by_model, so we can pull the creator by both
+             * id and model class. Otherwise, a Guide can have the same ID as a User. Remove any constraint from DB.
+             */
         ]);
 
         $this->setOrder(['created_date desc']);
