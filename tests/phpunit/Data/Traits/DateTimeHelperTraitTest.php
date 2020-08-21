@@ -1,11 +1,23 @@
-<?php
+<?php declare(strict_types=1);
 
+namespace PMRAtk\tests\phpunit\Data\Traits;
+
+
+use PMRAtk\Data\Traits\DateTimeHelpersTrait;
+use PMRAtk\tests\phpunit\TestCase;
+
+/**
+ * Class DTHTest
+ */
 class DTHTest {
-    use \PMRAtk\Data\Traits\DateTimeHelpersTrait;
+    use DateTimeHelpersTrait;
 }
 
 
-class DateTimeHelperTraitTest extends \PMRAtk\tests\phpunit\TestCase {
+/**
+ * Class DateTimeHelperTraitTest
+ */
+class DateTimeHelperTraitTest extends TestCase {
 
     /*
      *
@@ -26,8 +38,8 @@ class DateTimeHelperTraitTest extends \PMRAtk\tests\phpunit\TestCase {
     public function testDateCasting() {
         $m = new DTHTest();
         $this->assertEquals((new \DateTime())->format('d.m.Y H:i:s'), $this->callProtected($m, 'castDateTimeToGermanString', [new \DateTime(), 'datetime']));
-        $this->assertEquals((new \DateTime())->format('d.m.Y'),       $this->callProtected($m, 'castDateTimeToGermanString', [new \DateTime(), 'date']));
-        $this->assertEquals((new \DateTime())->format('H:i:s'),       $this->callProtected($m, 'castDateTimeToGermanString', [new \DateTime(), 'time']));
+        $this->assertEquals((new \DateTime())->format('d.m.Y'), $this->callProtected($m, 'castDateTimeToGermanString', [new \DateTime(), 'date']));
+        $this->assertEquals((new \DateTime())->format('H:i:s'), $this->callProtected($m, 'castDateTimeToGermanString', [new \DateTime(), 'time']));
         $this->assertEquals('',                                       $this->callProtected($m, 'castDateTimeToGermanString', [new \DateTime(), 'lalala']));
     }
 

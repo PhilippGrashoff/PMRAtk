@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\Data;
 
@@ -9,7 +9,7 @@ class SettingGroup extends BaseModel {
     /*
      *
      */
-    public function init() {
+    public function init(): void {
         parent::init();
 
         $this->addFields([
@@ -18,6 +18,6 @@ class SettingGroup extends BaseModel {
             ['order',        'type' => 'integer'],
         ]);
 
-        $this->hasMany('Setting', \PMRAtk\Data\Setting::class);
+        $this->hasMany('Setting', Setting::class);
     }
 }

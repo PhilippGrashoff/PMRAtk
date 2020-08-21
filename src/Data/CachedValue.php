@@ -1,7 +1,14 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\Data;
 
+use atk4\data\Model;
+
+
+/**
+ * Class CachedValue
+ * @package PMRAtk\Data
+ */
 class CachedValue extends BaseModel {
 
     public $table    = 'cached_value';
@@ -12,30 +19,33 @@ class CachedValue extends BaseModel {
     public $reload_after_save = false;
 
 
-    /*
+    /**
      *
      */
-    public function init() {
+    public function init(): void {
         parent::init();
 
-        $this->addFields([
-            ['value',        'type' => 'string'],
-        ]);
+        $this->addFields(
+            [
+                [
+                    'value',
+                    'type' => 'string'
+                ],
+            ]
+        );
 
         //if setting with ident exists, only update
         //TODO: If somehow ON DUPLICATE KEY UPDATE is available in ATK, it would save a query
-        $this->addHook('beforeSave', function($m, $is_update) {
-            $m->set('last_updated', new \DateTime());
-            if($is_update) {
+        $this->onHook(Model::HOOK_BEFORE_SAVE, function($model, $isUpdate) {
+            if($isUpdate) {
                 return;
             }
-            $cv = $m->newInstance();
-            $cv->tryLoad($m->get('ident'));
+            $cv = $model->newInstance();
+            $cv->tryLoad($model->get('ident'));
             if($cv->loaded()) {
-                $cv->set('value', $m->get('value'));
-                $cv->set('last_updated', new \DateTime());
+                $cv->set('value', $model->get('value'));
                 $cv->save();
-                $m->breakHook(false);
+                $model->breakHook(false);
             }
         });
     }

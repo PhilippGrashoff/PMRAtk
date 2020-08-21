@@ -1,12 +1,24 @@
-<?php
+<?php declare(strict_types=1);
 
-class Test extends \PMRAtk\tests\phpunit\Data\BaseModelA {
+namespace PMRAtk\tests\phpunit\Data\Traits;
 
-    use \PMRAtk\Data\Traits\UniqueFieldTrait;
+
+use PMRAtk\Data\Traits\UniqueFieldTrait;
+use PMRAtk\tests\phpunit\Data\BaseModelA;
+use PMRAtk\tests\phpunit\TestCase;
+
+/**
+ *
+ */
+class Test extends BaseModelA {
+    use UniqueFieldTrait;
 }
 
 
-class UniqueFieldTraitTest extends \PMRAtk\tests\phpunit\TestCase {
+/**
+ *
+ */
+class UniqueFieldTraitTest extends TestCase {
 
     /*
      *

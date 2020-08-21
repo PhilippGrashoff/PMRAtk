@@ -1,13 +1,19 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\View;
 
+use atk4\ui\Button;
+use atk4\ui\jQuery;
+use atk4\ui\jsExpression;
+use atk4\ui\Modal;
+use atk4\ui\Exception;
+use DateTimeInterface;
 use PMRAtk\Data\MessageForUser;
 
 /**
  * This modal automatically opens itself if there are any unread messages for the currently logged in user
  */
-class MessageForUserModal extends \atk4\ui\Modal
+class MessageForUserModal extends Modal
 {
 
     public $messages = [];
@@ -24,10 +30,10 @@ class MessageForUserModal extends \atk4\ui\Modal
     /**
      *
      */
-    public function renderView()
+    public function renderView(): void
     {
         if (!$this->app->auth->user->loaded()) {
-            throw new atk4\ui\Exception(__CLASS__ . ' can only be used with a logged in user');
+            throw new Exception(__CLASS__ . ' can only be used with a logged in user');
         }
         //if messages were not set, load them here
         $this->_loadMessages();
@@ -49,7 +55,7 @@ class MessageForUserModal extends \atk4\ui\Modal
      *
      */
     protected function _addMessage(MessageForUser $message) {
-        $this->title = $message->get('created_date') instanceof \DateTimeInterface ? $message->get('created_date')->format('d.m.Y').' ' : '';
+        $this->title = $message->get('created_date') instanceof DateTimeInterface ? $message->get('created_date')->format('d.m.Y').' ' : '';
         $this->title .= $message->get('title');
         $this->addScrolling();
         if($this->forceApproveRead
@@ -74,7 +80,7 @@ class MessageForUserModal extends \atk4\ui\Modal
      *
      */
     protected function _addMessageReadButton(MessageForUser $message) {
-        $b = new \atk4\ui\Button();
+        $b = new Button();
         $b->set($this->labelMessageRead)->addClass('green ok');
         $b->setAttr('data-mfu_id', $message->get('id'));
         $this->addButtonAction($b);
@@ -89,7 +95,7 @@ class MessageForUserModal extends \atk4\ui\Modal
             },
             [
                 'args' => [
-                    (new \atk4\ui\jQuery(new \atk4\ui\jsExpression('this')))->data('mfu_id'),
+                    (new jQuery(new jsExpression('this')))->data('mfu_id'),
                 ]
             ]
         );

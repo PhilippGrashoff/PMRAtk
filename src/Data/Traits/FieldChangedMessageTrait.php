@@ -1,6 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\Data\Traits;
+
+use atk4\data\Exception;
+use atk4\data\Reference\HasOne;
+use DateTimeInterFace;
 
 trait FieldChangedMessageTrait {
 
@@ -13,7 +17,7 @@ trait FieldChangedMessageTrait {
     public function addFieldChangedMessage(string $field_name, $old_value, $new_value) {
         //DateTimeHelpersTrait needs to be used!
         if(!method_exists($this, 'castDateTimeToGermanString')) {
-            throw new \atk4\data\Exception('The Trait \PMRAtk\Data\Traits\DateTimeHelpersTrait needs to be used in order to use FieldChangedMessageTrait');
+            throw new Exception('The Trait \PMRAtk\Data\Traits\DateTimeHelpersTrait needs to be used in order to use FieldChangedMessageTrait');
         }
 
         //nothing changed? no message
@@ -29,17 +33,17 @@ trait FieldChangedMessageTrait {
         }
 
         //value special if its a hasOne relation
-        if($this->hasRef($field_name) && $this->getRef($field_name) instanceOf \atk4\data\Reference\HasOne) {
+        if($this->hasRef($field_name) && $this->getRef($field_name) instanceOf HasOne) {
             $refmodel = $this->refModel($field_name);
             $old_value = $refmodel->tryLoad($old_value)->get($refmodel->title_field);
             $new_value = $refmodel->tryLoad($new_value)->get($refmodel->title_field);
         }
 
         //date handling
-        if(in_array($this->getField($field_name)->type, ['date', 'time', 'datetime']) && $old_value instanceOf \DateTimeInterFace) {
+        if(in_array($this->getField($field_name)->type, ['date', 'time', 'datetime']) && $old_value instanceOf DateTimeInterFace) {
             $old_value = $this->castDateTimeToGermanString($old_value, $this->getField($field_name)->type);
         }
-        if(in_array($this->getField($field_name)->type, ['date', 'time', 'datetime']) && $new_value instanceOf \DateTimeInterFace) {
+        if(in_array($this->getField($field_name)->type, ['date', 'time', 'datetime']) && $new_value instanceOf DateTimeInterFace) {
             $new_value = $this->castDateTimeToGermanString($new_value, $this->getField($field_name)->type);
         }
 

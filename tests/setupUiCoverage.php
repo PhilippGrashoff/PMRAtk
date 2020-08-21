@@ -1,8 +1,8 @@
 <?php
 
-require_once(__DIR__.'/config.php');
+require_once(__DIR__ . 'config.php');
 
-foreach(new \DirectoryIterator('.') as $file) {
+foreach(new DirectoryIterator('.') as $file) {
     if($file->isDot()) {
         continue;
     }
@@ -21,7 +21,7 @@ foreach(new \DirectoryIterator('.') as $file) {
 
     //go down one dir
     elseif($file->isDir()) {
-        foreach(new \DirectoryIterator($file->getFilename()) as $subdir) {
+        foreach(new DirectoryIterator($file->getFilename()) as $subdir) {
             if($subdir->isDir()
                 || $subdir->isDot()
                 || $subdir->getExtension() !== 'php') {

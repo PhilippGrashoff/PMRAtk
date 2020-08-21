@@ -1,6 +1,17 @@
-<?php
+<?php declare(strict_types=1);
 
-class FileMock extends \PMRAtk\Data\File {
+namespace PMRAtk\tests\phpunit\Data\Traits;
+
+
+use PMRAtk\Data\File;
+use PMRAtk\Data\UserException;
+use PMRAtk\tests\phpunit\Data\BaseModelB;
+use PMRAtk\tests\phpunit\TestCase;
+
+/**
+ *
+ */
+class FileMock extends File {
 
     public function uploadFile($f)
     {
@@ -10,17 +21,21 @@ class FileMock extends \PMRAtk\Data\File {
     }
 }
 
-class FileReferenceTest extends \PMRAtk\tests\phpunit\TestCase {
+
+/**
+ *
+ */
+class FileReferenceTest extends TestCase {
 
     /*
      * tests the addRecipient and removeRecipient Function passing various params
      */
     public function testAddUploadedFile() {
-        $m = new \PMRAtk\tests\phpunit\Data\BaseModelB(self::$app->db);
+        $m = new BaseModelB(self::$app->db);
         $m->save();
         $m->addUploadFileFromAtkUi('error');
         $m->addUploadFileFromAtkUi(['name' => 'ALAL', 'tmp_name' => 'HEHFDF']);
-        $m = new \PMRAtk\tests\phpunit\Data\BaseModelB(self::$app->db);
+        $m = new BaseModelB(self::$app->db);
         $this->assertEquals(null, $m->addUploadFileFromAtkUi(['name' => 'ALAL', 'tmp_name' => 'HEHFDF']));
     }
 
@@ -29,7 +44,7 @@ class FileReferenceTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testRemoveFile() {
-        $m = new \PMRAtk\tests\phpunit\Data\BaseModelB(self::$app->db);
+        $m = new BaseModelB(self::$app->db);
         $m->save();
         $f = $this->createTestFile('Hansi', '', $m);
         $this->assertEquals($m->ref('File')->action('count')->getOne(), 1);
@@ -42,9 +57,9 @@ class FileReferenceTest extends \PMRAtk\tests\phpunit\TestCase {
      * trying to delete a non-related file using removeFile will throw exception
      */
     public function testExceptionNonExistingFile() {
-        $m = new \PMRAtk\tests\phpunit\Data\BaseModelB(self::$app->db);
+        $m = new BaseModelB(self::$app->db);
         $m->save();
-        $this->expectException(\PMRAtk\Data\UserException::class);
+        $this->expectException(UserException::class);
         $m->removeFile(23432543635);
     }
 
@@ -53,7 +68,7 @@ class FileReferenceTest extends \PMRAtk\tests\phpunit\TestCase {
      * trying to delete a non-related file using removeFile will throw exception
      */
     public function testaddUploadFileViaHookOnSave() {
-        $m = new \PMRAtk\tests\phpunit\Data\BaseModelB(self::$app->db);
+        $m = new BaseModelB(self::$app->db);
         $m->addUploadFileFromAtkUi(['name' => 'ALAL', 'tmp_name' => 'HEHFDF']);
         $m->save();
 
@@ -65,11 +80,11 @@ class FileReferenceTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testaddUploadFileFromAtkUi() {
-        $m = new \PMRAtk\tests\phpunit\Data\BaseModelB(self::$app->db);
+        $m = new BaseModelB(self::$app->db);
         $m->save();
         $m->getRef('File')->model = new  FileMock(self::$app->db);
         $file = $m->addUploadFileFromAtkUi(['name' => 'demo_file.txt', 'path' => 'tests/']);
-        self::assertInstanceOf(\PMRAtk\Data\File::class, $file);
+        self::assertInstanceOf(File::class, $file);
         self::assertEquals(1 ,$m->ref('File')->action('count')->getOne());
     }
 
@@ -78,7 +93,7 @@ class FileReferenceTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testAddTypeToFile() {
-        $m = new \PMRAtk\tests\phpunit\Data\BaseModelB(self::$app->db);
+        $m = new BaseModelB(self::$app->db);
         $m->save();
         $m->getRef('File')->model = new  FileMock(self::$app->db);
         $file = $m->addUploadFileFromAtkUi(['name' => 'demo_file.txt', 'path' => 'tests/']);

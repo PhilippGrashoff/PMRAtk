@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\Data\Cron;
 
@@ -9,11 +9,20 @@ namespace PMRAtk\Data\Cron;
  * Sends an Email if any exception was thrown.
  */
 
+use atk4\core\AppScopeTrait;
+use atk4\core\DIContainerTrait;
+use atk4\data\Exception;
+use atk4\ui\App;
+use PMRAtk\Data\Email\EmailThrowableToAdminTrait;
+use PMRAtk\Data\Email\PHPMailer;
+use ReflectionClass;
+use Throwable;
+
 abstract class BaseCronJob {
 
-    use \atk4\core\DIContainerTrait;
-    use \PMRAtk\Data\Email\EmailThrowableToAdminTrait;
-    use \atk4\core\AppScopeTrait;
+    use DIContainerTrait;
+    use EmailThrowableToAdminTrait;
+    use AppScopeTrait;
 
     //The name of the cronjob to display to a user
     public $name = '';
@@ -37,10 +46,10 @@ abstract class BaseCronJob {
     /**
      *
      */
-    public function __construct(\atk4\ui\App $app, array $defaults = []) {
+    public function __construct(App $app, array $defaults = []) {
         $this->app = $app;
         $this->setDefaults($defaults);
-        $this->phpMailer = new \PMRAtk\Data\Email\PHPMailer($this->app);
+        $this->phpMailer = new PHPMailer($this->app);
     }
 
 
@@ -50,7 +59,7 @@ abstract class BaseCronJob {
     final public function execute() {
         //make sure execute exists, otherwise throw exception
         if (!method_exists($this, '_execute')) {
-            throw new \atk4\data\Exception('_execute needs to ne implemented in descendants of ' . __CLASS__);
+            throw new Exception('_execute needs to ne implemented in descendants of ' . __CLASS__);
         }
         //try complete cronjob logic, exception leads to fail email to admin
         try {
@@ -58,7 +67,7 @@ abstract class BaseCronJob {
             $this->successful = true;
             echo 'Cronjob ' . $this->getName() . ' successful';
             $this->sendSuccessEmail();
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->sendErrorEmailToAdmin($e, 'Im Cronjob ' . $this->getName() . ' ist ein Fehler aufgetreten');
         }
     }
@@ -69,7 +78,7 @@ abstract class BaseCronJob {
      */
     public function getName() {
         if (empty($this->name)) {
-            return (new \ReflectionClass($this))->getShortName();
+            return (new ReflectionClass($this))->getShortName();
         }
         return $this->name;
     }

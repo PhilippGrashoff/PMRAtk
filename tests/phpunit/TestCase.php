@@ -1,6 +1,14 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\tests\phpunit;
+
+use atk4\data\Model;
+use DirectoryIterator;
+use PMRAtk\Data\BaseModel;
+use PMRAtk\Data\Email\EmailAccount;
+use PMRAtk\Data\File;
+use PMRAtk\Data\Setting;
+use ReflectionClass;
 
 abstract class TestCase extends \PHPUnit\Framework\TestCase {
 
@@ -61,7 +69,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase {
      * Calls protected method.
      */
     public function callProtected($obj, $name, array $args = []) {
-        $class = new \ReflectionClass($obj);
+        $class = new ReflectionClass($obj);
         $method = $class->getMethod($name);
         $method->setAccessible(true);
 
@@ -84,7 +92,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase {
      */
     public function countFilesInDirWithExtension(string $dir, string $extension):int {
         $count = 0;
-        foreach(new \DirectoryIterator($dir) as $file) {
+        foreach(new DirectoryIterator($dir) as $file) {
             if(strtolower($file->getExtension()) === strtolower($extension)) {
                 $count++;
             }
@@ -96,7 +104,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase {
     /*
      * see if object has an audit set, returns this audit entry for further testing
      */
-    protected function _testAuditExists(\EOO\Data\BaseModel $m, string $type) {
+    protected function _testAuditExists(BaseModel $m, string $type) {
         $audit = $m->getAuditViewModel();
         $audit->addCondition('value', $type);
         $audit->tryLoadAny();
@@ -108,8 +116,8 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase {
     /*
      *
      */
-    public function createTestFile(string $filename, string $path = '', \PMRAtk\Data\BaseModel $parent = null) {
-        $file = new \PMRAtk\Data\File(self::$app->db, ['parentObject' => $parent]);
+    public function createTestFile(string $filename, string $path = '', BaseModel $parent = null) {
+        $file = new File(self::$app->db, ['parentObject' => $parent]);
         $file->set('path', $path);
         $file->createFileName($filename);
         $this->_copyFile($file->get('value'), $file->get('path'));
@@ -122,7 +130,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase {
     /*
      *
      */
-    protected function _testMToM(\atk4\data\Model $o, \atk4\data\Model $other) {
+    protected function _testMToM(Model $o, Model $other) {
         if(!$o->loaded()) {
             $o->save();
         }
@@ -130,7 +138,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase {
             $other->save();
         }
 
-        $shortname = (new \ReflectionClass($other))->getShortName();
+        $shortname = (new ReflectionClass($other))->getShortName();
         $hasname = 'has'.$shortname.'Relation';
         $addname = 'add'.$shortname;
         $removename = 'remove'.$shortname;
@@ -140,7 +148,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase {
         $this->assertTrue($o->$hasname($other));
         if(method_exists($o, $getRelationName)) {
             $m = $o->$getRelationName();
-            if($m instanceof \atk4\data\Model) {
+            if($m instanceof Model) {
                 self::assertEquals(1, $o->$getRelationName()->action('count')->getOne());
             }
         }
@@ -170,7 +178,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase {
      *
      */
     protected function _addStandardEmailAccount() {
-        $ea = new \PMRAtk\Data\Email\EmailAccount(self::$app->db);
+        $ea = new EmailAccount(self::$app->db);
         $ea->set('name',        STD_EMAIL);
         $ea->set('sender_name', STD_EMAIL_NAME);
         $ea->set('user',        EMAIL_USERNAME);
@@ -191,7 +199,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase {
      */
     protected function _removeSettings(array $names) {
         foreach($names as $name) {
-            $setting = new \PMRAtk\tests\phpunit\DeleteSetting(self::$app->db);
+            $setting = new DeleteSetting(self::$app->db);
             $setting->tryLoadBy('ident', $name);
             if($setting->loaded()) {
                 $setting->delete();
@@ -204,7 +212,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase {
      *
      */
     protected function _addSettingToApp(string $ident, $value) {
-        $s = new \PMRAtk\Data\Setting(self::$app->db);
+        $s = new Setting(self::$app->db);
         $s->tryLoadBy('ident', $ident);
         $s->set('ident', $ident);
         $s->set('value', $value);

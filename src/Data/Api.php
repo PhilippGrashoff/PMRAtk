@@ -1,6 +1,11 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\Data;
+
+use atk4\data\Model;
+use DateTimeInterFace;
+use Exception;
+use PMRAtk\View\App;
 
 class Api extends \atk4\api\Api {
 
@@ -11,7 +16,7 @@ class Api extends \atk4\api\Api {
     /*
      *
      */
-    public function __construct(\PMRAtk\View\App $app) {
+    public function __construct(App $app) {
         parent::__construct();
         $this->app = $app;
         $app->isApiRequest = true;
@@ -42,7 +47,7 @@ class Api extends \atk4\api\Api {
             //throws Exception if user couldnt be loaded by Token
             $this->app->loadUserByToken($_REQUEST[$login_field]);
         }
-        catch(\Exception $e) {
+        catch(Exception $e) {
             $this->caughtException($e);
         }
     }
@@ -50,8 +55,9 @@ class Api extends \atk4\api\Api {
 
     /*
      * export date and time fields as strings in ISO Code
+     * //TODO This should go in ATK Api
      */
-    protected function exportModel(\atk4\data\Model $m) {
+    protected function exportModel(Model $m) {
         //scan for date and time fields
         $datetime_fields = [];
         $date_fields = [];
@@ -78,17 +84,17 @@ class Api extends \atk4\api\Api {
             $export = $m->export($this->getAllowedFields($m, 'read'));
             foreach($export as &$record) {
                 foreach($datetime_fields as $field_name) {
-                    if(isset($record[$field_name]) && $record[$field_name] instanceOf \DateTimeInterFace) {
+                    if(isset($record[$field_name]) && $record[$field_name] instanceOf DateTimeInterFace) {
                         $record[$field_name] = $record[$field_name]->format(DATE_ATOM);
                     }
                 }
                 foreach($date_fields as $field_name) {
-                    if(isset($record[$field_name]) && $record[$field_name] instanceOf \DateTimeInterFace) {
+                    if(isset($record[$field_name]) && $record[$field_name] instanceOf DateTimeInterFace) {
                         $record[$field_name] = $record[$field_name]->format('Y-m-d');
                     }
                 }
                 foreach($time_fields as $field_name) {
-                    if(isset($record[$field_name]) && $record[$field_name] instanceOf \DateTimeInterFace) {
+                    if(isset($record[$field_name]) && $record[$field_name] instanceOf DateTimeInterFace) {
                         $record[$field_name] = $record[$field_name]->format('H:i:s');
                     }
                 }

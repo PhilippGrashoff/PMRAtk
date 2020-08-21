@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\tests;
 
@@ -10,7 +10,13 @@ namespace PMRAtk\tests;
  *
  * Built on top of Zend Frameworks Zend Email
  */
-class SentEmailContentTest extends \PMRAtk\tests\phpunit\TestCase {
+
+use atk4\data\Exception;
+use PMRAtk\Data\Email\EmailAccount;
+use PMRAtk\tests\phpunit\TestCase;
+use Zend\Mail\Storage\Imap;
+
+class SentEmailContentTest extends TestCase {
 
     //instance of \PMRAtk\Data\Email\EmailAccount;
     public $emailAccount;
@@ -21,7 +27,7 @@ class SentEmailContentTest extends \PMRAtk\tests\phpunit\TestCase {
     /*
      *
      */
-    public function __construct(\PMRAtk\Data\Email\EmailAccount $ea) {
+    public function __construct(EmailAccount $ea) {
         $this->emailAccount = $ea;
         parent::__construct();
     }
@@ -31,7 +37,7 @@ class SentEmailContentTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function loadLastEmailFromFolder(string $folder) {
-        $es = new \Zend\Mail\Storage\Imap([
+        $es = new Imap([
             'host'     => $this->emailAccount->get('imap_host'),
             'user'     => $this->emailAccount->get('user'),
             'password' => $this->emailAccount->get('password'),
@@ -66,7 +72,7 @@ class SentEmailContentTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function loadLastEmailFromFolderByUUID(string $folder, string $uuid) {
-        $es = new \Zend\Mail\Storage\Imap([
+        $es = new Imap([
             'host'     => $this->emailAccount->get('imap_host'),
             'user'     => $this->emailAccount->get('user'),
             'password' => $this->emailAccount->get('password'),
@@ -98,6 +104,6 @@ class SentEmailContentTest extends \PMRAtk\tests\phpunit\TestCase {
         }
 
 
-        throw new \atk4\data\Exception('The Email with UUID '.$uuid.' in Subject could not be found');
+        throw new Exception('The Email with UUID '.$uuid.' in Subject could not be found');
     }
 }

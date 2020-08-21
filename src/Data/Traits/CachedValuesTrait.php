@@ -1,6 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\Data\Traits;
+
+use DateTime;
+use PMRAtk\Data\CachedValue;
 
 trait CachedValuesTrait {
 
@@ -19,7 +22,7 @@ trait CachedValuesTrait {
     public function getCachedValue(string $ident, $value, int $timeout = 0) {
         //load cached values on first time one is requested
         if(!$this->_cachedValuesLoaded) {
-            foreach(new \PMRAtk\Data\CachedValue($this->db) as $cv) {
+            foreach(new CachedValue($this->db) as $cv) {
                 $this->_cachedValues[$cv->get('ident')] = clone $cv;
             }
             $this->_cachedValuesLoaded = true;
@@ -33,7 +36,7 @@ trait CachedValuesTrait {
         //if a timeout is defined
         if($timeout > 0) {
             //still good?
-            if($this->_cachedValues[$ident]->get('last_updated') >= (new \DateTime())->modify('-'.$timeout.' Seconds')) {
+            if($this->_cachedValues[$ident]->get('last_updated') >= (new DateTime())->modify('-'.$timeout.' Seconds')) {
                 return $this->_cachedValues[$ident]->get('value');
             }
             //recalculate
@@ -55,7 +58,7 @@ trait CachedValuesTrait {
         if(is_callable($value)) {
             $value = call_user_func($value);
         }
-        $s = new \PMRAtk\Data\CachedValue($this->db);
+        $s = new CachedValue($this->db);
         //make sure its unique
         $s->tryLoad($ident);
         if(!$s->loaded()) {

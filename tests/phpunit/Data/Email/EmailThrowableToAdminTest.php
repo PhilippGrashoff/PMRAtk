@@ -1,7 +1,16 @@
-<?php
+<?php declare(strict_types=1);
 
+namespace PMRAtk\tests\phpunit\Data\Email;
+
+
+use PMRAtk\Data\Email\EmailThrowableToAdminTrait;
+use PMRAtk\tests\phpunit\TestCase;
+
+/**
+ *
+ */
 class ThrowableTest {
-    use \PMRAtk\Data\Email\EmailThrowableToAdminTrait;
+    use EmailThrowableToAdminTrait;
 
     public $app;
 
@@ -18,7 +27,10 @@ class ThrowableTest {
 }
 
 
-class EmailThrowableToAdminTest extends \PMRAtk\tests\phpunit\TestCase {
+/**
+ *
+ */
+class EmailThrowableToAdminTest extends TestCase {
     /*
      *
      */

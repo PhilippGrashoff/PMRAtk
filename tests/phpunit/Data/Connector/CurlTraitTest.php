@@ -1,18 +1,32 @@
-<?php
+<?php declare(strict_types=1);
 
+namespace PMRAtk\tests\phpunit\Data\Connector;
+
+
+use Curl\Curl;
+use PMRAtk\Data\Connector\CurlException;
+use PMRAtk\Data\Connector\CurlTrait;
+use PMRAtk\tests\phpunit\TestCase;
+
+/**
+ *
+ */
 class SomeConnector {
 
-    use \PMRAtk\Data\Connector\CurlTrait;
+    use CurlTrait;
 
     public $curl;
 
     public function __construct() {
-        $this->curl = new \Curl\Curl();
+        $this->curl = new Curl();
     }
 }
 
 
-class CurlTraitTest extends \PMRAtk\tests\phpunit\TestCase {
+/**
+ *
+ */
+class CurlTraitTest extends TestCase {
 
 
     /*
@@ -32,7 +46,7 @@ class CurlTraitTest extends \PMRAtk\tests\phpunit\TestCase {
         $sc = new SomeConnector();
         $sc->curl->response = 'LALA';
         $sc->curl->curlError = 'SomeNetworkFail';
-        $this->expectException(\PMRAtk\Data\Connector\CurlException::class);
+        $this->expectException(CurlException::class);
         $sc->returnCurlResponse();
     }
 
@@ -44,7 +58,7 @@ class CurlTraitTest extends \PMRAtk\tests\phpunit\TestCase {
         $sc = new SomeConnector();
         $sc->curl->response = 'LALA';
         $sc->curl->error = 'SomeNot200Response';
-        $this->expectException(\PMRAtk\Data\Connector\CurlException::class);
+        $this->expectException(CurlException::class);
         $sc->returnCurlResponse();
     }
 
@@ -59,7 +73,7 @@ class CurlTraitTest extends \PMRAtk\tests\phpunit\TestCase {
         try {
             $sc->returnCurlResponse($data);
         }
-        catch (\PMRAtk\Data\Connector\CurlException $e) {
+        catch (CurlException $e) {
             self::assertArrayHasKey("data sent in body", $e->params);
         }
     }

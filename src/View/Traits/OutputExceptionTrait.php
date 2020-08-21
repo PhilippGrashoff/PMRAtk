@@ -1,13 +1,16 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\View\Traits;
+
+use ReflectionClass;
+use Throwable;
 
 trait OutputExceptionTrait {
 
     /*
      *
      */
-    public function outputExceptionAsJsNotify(\Throwable $e, string $text_before = ''):array {
+    public function outputExceptionAsJsNotify(Throwable $e, string $text_before = ''):array {
         $return = [];
         foreach($this->outputException($e, $text_before) as $message) {
             $return[] = $this->failNotify($message);
@@ -20,9 +23,9 @@ trait OutputExceptionTrait {
     /*
      *
      */
-    public function outputException(\Throwable $e, string $text_before = ''):array {
+    public function outputException(Throwable $e, string $text_before = ''):array {
         $return = [];
-        $r = new \ReflectionClass($e);
+        $r = new ReflectionClass($e);
 
         //ValidationException should render each message
         if($r->getName() == 'atk4\data\ValidationException') {

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\Data\Traits;
 
@@ -6,6 +6,11 @@ namespace PMRAtk\Data\Traits;
  * EPA is short for Email, Address, Phone. This adds functions to add,
  * alter and delete related EPAs
  */
+
+use atk4\data\Exception;
+use PMRAtk\Data\Address;
+use PMRAtk\Data\Email;
+use PMRAtk\Data\Phone;
 
 trait EPARelationsTrait
 {
@@ -22,7 +27,7 @@ trait EPARelationsTrait
             'Phone',
             [
                 function () {
-                    return (new \PMRAtk\Data\Phone($this->persistence, ['parentObject' => $this]))->addCondition(
+                    return (new Phone($this->persistence, ['parentObject' => $this]))->addCondition(
                         'model_class',
                         ($this->_epaRefModelClass ? : get_class($this))
                     );
@@ -35,7 +40,7 @@ trait EPARelationsTrait
             'Email',
             [
                 function () {
-                    return (new \PMRAtk\Data\Email($this->persistence, ['parentObject' => $this]))->addCondition(
+                    return (new Email($this->persistence, ['parentObject' => $this]))->addCondition(
                         'model_class',
                         ($this->_epaRefModelClass ? : get_class($this))
                     );
@@ -48,7 +53,7 @@ trait EPARelationsTrait
             'Address',
             [
                 function () {
-                    return (new \PMRAtk\Data\Address($this->persistence, ['parentObject' => $this]))->addCondition(
+                    return (new Address($this->persistence, ['parentObject' => $this]))->addCondition(
                         'model_class',
                         ($this->_epaRefModelClass ? : get_class($this))
                     );
@@ -59,7 +64,7 @@ trait EPARelationsTrait
         );
 
         if($addDelete) {
-            $this->addHook(
+            $this->onHook(
                 'beforeDelete',
                 function ($m) {
                     $m->deleteHasMany('Phone');
@@ -77,7 +82,7 @@ trait EPARelationsTrait
     protected function _getFirstEPA(string $type): string
     {
         if (!$this->hasRef($type)) {
-            throw new \atk4\data\Exception('Model does not have ' . $type . ' reference in ' . __FUNCTION__);
+            throw new Exception('Model does not have ' . $type . ' reference in ' . __FUNCTION__);
         }
         foreach ($this->ref($type) as $a) {
             if (!empty($a->get('value'))) {
@@ -118,7 +123,7 @@ trait EPARelationsTrait
     protected function _getEPAById(string $type, int $id)
     {
         if (!$this->hasRef($type)) {
-            throw new \atk4\data\Exception('Model does not have ' . $type . ' reference in ' . __FUNCTION__);
+            throw new Exception('Model does not have ' . $type . ' reference in ' . __FUNCTION__);
         }
         foreach ($this->ref($type) as $a) {
             if ($a->get('id') == $id) {
@@ -126,7 +131,7 @@ trait EPARelationsTrait
             }
         }
 
-        throw new \atk4\data\Exception('The loaded object does not have the ' . $type . '-Reference with id ' . $id);
+        throw new Exception('The loaded object does not have the ' . $type . '-Reference with id ' . $id);
     }
 
 
@@ -212,7 +217,7 @@ trait EPARelationsTrait
     {
         //check if reference exists
         if (!$this->hasRef($type)) {
-            throw new \atk4\data\Exception('The model does not have the reference ' . $type);
+            throw new Exception('The model does not have the reference ' . $type);
         }
 
         //if value is empty, do not do anything
@@ -223,7 +228,7 @@ trait EPARelationsTrait
         $classname = get_class($this->refModel($type));
         //if $this has no ID yet, use afterSave hook
         if (!$this->loaded()) {
-            $this->addHook(
+            $this->onHook(
                 'afterSave',
                 function ($m, $isUpdate) use ($type, $value) {
                     $m->createEPA($type, $value);
@@ -241,7 +246,7 @@ trait EPARelationsTrait
             $new_epa->set('model_id', $modelId);
             if(!$new_epa->get('model_id')
                 || !$new_epa->get('model_class')) {
-                throw new \atk4\data\Exception('Both model_class and model_id need to have a value');
+                throw new Exception('Both model_class and model_id need to have a value');
             }
             $new_epa->save();
             if (method_exists($this, 'addSecondaryAudit')) {
@@ -266,7 +271,7 @@ trait EPARelationsTrait
     {
         //check if reference exists
         if (!$this->hasRef($type)) {
-            throw new \atk4\data\Exception('The model does not have the reference ' . $type);
+            throw new Exception('The model does not have the reference ' . $type);
         }
 
         $epa = $this->ref($type);
@@ -304,7 +309,7 @@ trait EPARelationsTrait
     {
         //check if reference exists
         if (!$this->hasRef($type)) {
-            throw new \atk4\data\Exception('The model does not have the reference ' . $type);
+            throw new Exception('The model does not have the reference ' . $type);
         }
 
         $epa = $this->ref($type);

@@ -1,22 +1,39 @@
-<?php
+<?php declare(strict_types=1);
 
-class TestViewWithForm extends \atk4\ui\View {
-    use \PMRAtk\View\Traits\FormHelpersTrait;
+namespace PMRAtk\tests\phpunit\View\Traits;
+
+
+use atk4\ui\Form;
+use atk4\ui\View;
+use PMRAtk\tests\phpunit\TestCase;
+use PMRAtk\View\App;
+use PMRAtk\View\Traits\FormHelpersTrait;
+
+/**
+ * Class TestViewWithForm
+ * @package PMRAtk\tests\phpunit\View\Traits
+ */
+class TestViewWithForm extends View {
+    use FormHelpersTrait;
 }
 
 
-class FormHelpersTraitTest extends \PMRAtk\tests\phpunit\TestCase {
+/**
+ * Class FormHelpersTraitTest
+ * @package PMRAtk\tests\phpunit\View\Traits
+ */
+class FormHelpersTraitTest extends TestCase {
 
     /*
      *
      */
     public function testFieldIdsAndSubmitButtonId() {
-        $app = new \PMRAtk\View\App(['nologin'], ['always_run' => false]);
-        $v   = $app->add(new TestViewWithForm());
-        $f = $v->add('Form');
+        $app = new App(['nologin'], ['always_run' => false]);
+        $v = TestViewWithForm::addTo($app);
+        $f = Form::addTo($v);
         $f->id = 'testForm';
-        $field1 = $f->addField('test1');
-        $field2 = $f->addField('test2');
+        $field1 = $f->addControl('test1');
+        $field2 = $f->addControl('test2');
         $this->assertNotEquals('test1', $field1->id);
         $v->setHTMLIds($f);
         $this->assertEquals('test1', $field1->id);

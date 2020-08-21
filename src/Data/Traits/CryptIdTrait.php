@@ -1,13 +1,16 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\Data\Traits;
 
 /*
  * TODO: See if rand() is good to use for creating truly random stuff
  */
+
+use atk4\data\Exception;
+
 trait CryptIdTrait {
 
-    use \PMRAtk\Data\Traits\UniqueFieldTrait;
+    use UniqueFieldTrait;
 
     public $possibleChars = [
         '1','2','3','4','5','6','7','8','9',
@@ -42,7 +45,7 @@ trait CryptIdTrait {
      * Overwrite to your own needs
      */
     protected function _generateCryptId():string {
-        throw new \atk4\data\Exception(__FUNCTION__.' must be extended in child model');
+        throw new Exception(__FUNCTION__.' must be extended in child model');
     }
 
 

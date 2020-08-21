@@ -1,8 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\Data\Email;
 
-class EmailTemplate extends \PMRAtk\Data\SecondaryBaseModel {
+use PMRAtk\Data\SecondaryBaseModel;
+
+class EmailTemplate extends SecondaryBaseModel {
 
     public $table = 'email_template';
 
@@ -10,7 +12,7 @@ class EmailTemplate extends \PMRAtk\Data\SecondaryBaseModel {
     /**
      *
      */
-    public function init() {
+    public function init(): void {
         parent::init();
 
         $this->addFields([

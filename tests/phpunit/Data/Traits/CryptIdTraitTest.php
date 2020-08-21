@@ -1,18 +1,32 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace PMRAtk\tests\phpunit\Traits\Data;
+namespace PMRAtk\tests\phpunit\Data\Traits;
 
 
-class CryptTest extends \atk4\data\Model {
+use atk4\data\Exception;
+use atk4\data\Model;
+use PMRAtk\Data\SecondaryBaseModel;
+use PMRAtk\Data\Token;
+use PMRAtk\Data\Traits\CryptIdTrait;
+use PMRAtk\tests\phpunit\TestCase;
 
-    use \PMRAtk\Data\Traits\CryptIdTrait;
+/**
+ *
+ */
+class CryptTest extends Model {
+
+    use CryptIdTrait;
 
     public $table = 'SecondaryBaseModel';
 }
 
-class CryptWhileTest extends \PMRAtk\Data\SecondaryBaseModel {
 
-    use \PMRAtk\Data\Traits\CryptIdTrait;
+/**
+ *
+ */
+class CryptWhileTest extends SecondaryBaseModel {
+
+    use CryptIdTrait;
 
     public $table = 'SecondaryBaseModel';
     public $counter = 0;
@@ -31,7 +45,10 @@ class CryptWhileTest extends \PMRAtk\Data\SecondaryBaseModel {
 }
 
 
-class CryptIdTraitTest extends \PMRAtk\tests\phpunit\TestCase {
+/**
+ *
+ */
+class CryptIdTraitTest extends TestCase {
 
     /*
      * test getting a random char
@@ -50,7 +67,7 @@ class CryptIdTraitTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function testExceptionOverwriteGenerate() {
         $t = new CryptTest(self::$app->db);
-        $this->expectException(\atk4\data\Exception::class);
+        $this->expectException(Exception::class);
         $this->callProtected($t, '_generateCryptId');
     }
 
@@ -59,7 +76,7 @@ class CryptIdTraitTest extends \PMRAtk\tests\phpunit\TestCase {
      * use Token class to test setCryptId
      */
     public function testsetCryptId() {
-        $t = new \PMRAtk\Data\Token(self::$app->db);
+        $t = new Token(self::$app->db);
         $t->setCryptId('value');
         $this->assertEquals(strlen($t->get('value')), 64);
     }

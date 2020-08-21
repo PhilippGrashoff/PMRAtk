@@ -1,8 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\tests\phpunit\View;
 
 use atk4\data\Model;
+use DateTime;
+use PMRAtk\Data\Setting;
 use PMRAtk\tests\phpunit\Data\BaseModelA;
 use PMRAtk\tests\phpunit\TestCase;
 use PMRAtk\View\Template;
@@ -15,7 +17,7 @@ class TemplateTest extends TestCase {
     public function testSTDValues() {
         $t = new Template();
         $t->app = self::$app;
-        $s = new \PMRAtk\Data\Setting(self::$app->db);
+        $s = new Setting(self::$app->db);
         $s->set('ident', 'STD_DADAPRA');
         $s->set('value', 'LALA');
         self::$app->addSetting($s);
@@ -45,7 +47,7 @@ class TemplateTest extends TestCase {
         $class = new class extends Model {
             public $table = 'blalba';
 
-            public function init() {
+            public function init(): void {
                 parent::init();
                 $this->addFields([
                                      ['name',     'type' => 'string'],
@@ -100,7 +102,7 @@ class TemplateTest extends TestCase {
      */
     public function testSetTagsFromModelWithDates() {
         $model = $this->getTestModel();
-        $dt = \DateTime::createFromFormat('Y-m-d H:i:s', '2019-05-05 10:30:00');
+        $dt = DateTime::createFromFormat('Y-m-d H:i:s', '2019-05-05 10:30:00');
         $model->set('datetime', clone $dt);
         $model->set('date',     clone $dt);
         $model->set('time',     clone $dt);

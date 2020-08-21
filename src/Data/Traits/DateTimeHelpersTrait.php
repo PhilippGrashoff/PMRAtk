@@ -1,6 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\Data\Traits;
+
+use DateTimeInterface;
 
 trait DateTimeHelpersTrait {
 
@@ -8,7 +10,7 @@ trait DateTimeHelpersTrait {
     /*
      * returns the difference of 2 datetime objects in minutes
      */
-    public function getDateDiffTotalMinutes(\DateTimeInterFace $s, \DateTimeInterFace $e) {
+    public function getDateDiffTotalMinutes(DateTimeInterFace $s, DateTimeInterFace $e) {
         $diff = $s->diff($e);
         return $diff->days*24*60+$diff->h*60+$diff->i;
     }
@@ -20,7 +22,7 @@ trait DateTimeHelpersTrait {
      */
     public function castDateTimeToGermanString($value, string $type, bool $shorten_time = false):string {
         //no DateTimeInterFace passed? Just return given value
-        if(!$value instanceof \DateTimeInterface) {
+        if(!$value instanceof DateTimeInterface) {
             return (string) $value;
         }
 

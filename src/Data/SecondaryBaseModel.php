@@ -1,65 +1,95 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\Data;
 
-class SecondaryBaseModel extends \atk4\data\Model {
+use atk4\data\Exception;
+use atk4\data\Model;
+use PMRAtk\Data\Traits\CreatedDateAndLastUpdatedTrait;
 
-    public $parentObject;
 
-    public function init() {
+/**
+ * Class SecondaryBaseModel
+ * @package PMRAtk\Data
+ */
+abstract class SecondaryBaseModel extends Model
+{
+
+    use CreatedDateAndLastUpdatedTrait;
+
+    public ?Model $parentObject;
+
+    /**
+     *
+     */
+    public function init(): void
+    {
         parent::init();
 
-        $this->addFields([
-            ['model_class',     'type'=>'text',       'system' => true],
-            ['model_id',        'type'=>'integer',    'system' => true],
-            ['value',           'type'=>'text'],
-            ['created_date',    'type' => 'datetime', 'persist_timezone' => 'Europe/Berlin', 'system' => true],
-            ['last_updated',    'type' => 'datetime', 'persist_timezone' => 'Europe/Berlin', 'system' => true],
-        ]);
+        $this->addFields(
+            [
+                //The class of the parent model e.g. Some\NameSpace\SomeClass
+                [
+                    'model_class',
+                    'type' => 'text',
+                    'system' => true
+                ],
+                //The id of the parent model, e.g. 159
+                [
+                    'model_id',
+                    'type' => 'integer',
+                    'system' => true
+                ],
+                //some generic value field for storing the actual data like an address or a phone
+                [
+                    'value',
+                    'type' => 'text'
+                ],
+                //A parent model, when deleted, SHOULD delete all referenced SecondaryBaseModels like Emails, Addresses, Files.
+                //However, periodically checking if parent object still exists is sensible to avoid having old data without
+                //existing parent models. This timestamp can be used to indicate the last time such a check happened.
+                [
+                    'last_checked',
+                    'type' => 'datetime'
+                ],
+            ]
+        );
 
+        $this->addCreatedDateAndLastUpdateFields();
+        $this->addCreatedDateAndLastUpdatedHook();
 
-        //set model_class and model_id if parentObject was set
-        if(isset($this->parentObject) && $this->parentObject instanceOf \atk4\data\Model) {
-            $this->set('model_class', (new \ReflectionClass($this->parentObject))->getName());
-            if($this->parentObject->get('id')) {
-                $this->set('model_id', ($this->parentObject)->get('id'));
+        //set model_class and model_id if parentObject was set. If parentObject is already set, data is automatically pulled
+        if (
+            isset($this->parentObject)
+            && $this->parentObject instanceof Model
+        ) {
+            $this->set('model_class', get_class($this->parentObject));
+            if ($this->parentObject->get($this->parentObject->id_field)) {
+                $this->set('model_id', ($this->parentObject)->get($this->parentObject->id_field));
             }
         }
-
-        //trim value before saving
-        $this->addHook('beforeSave', function($m) {
-            $m->set('value', trim($m->get('value')));
-            //if its update, set last_updated
-            if($m->get('id')) {
-                $m->set('last_updated', new \DateTime());
-            }
-            //on insert set created_date
-            else {
-                $m->set('created_date', new \DateTime());
-            }
-        });
     }
 
 
-    /*
+    /**
      * tries to load its parent object based on model_class and model_id
-     *
-     * @return object|null
      */
-    public function getParentObject() {
-        if(empty($this->get('model_class')) || empty($this->get('model_id'))) {
+    public function getParentObject(): ?Model
+    {
+        if (
+            empty($this->get('model_class'))
+            || empty($this->get('model_id'))
+        ) {
             return null;
         }
 
-        $classname = $this->get('model_class');
-        if(!class_exists($classname)) {
-            throw new \atk4\data\Exception('Class '.$classname.' does not exist in '.__FUNCTION__);
+        $className = $this->get('model_class');
+        if (!class_exists($className)) {
+            throw new Exception('Class ' . $className . ' does not exist in ' . __FUNCTION__);
         }
 
-        $o = new $classname($this->persistence);
-        $o->tryLoad($this->get('model_id'));
+        $parentObject = new $className($this->persistence);
+        $parentObject->load($this->get('model_id'));
 
-        return clone $o;
+        return clone $parentObject;
     }
 }
-?>

@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS `SecondaryBaseModel`
     `id`           INT          NOT NULL AUTO_INCREMENT,
     `last_updated` DATETIME     NULL,
     `created_date` DATETIME     NULL,
+    `last_checked` DATETIME     NULL,
     `value`        TEXT         NULL,
     `model_class`  VARCHAR(255) NULL,
     `model_id`     INT          NULL,
@@ -71,7 +72,7 @@ CREATE TABLE IF NOT EXISTS `audit`
     `id`              INT          NOT NULL AUTO_INCREMENT,
     `last_updated`    DATETIME     NULL,
     `created_date`    DATETIME     NULL,
-    `created_by`      INT          NULL,
+    `rendered_output` TEXT         NULL,
     `created_by_name` VARCHAR(255) NULL,
     `value`           TEXT         NULL,
     `data`            TEXT         NULL,
@@ -269,7 +270,7 @@ CREATE TABLE IF NOT EXISTS `token`
     COLLATE = latin1_german1_ci;
 
 
-CREATE TABLE IF NOT EXISTS `User`
+CREATE TABLE IF NOT EXISTS `user`
 (
     `id`            INT          NOT NULL AUTO_INCREMENT,
     `last_updated`  DATETIME     NULL,

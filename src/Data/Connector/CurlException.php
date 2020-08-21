@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\Data\Connector;
 
@@ -7,13 +7,17 @@ namespace PMRAtk\Data\Connector;
  * The param array of atk4\core\Exception always has 'response' which is
  * body if the response. In case of a network error, it contains
  */
-class CurlException extends \atk4\core\Exception {
+
+use atk4\core\Exception;
+use Throwable;
+
+class CurlException extends Exception {
 
 
     /*
      * constructor gets params array as third param
      */
-    public function __construct(string $message, int $error_code, $response, $dataSent = null, \Throwable $previous = null) {
+    public function __construct(string $message, int $error_code, $response, $dataSent = null, Throwable $previous = null) {
         parent::__construct($message, $error_code, $previous);
         if($dataSent) {
             $this->addMoreInfo('data sent in body', $dataSent);

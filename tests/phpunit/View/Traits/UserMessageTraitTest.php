@@ -1,25 +1,39 @@
-<?php
+<?php declare(strict_types=1);
 
+namespace PMRAtk\tests\phpunit\View\Traits;
+
+
+use atk4\ui\jsToast;
+use PMRAtk\tests\phpunit\TestCase;
+use PMRAtk\View\Traits\UserMessageTrait;
+
+/**
+ * Class TestClassForUserMessageTrait
+ * @package PMRAtk\tests\phpunit\View\Traits
+ */
 class TestClassForUserMessageTrait {
-    use \PMRAtk\View\Traits\UserMessageTrait;
+    use UserMessageTrait;
 }
 
 
-class UserMessageTraitTest extends \PMRAtk\tests\phpunit\TestCase {
-
+/**
+ * Class UserMessageTraitTest
+ * @package PMRAtk\tests\phpunit\View\Traits
+ */
+class UserMessageTraitTest extends TestCase {
 
     /*
      *
      */
     public function testAddMessage() {
-        $v = new \TestClassForUserMessageTrait();
+        $v = new TestClassForUserMessageTrait();
         $v->addUserMessage('TestMessage1', 'success');
         $this->assertEquals($v->userMessages[0]['message'], 'TestMessage1');
         $v->addUserMessage('TestMessage2');
         $v->addUserMessage('TestMessage3', 'error');
         $v->addUserMessage('TestMessage4', 'warning');
         $this->assertEquals(count($v->getUserMessagesAsJsToast()), 4);
-        $this->assertTrue($v->getUserMessagesAsJsToast()[0] instanceOf \atk4\ui\jsToast);
+        $this->assertTrue($v->getUserMessagesAsJsToast()[0] instanceOf jsToast);
         $htmlstring = $v->getUserMessagesAsHTML();
         $this->assertTrue(strpos($htmlstring, 'class="ui message') !== false);
         $inlinehtml = $v->getUserMessagesAsHTML(true);
@@ -31,7 +45,7 @@ class UserMessageTraitTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testSetDuration() {
-        $v = new \TestClassForUserMessageTrait();
+        $v = new TestClassForUserMessageTrait();
         $v->addUserMessage('TestMessage1', 'success', 2000);
         $res = $v->getUserMessagesAsJsToast();
         self::assertEquals(2000, $res[0]->settings['displayTime']);

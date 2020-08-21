@@ -1,33 +1,57 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\Data;
 
+use atk4\data\Model;
+
+
+/**
+ * Class Audit
+ * @package PMRAtk\Data
+ */
 class Audit extends SecondaryBaseModel {
 
     public $table = 'audit';
 
-    public function init() {
+
+    /**
+     *
+     */
+    public function init(): void {
         parent::init();
 
-        $this->addFields([
-            ['data',            'type'      => 'array',       'serialize' => 'serialize'],
-            ['created_by_name', 'type'      => 'string'],
-            ['created_by',      'type'      => 'integer'],
-            /*
-             * TODO: Either kick created_by or add field created_by_model, so we can pull the creator by both
-             * id and model class. Otherwise, a Guide can have the same ID as a User. Remove any constraint from DB.
-             */
-        ]);
+        $this->addFields(
+            [
+                [
+                    'data',
+                    'type'      => 'array',
+                    'serialize' => 'serialize'
+                ],
+                //store the name of the creator. Might be needed to re-render rendered_output
+                [
+                    'created_by_name',
+                    'type'      => 'string'
+                ],
+                [
+                    'rendered_output',
+                    'type'      => 'string'
+                ],
+            ]
+        );
 
-        $this->setOrder(['created_date desc']);
 
+        $this->setOrder('created_date desc');
 
         //if the model also has a field created_by_name (Audit models), fill in the current name of the admin user.
-        $this->addHook('beforeInsert', function($m, &$data) {
-            if(isset($m->app->auth->user)
-                && $m->app->auth->user->loaded()) {
-                $data['created_by_name'] = $m->app->auth->user->get('name');
-                $data['created_by'] = $m->app->auth->user->get('id');
+        $this->onHook(Model::HOOK_BEFORE_SAVE, function($model, $isUpdate) {
+            if($isUpdate) {
+                return;
+            }
+            if(
+                isset($model->app->auth->user)
+                && $model->app->auth->user->loaded()
+            ) {
+                $model->set('created_by_name', $model->app->auth->user->get('name'));
             }
         });
     }

@@ -1,10 +1,13 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\tests\phpunit;
 
-class TestApp extends \PMRAtk\View\App {
+use PMRAtk\tests\Traits\TestLoggerTrait;
+use PMRAtk\App\App;
 
-    use \PMRAtk\tests\Traits\TestLoggerTrait;
+class TestApp extends App {
+
+    use TestLoggerTrait;
 
     public $always_run = false;
     public $catch_exceptions = false;
@@ -16,6 +19,6 @@ class TestApp extends \PMRAtk\View\App {
      */
     protected function _addAuth() {
         parent::_addAuth();
-        $this->auth->user->load(1);
+        //TODO DISABLED FOR NOW$this->auth->user->load(1);
     }
 }

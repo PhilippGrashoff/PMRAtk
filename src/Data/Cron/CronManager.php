@@ -1,8 +1,14 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace  PMRAtk\Data\Cron;
 
-class CronManager extends \PMRAtk\Data\BaseModel {
+use DateTime;
+use DateTimeInterface;
+use DirectoryIterator;
+use PMRAtk\Data\BaseModel;
+use ReflectionClass;
+
+class CronManager extends BaseModel {
 
     public $table = 'cron';
 
@@ -37,7 +43,7 @@ class CronManager extends \PMRAtk\Data\BaseModel {
     /**
      *
      */
-    public function init() {
+    public function init(): void {
         parent::init();
         $this->addFields([
             ['name',              'type' => 'string',    'caption' => 'Diesen Cronjob ausführen',                                                             'ui' => ['form' => ['DropDown', 'values' => $this->getAvailableCrons()]]],
@@ -61,26 +67,36 @@ class CronManager extends \PMRAtk\Data\BaseModel {
                 if(!$record->get('is_active')) {
                     return '';
                 }
-                if($record->get('interval') == 'YEARLY'
-                && $record->get('date_yearly')
-                && $record->get('time_yearly')) {
+                if(
+                    $record->get('interval') == 'YEARLY'
+                    && $record->get('date_yearly')
+                    && $record->get('time_yearly')
+                ) {
                     return 'Jährlich am ' .$record->get('date_yearly')->format('d.m.Y') . ' um ' . $record->get('time_yearly')->format('H:i');
                 }
-                if($record->get('interval') == 'MONTHLY'
-                && $record->get('day_monthly')
-                && $record->get('time_monthly')) {
+                if(
+                    $record->get('interval') == 'MONTHLY'
+                    && $record->get('day_monthly')
+                    && $record->get('time_monthly')
+                ) {
                     return 'Monatlich am ' .$record->get('day_monthly') . '. um ' . $record->get('time_monthly')->format('H:i');
                 }
-                if($record->get('interval') == 'DAILY'
-                && $record->get('time_daily')) {
+                if(
+                    $record->get('interval') == 'DAILY'
+                    && $record->get('time_daily')
+                ) {
                     return 'Täglich um ' . $record->get('time_daily')->format('H:i');
                 }
-                if($record->get('interval') == 'HOURLY'
-                && $record->get('minute_hourly')) {
+                if(
+                    $record->get('interval') == 'HOURLY'
+                    && $record->get('minute_hourly')
+                ) {
                     return 'Stündlich zur '.$record->get('minute_hourly').'. Minute';
                 }
-                if($record->get('interval') == 'MINUTELY'
-                && $record->get('interval_minutely')) {
+                if(
+                    $record->get('interval') == 'MINUTELY'
+                    && $record->get('interval_minutely')
+                ) {
                     if($record->get('interval_minutely') == 'EVERY_MINUTE') {
                         return 'Zu jeder Minute';
                     }
@@ -91,12 +107,14 @@ class CronManager extends \PMRAtk\Data\BaseModel {
                         return 'Viertelstündlich um '.(0 + $record->get('offset_minutely')).', '.(15 + $record->get('offset_minutely')).', ...';
                     }
                 }
+
+                return '';
             },
             'type' => 'string',
             'caption' => 'wird ausgeführt',
         ]);
 
-        $this->addHook('beforeSave', function($m, $isUpdate) {
+        $this->onHook('beforeSave', function($m, $isUpdate) {
             if(!$m->isDirty('name')) {
                 return;
             }
@@ -122,11 +140,11 @@ class CronManager extends \PMRAtk\Data\BaseModel {
     /**
      *
      */
-    public function run(\DateTime $dateTime = null) {
+    public function run(DateTime $dateTime = null) {
         //for testing settings, a dateTime object can be provided. In Normal operation, do not pass anything to use
         //curret time
         if(!$dateTime) {
-            $dateTime = new \DateTime();
+            $dateTime = new DateTime();
         }
         foreach($this as $cron) {
             if(!$cron->get('is_active')) {
@@ -138,8 +156,8 @@ class CronManager extends \PMRAtk\Data\BaseModel {
             $currentMinute = $dateTime->format('i');
             //yearly execution
             if($cron->get('interval') == 'YEARLY') {
-                if(!$cron->get('date_yearly') instanceof \DateTimeInterface
-                || !$cron->get('time_yearly') instanceof  \DateTimeInterface) {
+                if(!$cron->get('date_yearly') instanceof DateTimeInterface
+                || !$cron->get('time_yearly') instanceof  DateTimeInterface) {
                     continue;
                 }
                 if($currentDate !== $cron->get('date_yearly')->format('m-d')
@@ -152,7 +170,7 @@ class CronManager extends \PMRAtk\Data\BaseModel {
             elseif($cron->get('interval') == 'MONTHLY') {
                 if($cron->get('day_monthly') < 1
                 || $cron->get('day_monthly') > 28
-                || !$cron->get('time_monthly') instanceof \DateTimeInterface) {
+                || !$cron->get('time_monthly') instanceof DateTimeInterface) {
                     continue;
                 }
                 if(intval($currentDay) !== $cron->get('day_monthly')
@@ -212,7 +230,7 @@ class CronManager extends \PMRAtk\Data\BaseModel {
         $cronClass->execute();
         $info['execution_time'] = microtime(true) - $time_start;
         $info['status']         = $cronClass->successful;
-        $info['last_executed']  = (new \DateTime())->format('d.m.Y H:i:s');
+        $info['last_executed']  = (new DateTime())->format('d.m.Y H:i:s');
         $info['output']         = ob_get_contents();
         ob_end_clean();
 
@@ -242,14 +260,14 @@ class CronManager extends \PMRAtk\Data\BaseModel {
                 continue;
             }
 
-            foreach(new \DirectoryIterator($dirName) as $file) {
+            foreach(new DirectoryIterator($dirName) as $file) {
                 if($file->getExtension() !== 'php') {
                     continue;
                 }
 
                 $className = $namespace.'\\'.$file->getBasename('.php');
                 if(!class_exists($className)
-                    || (new \ReflectionClass($className))->isAbstract()) {
+                    || (new ReflectionClass($className))->isAbstract()) {
                     continue;
                 }
 
@@ -260,7 +278,7 @@ class CronManager extends \PMRAtk\Data\BaseModel {
                 }
 
                 $class = new $className($this->app);
-                if(!$class instanceof \PMRAtk\Data\Cron\BaseCronJob) {
+                if(!$class instanceof BaseCronJob) {
                     continue;
                 }
                 $res[get_class($class)] = $class->getName();

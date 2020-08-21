@@ -1,6 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\View\Traits;
+
+use atk4\ui\Template;
 
 trait SubTemplateCloneDeleteTrait {
 
@@ -11,7 +13,7 @@ trait SubTemplateCloneDeleteTrait {
      * is looked for. If found, clones region and sets it to property. Deletes region
      * in $this->template
      */
-    public function templateCloneAndDelete(array $regionNames = [], \atk4\ui\Template $template = null) {
+    public function templateCloneAndDelete(array $regionNames = [], Template $template = null) {
         if($template === null) {
             $template = $this->template;
         }

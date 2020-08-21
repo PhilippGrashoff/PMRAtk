@@ -1,6 +1,13 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\Data\Traits;
+
+use atk4\data\Reference\HasOne;
+use DateTime;
+use PMRAtk\Data\Audit;
+use PMRAtk\Data\BaseModel;
+use PMRAtk\Data\SecondaryBaseModel;
+use ReflectionClass;
 
 trait AuditTrait {
 
@@ -10,17 +17,17 @@ trait AuditTrait {
     protected function _addAuditRef() {
         $this->hasMany('Audit', [
             function() {
-                return (new \PMRAtk\Data\Audit($this->persistence, ['parentObject' => $this]))->addCondition('model_class', get_class($this));
+                return (new Audit($this->persistence, ['parentObject' => $this]))->addCondition('model_class', get_class($this));
             },
             'their_field' => 'model_id']);
 
         //after save, create Audit
-        $this->addHook('afterSave', function($m, $is_update) {
+        $this->onHook('afterSave', function($m, $is_update) {
             $m->createAudit($is_update ? 'CHANGE' : 'CREATE');
         });
 
         //after delete, create Audit
-        $this->addHook('afterDelete', function($m) {
+        $this->onHook('afterDelete', function($m) {
             $m->createDeleteAudit();
         });
     }
@@ -56,7 +63,7 @@ trait AuditTrait {
             return;
         }
 
-        $audit = new \PMRAtk\Data\Audit($this->persistence, ['parentObject' => $this]);
+        $audit = new Audit($this->persistence, ['parentObject' => $this]);
         $audit->reload_after_save = false;
         $audit->set('value', $type);
 
@@ -88,7 +95,7 @@ trait AuditTrait {
                 $data[$field_name] = $this->_dateFieldAudit($field_name, $dirty_field);
             }
             //hasOne relationship
-            elseif($this->hasRef($field_name) && $this->getRef($field_name) instanceOf \atk4\data\Reference\HasOne) {
+            elseif($this->hasRef($field_name) && $this->getRef($field_name) instanceOf HasOne) {
                 $old = $this->ref($field_name)->newInstance();
                 $old->tryLoad($dirty_field);
                 $new = $this->ref($field_name)->newInstance();
@@ -119,7 +126,7 @@ trait AuditTrait {
         if(!$this->_auditEnabled()) {
             return;
         }
-        $audit = new \PMRAtk\Data\Audit($this->persistence, ['parentObject' => $this]);
+        $audit = new Audit($this->persistence, ['parentObject' => $this]);
         $audit->reload_after_save = false;
         $audit->set('value', 'DELETE');
         $audit->save();
@@ -131,7 +138,7 @@ trait AuditTrait {
      */
     public function addSecondaryAudit(
         string $type,
-        \PMRAtk\Data\SecondaryBaseModel $model,
+        SecondaryBaseModel $model,
         string $field = 'value',
         string $modelClass = null,
         int $modelId = null
@@ -140,9 +147,9 @@ trait AuditTrait {
             return;
         }
 
-        $audit = new \PMRAtk\Data\Audit($this->persistence, ['parentObject' => $this]);
+        $audit = new Audit($this->persistence, ['parentObject' => $this]);
         $audit->reload_after_save = false;
-        $audit->set('value', $type.'_'.strtoupper((new \ReflectionClass($model))->getShortName()));
+        $audit->set('value', $type.'_'.strtoupper((new ReflectionClass($model))->getShortName()));
         if($modelClass && $modelId) {
             $audit->set('model_class', $modelClass);
             $audit->set('model_id', $modelId);
@@ -163,14 +170,14 @@ trait AuditTrait {
     /*
      * creates an Audit for adding/removing MToM Relations
      */
-    public function addMToMAudit(string $type, \PMRAtk\Data\BaseModel $model, $nameField = 'name') {
+    public function addMToMAudit(string $type, BaseModel $model, $nameField = 'name') {
         if(!$this->_auditEnabled()) {
             return;
         }
 
-        $audit = new \PMRAtk\Data\Audit($this->persistence, ['parentObject' => $this]);
+        $audit = new Audit($this->persistence, ['parentObject' => $this]);
         $audit->reload_after_save = false;
-        $audit->set('value', $type.'_'.strtoupper((new \ReflectionClass($model))->getShortName()));
+        $audit->set('value', $type.'_'.strtoupper((new ReflectionClass($model))->getShortName()));
 
         $data = ['id' => $model->get('id'), 'name' => $model->get($nameField), 'model' => get_class($model)];
 
@@ -186,7 +193,7 @@ trait AuditTrait {
         if(!$this->_auditEnabled()) {
             return;
         }
-        $audit = new \PMRAtk\Data\Audit($this->persistence, ['parentObject' => $this]);
+        $audit = new Audit($this->persistence, ['parentObject' => $this]);
         $audit->reload_after_save = false;
         $audit->set('value', $type);
         $audit->set('data', $data);
@@ -222,8 +229,8 @@ trait AuditTrait {
     private function _dateFieldAudit($field_name, $dirty_field):array {
         return [
             'field_name' => $this->getField($field_name)->getCaption(),
-            'old_value'  => ($dirty_field instanceof \DateTime) ? date_format($dirty_field, 'd.m.Y') : '',
-            'new_value'  => ($this->get($field_name) instanceof \DateTime) ? date_format($this->get($field_name), 'd.m.Y') : '',
+            'old_value'  => ($dirty_field instanceof DateTime) ? date_format($dirty_field, 'd.m.Y') : '',
+            'new_value'  => ($this->get($field_name) instanceof DateTime) ? date_format($this->get($field_name), 'd.m.Y') : '',
         ];
     }
 
@@ -239,8 +246,8 @@ trait AuditTrait {
     private function _timeFieldAudit($field_name, $dirty_field):array {
         return [
             'field_name' => $this->getField($field_name)->getCaption(),
-            'old_value'  => ($dirty_field instanceof \DateTime) ? date_format($dirty_field, 'H:i') : '',
-            'new_value'  => ($this->get($field_name) instanceof \DateTime) ? date_format($this->get($field_name), 'H:i') : '',
+            'old_value'  => ($dirty_field instanceof DateTime) ? date_format($dirty_field, 'H:i') : '',
+            'new_value'  => ($this->get($field_name) instanceof DateTime) ? date_format($this->get($field_name), 'H:i') : '',
         ];
     }
 

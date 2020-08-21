@@ -1,6 +1,9 @@
-<?php
+<?php declare(strict_types=1);
+
 namespace PMRAtk\tests\selenium\Traits;
 
+use Datetime;
+use Exception;
 use Facebook\WebDriver\Remote\WebDriverCapabilityType;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Facebook\WebDriver\WebDriverExpectedCondition;
@@ -138,7 +141,7 @@ trait BaseFunctionsTrait {
                     self::$webDriver->switchTo()->alert()->accept();
                     return true;
                 }
-                catch(\Exception $e) {}
+                catch(Exception $e) {}
             }
         );
     }
@@ -185,7 +188,7 @@ trait BaseFunctionsTrait {
         try {
             self::$webDriver->executeScript($script);
         }
-        catch(\Exception $e) {
+        catch(Exception $e) {
             var_dump($script);
             throw $e;
         }
@@ -222,7 +225,7 @@ trait BaseFunctionsTrait {
                     $this->findByCSS($css_selector)->click();
                     return true;
                 }
-                catch(\Exception $e) {}
+                catch(Exception $e) {}
             }
         );
     }
@@ -239,7 +242,7 @@ trait BaseFunctionsTrait {
                     $e->click();
                     return true;
                 }
-                catch(\Exception $e) {}
+                catch(Exception $e) {}
             }
         );
     }
@@ -336,7 +339,7 @@ trait BaseFunctionsTrait {
         $input->sendKeys(WebDriverKeys::ARROW_LEFT);
         //hack for different date format inputs
         if(self::$app->getSetting('TEST_DATEFORMAT') == 'us') {
-            $d = (new \Datetime())->createFromFormat('Hi', $time);
+            $d = (new Datetime())->createFromFormat('Hi', $time);
             $time = $d->format('hia');
         }
         $input->sendKeys($time);
@@ -399,7 +402,7 @@ trait BaseFunctionsTrait {
                     $elem = self::$webDriver->findElement(WebDriverBy::cssSelector($css_selector));
                     return (strpos($elem->getText(), $text) !== false);
                 }
-                catch(\Exception $e) {}
+                catch(Exception $e) {}
             }
         );
     }
@@ -455,7 +458,7 @@ trait BaseFunctionsTrait {
      *
      */
     public function modalIsVisible() {
-        return $this->isVisible('.atk-modal.visible');
+        $this->isVisible('.atk-modal.visible');
     }
 
 

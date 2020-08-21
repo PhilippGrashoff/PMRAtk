@@ -1,12 +1,18 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\tests\phpunit;
 
-class DeleteSetting extends \atk4\data\Model {
+use atk4\data\Model;
+
+
+/**
+ *
+ */
+class DeleteSetting extends Model {
 
     public $table = 'setting';
 
-    public function init() {
+    public function init(): void {
         parent::init();
         $this->addFields([
             ['ident', 'type' => 'string'],

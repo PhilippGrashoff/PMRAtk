@@ -1,14 +1,16 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\View\Traits;
+
+use atk4\ui\jsToast;
 
 trait NotifyTrait {
 
     /*
      *
      */
-    public function successNotify(string $text, int $displayTime = 3000):\atk4\ui\jsToast {
-        return new \atk4\ui\jsToast([
+    public function successNotify(string $text, int $displayTime = 3000): jsToast {
+        return new jsToast([
             'message' => $text,
             'position' => 'bottom right',
             'showProgress' => 'bottom',
@@ -20,8 +22,8 @@ trait NotifyTrait {
     /*
      *
      */
-    public function failNotify(string $text, int $displayTime = 10000):\atk4\ui\jsToast {
-        return new \atk4\ui\jsToast([
+    public function failNotify(string $text, int $displayTime = 10000): jsToast {
+        return new jsToast([
             'message' => $text,
             'position' => 'bottom right',
             'showProgress' => 'bottom',
@@ -33,8 +35,8 @@ trait NotifyTrait {
     /*
      *
      */
-    public function warningNotify(string $text, int $displayTime = 7000):\atk4\ui\jsToast {
-        return new \atk4\ui\jsToast([
+    public function warningNotify(string $text, int $displayTime = 7000): jsToast {
+        return new jsToast([
             'message' => $text,
             'position' => 'bottom right',
             'showProgress' => 'bottom',

@@ -1,6 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\tests\Traits;
+
+use PMRAtk\Data\FileLogger;
+use Psr\Log\LogLevel;
 
 trait TestLoggerTrait {
 
@@ -18,7 +21,7 @@ trait TestLoggerTrait {
         if(!$this->createLog) {
             return;
         }
-        $this->_getLogger()->log(\Psr\Log\LogLevel::DEBUG, PHP_EOL.PHP_EOL.$text.PHP_EOL);
+        $this->_getLogger()->log(LogLevel::DEBUG, PHP_EOL.PHP_EOL.$text.PHP_EOL);
     }
 
 
@@ -29,7 +32,7 @@ trait TestLoggerTrait {
         if(!$this->createLog) {
             return;
         }
-        $this->_getLogger()->log(\Psr\Log\LogLevel::DEBUG, PHP_EOL.$text.PHP_EOL);
+        $this->_getLogger()->log(LogLevel::DEBUG, PHP_EOL.$text.PHP_EOL);
     }
 
 
@@ -41,7 +44,7 @@ trait TestLoggerTrait {
             return;
         }
         $this->queryCount++;
-        $this->_getLogger()->log(\Psr\Log\LogLevel::DEBUG, sprintf("[%02.6f] %s\n", $took, $expr->getDebugQuery()));
+        $this->_getLogger()->log(LogLevel::DEBUG, sprintf("[%02.6f] %s\n", $took, $expr->getDebugQuery()));
     }
 
 
@@ -50,7 +53,7 @@ trait TestLoggerTrait {
      */
     protected function _getLogger() {
         if(!$this->logger) {
-            $this->logger = new \PMRAtk\Data\FileLogger(FILE_BASE_PATH.'tests/logs/dblog.txt');
+            $this->logger = new FileLogger(FILE_BASE_PATH.'tests/logs/dblog.txt');
             $this->logger->emptyLogFile();
         }
 

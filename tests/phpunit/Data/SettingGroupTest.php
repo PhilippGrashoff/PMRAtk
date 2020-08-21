@@ -1,14 +1,17 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\tests\phpunit\Data;
 
-class SettingGroupTest extends \PMRAtk\tests\phpunit\TestCase {
+use PMRAtk\Data\SettingGroup;
+use PMRAtk\tests\phpunit\TestCase;
+
+class SettingGroupTest extends TestCase {
 
     /*
      * test init
      */
     public function testInit() {
-        $s = new \PMRAtk\Data\SettingGroup(self::$app->db);
+        $s = new SettingGroup(self::$app->db);
         $s->save();
         $this->assertTrue(true);
     }

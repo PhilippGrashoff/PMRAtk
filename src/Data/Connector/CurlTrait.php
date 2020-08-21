@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\Data\Connector;
 
@@ -21,7 +21,7 @@ trait CurlTrait {
     public function returnCurlResponse($dataSent = null) {
         //if curl could not succeed (e.g. timeout), throw exception
         if($this->curl->curlError) {
-            throw new \PMRAtk\Data\Connector\CurlException('The Api request in '.debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,2)[1]['function']. 'was not successful', 0, 'Verbindungsfehler');
+            throw new CurlException('The Api request in '.debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1]['function']. 'was not successful', 0, 'Verbindungsfehler');
         }
         //if some error http status was returned by Api, return false;
         elseif($this->curl->error) {
@@ -32,7 +32,7 @@ trait CurlTrait {
             }
             $message .= ' in '.debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,2)[1]['function'];
 
-            throw new \PMRAtk\Data\Connector\CurlException($message, ($this->curl->httpStatusCode ? : 1), $this->curl->response, $dataSent);
+            throw new CurlException($message, ($this->curl->httpStatusCode ? : 1), $this->curl->response, $dataSent);
         }
 
         //else, return response

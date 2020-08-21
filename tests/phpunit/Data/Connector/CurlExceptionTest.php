@@ -1,12 +1,21 @@
-<?php
+<?php declare(strict_types=1);
 
-class CurlExceptionTest extends \PMRAtk\tests\phpunit\TestCase {
+namespace PMRAtk\tests\phpunit\Data\Connector;
+
+
+use PMRAtk\Data\Connector\CurlException;
+use PMRAtk\tests\phpunit\TestCase;
+
+/**
+ *
+ */
+class CurlExceptionTest extends TestCase {
 
     /**
      *
      */
     public function testConstruct() {
-        $e = new \PMRAtk\Data\Connector\CurlException('SomeMessage', 404, '{error:"SomeError"}');
+        $e = new CurlException('SomeMessage', 404, '{error:"SomeError"}');
         $this->assertEquals($e->getParams(), ['response' => '{error:"SomeError"}']);
     }
 
@@ -15,7 +24,7 @@ class CurlExceptionTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testConstructWithDataSent() {
-        $e = new \PMRAtk\Data\Connector\CurlException('SomeMessage', 404, '{error:"SomeError"}', 'SomeDataSent');
+        $e = new CurlException('SomeMessage', 404, '{error:"SomeError"}', 'SomeDataSent');
         $this->assertEquals($e->getParams()['data sent in body'], 'SomeDataSent');
     }
 
@@ -28,7 +37,7 @@ class CurlExceptionTest extends \PMRAtk\tests\phpunit\TestCase {
             'error' => 'SomeErrorMessage',
             'code' => 404
         ];
-        $e = new \PMRAtk\Data\Connector\CurlException('SomeMessage', 404, json_encode($arr));
+        $e = new CurlException('SomeMessage', 404, json_encode($arr));
         $this->assertEquals('SomeErrorMessage', $e->getErrorMessage());
     }
 
@@ -39,7 +48,7 @@ class CurlExceptionTest extends \PMRAtk\tests\phpunit\TestCase {
     public function testGetErrorMessageResponseAlreadyDecodedToObject() {
         $o = new \StdClass();
         $o->error = 'SomeErrorMessage';
-        $e = new \PMRAtk\Data\Connector\CurlException('SomeMessage', 404, $o);
+        $e = new CurlException('SomeMessage', 404, $o);
         $this->assertEquals('SomeErrorMessage', $e->getErrorMessage());
     }
 
@@ -52,7 +61,7 @@ class CurlExceptionTest extends \PMRAtk\tests\phpunit\TestCase {
             'somekey' => 'SomeErrorMessage',
             'code' => 404
         ];
-        $e = new \PMRAtk\Data\Connector\CurlException('SomeMessage', 404, json_encode($arr));
+        $e = new CurlException('SomeMessage', 404, json_encode($arr));
         $this->assertEquals('SomeMessage', $e->getErrorMessage());
     }
 
@@ -67,7 +76,7 @@ class CurlExceptionTest extends \PMRAtk\tests\phpunit\TestCase {
                 'code' => 404,
             ],
         ];
-        $e = new \PMRAtk\Data\Connector\CurlException('SomeMessage', 404, json_encode($arr));
+        $e = new CurlException('SomeMessage', 404, json_encode($arr));
         $this->assertEquals('SomeErrorMessage', $e->getErrorMessage());
     }
 
@@ -76,7 +85,7 @@ class CurlExceptionTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testGetErrorMessageWithString() {
-        $e = new \PMRAtk\Data\Connector\CurlException('SomeMessage', 404, 'SomeErrorMessage');
+        $e = new CurlException('SomeMessage', 404, 'SomeErrorMessage');
         $this->assertEquals('SomeErrorMessage', $e->getErrorMessage());
     }
 }

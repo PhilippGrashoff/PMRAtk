@@ -1,16 +1,23 @@
-<?php
+<?php declare(strict_types=1);
 
+namespace EOO\tests\phpunit\App;
+
+use PMRAtk\Data\Email\EmailTemplate;
+use PMRAtk\Data\Setting;
+use PMRAtk\Data\Token;
 use PMRAtk\tests\phpunit\Data\BaseModelA;
 use PMRAtk\tests\phpunit\Data\BaseModelB;
+use PMRAtk\tests\phpunit\TestCase;
+use PMRAtk\View\App;
 
 
-class AppTest extends \PMRAtk\tests\phpunit\TestCase {
+class AppTest extends TestCase {
 
     /*
      *
      */
     public function testAppConstruct() {
-        $app = new \PMRAtk\View\App(['nologin'], ['always_run' => false]);
+        $app = new App(['nologin'], ['always_run' => false]);
         $this->assertTrue($app->auth->user instanceOf \PMRAtk\Data\User);
     }
 
@@ -21,7 +28,7 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function testExceptionEmptyRoleArray() {
         $this->expectException(\atk4\data\Exception::class);
-        $app = new \PMRAtk\View\App([], ['always_run' => false]);
+        $app = new App([], ['always_run' => false]);
     }
 
 
@@ -30,7 +37,7 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function testTokenLogin() {
         $token = self::$app->auth->user->setNewToken();
-        $app = new \PMRAtk\View\App(['nologin'], ['always_run' => false]);
+        $app = new App(['nologin'], ['always_run' => false]);
         $app->db = self::$app->db;
         $app->loadUserByToken($token);
         //some assertion so PHPUnit does not complain
@@ -42,7 +49,7 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testTokenLoginTokenNotFoundException() {
-        $app = new \PMRAtk\View\App(['nologin'], ['always_run' => false]);
+        $app = new App(['nologin'], ['always_run' => false]);
         $this->expectException(\atk4\data\Exception::class);
         $app->loadUserByToken('sfsdfssdfeg');
     }
@@ -52,9 +59,9 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testTokenLoginUserForTokenNotFoundException() {
-        $app = new \PMRAtk\View\App(['nologin'], ['always_run' => false]);
+        $app = new App(['nologin'], ['always_run' => false]);
         $app->db = self::$app->db;
-        $token = new \PMRAtk\Data\Token(self::$app->db);
+        $token = new Token(self::$app->db);
         $token->save();
         $this->expectException(\atk4\data\Exception::class);
         $app->loadUserByToken($token->get('value'));
@@ -65,7 +72,7 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testaddSummerNote() {
-        $app = new \PMRAtk\View\App(['nologin'], ['always_run' => false]);
+        $app = new App(['nologin'], ['always_run' => false]);
         $app->addSummernote();
         $this->assertTrue($app->auth->user instanceOf \PMRAtk\Data\User);
 
@@ -76,7 +83,7 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testDeviceWidth() {
-        $app = new \PMRAtk\View\App(['nologin'], ['always_run' => false]);
+        $app = new App(['nologin'], ['always_run' => false]);
         $_SESSION['device_width'] = 500;
         $app->getDeviceWidth();
         $this->assertEquals(500, $app->deviceWidth);
@@ -90,7 +97,7 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testgetEmailTemplateExceptionIfTemplateNotFound() {
-        $app = new \PMRAtk\View\App(['nologin'], ['always_run' => false]);
+        $app = new App(['nologin'], ['always_run' => false]);
         $this->expectException(\atk4\data\Exception::class);
         $app->loadEmailTemplate('DDFUSFsfdfse');
     }
@@ -100,7 +107,7 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testgetEmailTemplateFromSavedEmailTemplate() {
-        $app = new \PMRAtk\View\App(['nologin'], ['always_run' => false]);
+        $app = new App(['nologin'], ['always_run' => false]);
         $app->db = self::$app->db;
         $app->saveEmailTemplate('DUDU', '<div>Miau</div>');
         $t = $app->loadEmailTemplate('DUDU');
@@ -112,7 +119,7 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testgetEmailTemplateRawString() {
-        $app = new \PMRAtk\View\App(['nologin'], ['always_run' => false]);
+        $app = new App(['nologin'], ['always_run' => false]);
         $app->db = self::$app->db;
         $app->saveEmailTemplate('DUDU', '<div>Miau{$somevar}</div>');
         $t = $app->loadEmailTemplate('DUDU', true);
@@ -124,11 +131,11 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testgetCachedModel() {
-        $app = new \PMRAtk\View\App(['nologin'], ['always_run' => false]);
-        $b1 = new \PMRAtk\tests\phpunit\Data\BaseModelA($app->db);
+        $app = new App(['nologin'], ['always_run' => false]);
+        $b1 = new BaseModelA($app->db);
         $b1->set('name', 'Duggu');
         $b1->save();
-        $b2 = new \PMRAtk\tests\phpunit\Data\BaseModelA($app->db);
+        $b2 = new BaseModelA($app->db);
         $b2->save();
 
         $a = $app->getCachedModel('\\PMRAtk\\tests\\phpunit\\Data\\BaseModelA');
@@ -137,8 +144,8 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
         $this->assertEquals($b1->id, key($a));
         end($a);
         $this->assertEquals($b2->id, key($a));
-        $this->assertTrue($a[$b1->id] instanceOf \PMRAtk\tests\phpunit\Data\BaseModelA);
-        $this->assertTrue($a[$b2->id] instanceOf \PMRAtk\tests\phpunit\Data\BaseModelA);
+        $this->assertTrue($a[$b1->id] instanceOf BaseModelA);
+        $this->assertTrue($a[$b2->id] instanceOf BaseModelA);
 
         //see if its not reloaded from db
         $b1->set('name', 'lala');
@@ -152,7 +159,7 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testgetCachedModelExceptionOnNonExistantModel() {
-        $app = new \PMRAtk\View\App(['nologin'], ['always_run' => false]);
+        $app = new App(['nologin'], ['always_run' => false]);
         $this->expectException(\atk4\data\Exception::class);
         $a = $app->getCachedModel('SomeNonExistantModel');
     }
@@ -162,7 +169,7 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testSaveEmailTemplate() {
-        $app = new \PMRAtk\View\App(['nologin'], ['always_run' => false]);
+        $app = new App(['nologin'], ['always_run' => false]);
         $app->db = self::$app->db;
         $initial_count = $this->countModelRecords('\\PMRAtk\\Data\\Email\\EmailTemplate');
         //should create a new one
@@ -172,7 +179,7 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
         $app->saveEmailTemplate('SOME', 'AndSomeOtherValue');
         $this->assertEquals($initial_count + 1, $this->countModelRecords('\\PMRAtk\\Data\\Email\\EmailTemplate'));
         //see if value is stored
-        $et = new \PMRAtk\Data\Email\EmailTemplate(self::$app->db);
+        $et = new EmailTemplate(self::$app->db);
         $et->loadBy('ident', 'SOME');
         self::assertEquals('AndSomeOtherValue', $et->get('value'));
 
@@ -186,7 +193,7 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testLoadTemplateException() {
-        $app = new \PMRAtk\View\App(['nologin'], ['always_run' => false]);
+        $app = new App(['nologin'], ['always_run' => false]);
         $this->expectException(\atk4\ui\Exception::class);
         $app->loadTemplate('SomeNonExistantModel');
     }
@@ -196,7 +203,7 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testloadEmailTemplateRawFromFile() {
-        $app = new \PMRAtk\View\App(['nologin'], ['always_run' => false]);
+        $app = new App(['nologin'], ['always_run' => false]);
         $app->db = self::$app->db;
         $t = $app->loadEmailTemplate('testemailtemplate.html', true);
         self::assertTrue(strpos($t, '{$testtag}') !== false);
@@ -207,7 +214,7 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testloadTemplateWithFilePath() {
-        $app = new \PMRAtk\View\App(['nologin'], ['always_run' => false]);
+        $app = new App(['nologin'], ['always_run' => false]);
         $t = $app->loadTemplate(FILE_BASE_PATH.'/template/email/default_footer.html');
         self::assertEquals('</div>'.PHP_EOL.'</body>'.PHP_EOL.'</html>', $t->render());
     }
@@ -217,7 +224,7 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testsaveAndLoadEmailTemplateFromModel() {
-        $app = new \PMRAtk\View\App(['nologin'], ['always_run' => false]);
+        $app = new App(['nologin'], ['always_run' => false]);
         $app->db = self::$app->db;
 
         //initial state should be same as file, as file should be loaded
@@ -247,7 +254,7 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testLoadEmailTemplateExceptionModelNotLoaded() {
-        $app = new \PMRAtk\View\App(['nologin'], ['always_run' => false]);
+        $app = new App(['nologin'], ['always_run' => false]);
         $app->db = self::$app->db;
         $bb = new BaseModelB(self::$app->db);
         self::expectException(\atk4\data\Exception::class);
@@ -260,7 +267,7 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
      * for another model_id
      */
     public function testLoadEmailTemplateLoadFromFileIfInDBOnlyPerModel() {
-        $app = new \PMRAtk\View\App(['nologin'], ['always_run' => false]);
+        $app = new App(['nologin'], ['always_run' => false]);
         $app->db = self::$app->db;
         $ba1 = new BaseModelA(self::$app->db);
         $ba1->save();
@@ -286,11 +293,11 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function testSendEmailToAdmin() {
         $this->_addStandardEmailAccount();
-        $s = new \PMRAtk\Data\Setting(self::$app->db);
+        $s = new Setting(self::$app->db);
         $s->set('ident', 'STD_EMAIL');
         $s->set('value', 'test2@easyoutdooroffice.com');
         self::$app->addSetting($s);
-        $s = new \PMRAtk\Data\Setting(self::$app->db);
+        $s = new Setting(self::$app->db);
         $s->set('ident', 'STD_EMAIL_NAME');
         $s->set('value', 'HANSI PETER');
         self::$app->addSetting($s);
@@ -306,7 +313,7 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function testAddSetting() {
         $imc = $this->countModelRecords('\PMRAtk\Data\Setting');
-        $s = new \PMRAtk\Data\Setting(self::$app->db);
+        $s = new Setting(self::$app->db);
         $s->set('ident', 'LALADU');
         self::$app->addSetting($s);
         self::assertEquals($imc + 1, $this->countModelRecords('\PMRAtk\Data\Setting'));
@@ -319,7 +326,7 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testSettingsAreLoadedIfNot() {
-        $s = new \PMRAtk\Data\Setting(self::$app->db);
+        $s = new Setting(self::$app->db);
         $s->set('ident', 'RERERERE');
         $s->set('value', 'PIRIDI');
         self::$app->addSetting($s);
@@ -350,7 +357,7 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testSettingExists() {
-        $s = new \PMRAtk\Data\Setting(self::$app->db);
+        $s = new Setting(self::$app->db);
         $s->set('ident', 'SOMEEXISTINGSETTING');
         $s->set('value', 'HALLOHALLO');
         self::$app->addSetting($s);
@@ -363,11 +370,11 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testGetSTDSettings() {
-        $s = new \PMRAtk\Data\Setting(self::$app->db);
+        $s = new Setting(self::$app->db);
         $s->set('ident', 'STD_NAME');
         $s->set('value', 'HALLOHALLO');
         self::$app->addSetting($s);
-        $s = new \PMRAtk\Data\Setting(self::$app->db);
+        $s = new Setting(self::$app->db);
         $s->set('ident', 'SOMENONSTDSETTING');
         $s->set('value', 'PIRIDA');
         self::$app->addSetting($s);
@@ -381,7 +388,7 @@ class AppTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testSetSetting() {
-        $s = new \PMRAtk\Data\Setting(self::$app->db);
+        $s = new Setting(self::$app->db);
         $s->set('ident', 'STD_NAME');
         $s->set('value', 'HALLOHALLOHALLOHALLO');
         self::$app->setSetting($s);

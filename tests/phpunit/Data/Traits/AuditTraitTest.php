@@ -1,17 +1,19 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\tests\phpunit\Data\Traits;
 
+use PMRAtk\Data\Audit;
 use PMRAtk\Data\Email;
 use PMRAtk\tests\phpunit\Data\BaseModelA;
 use PMRAtk\tests\phpunit\Data\BaseModelB;
+use PMRAtk\tests\phpunit\TestCase;
 
 
 /**
  * Class AuditTraitTest
  * @package PMRAtk\tests\phpunit\Data\Traits
  */
-class AuditTraitTest extends \PMRAtk\tests\phpunit\TestCase
+class AuditTraitTest extends TestCase
 {
 
     /**
@@ -39,7 +41,7 @@ class AuditTraitTest extends \PMRAtk\tests\phpunit\TestCase
      */
     public function testAuditCreatedForFields()
     {
-        $a = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
+        $a = new BaseModelA(self::$app->db);
         $a->save();
         $this->assertEquals(1, $a->getAuditViewModel()->action('count')->getOne());
         $a->set('name', 'TEST');
@@ -58,8 +60,8 @@ class AuditTraitTest extends \PMRAtk\tests\phpunit\TestCase
         $this->assertEquals(5, $a->getAuditViewModel()->action('count')->getOne());
 
         //hasOne Audit field all possibilities
-        $b1 = new \PMRAtk\tests\phpunit\Data\BaseModelB(self::$app->db);
-        $b2 = new \PMRAtk\tests\phpunit\Data\BaseModelB(self::$app->db);
+        $b1 = new BaseModelB(self::$app->db);
+        $b2 = new BaseModelB(self::$app->db);
         $b1->save();
         $b2->save();
 
@@ -92,14 +94,14 @@ class AuditTraitTest extends \PMRAtk\tests\phpunit\TestCase
      */
     public function testDeleteAudit()
     {
-        $a = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
+        $a = new BaseModelA(self::$app->db);
         $a->save();
-        $initial_audit_count = (new \PMRAtk\Data\Audit(self::$app->db))->action('count')->getOne();
+        $initial_audit_count = (new Audit(self::$app->db))->action('count')->getOne();
         $a->delete();
-        $this->assertEquals($initial_audit_count + 1, (new \PMRAtk\Data\Audit(self::$app->db))->action('count')->getOne());
+        $this->assertEquals($initial_audit_count + 1, (new Audit(self::$app->db))->action('count')->getOne());
 
         //make sure newest audit is of type delete
-        $a = new \PMRAtk\Data\Audit(self::$app->db);
+        $a = new Audit(self::$app->db);
         $a->setOrder('id DESC');
         $a->setLimit(0, 1);
         $a->loadAny();
@@ -112,14 +114,14 @@ class AuditTraitTest extends \PMRAtk\tests\phpunit\TestCase
      */
     public function testEPAAudit()
     {
-        $a = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
+        $a = new BaseModelA(self::$app->db);
         $a->save();
-        $initial_audit_count = (new \PMRAtk\Data\Audit(self::$app->db))->action('count')->getOne();
+        $initial_audit_count = (new Audit(self::$app->db))->action('count')->getOne();
         $e = $a->addEmail('tetete');
         $a->updateEmail($e->get('id'), 'jzjzjz');
         $a->deleteEmail($e->get('id'));
 
-        $this->assertEquals($initial_audit_count + 3, (new \PMRAtk\Data\Audit(self::$app->db))->action('count')->getOne());
+        $this->assertEquals($initial_audit_count + 3, (new Audit(self::$app->db))->action('count')->getOne());
 
         //make sure ADD_EMAIL, CHANGE_EMAIL AND DELETE_EMAIL Audits are there
         $change_found = false;
@@ -148,16 +150,16 @@ class AuditTraitTest extends \PMRAtk\tests\phpunit\TestCase
     public function testNoAuditCreatedOnSetting()
     {
         $_ENV['CREATE_AUDIT'] = false;
-        $initial_audit_count = (new \PMRAtk\Data\Audit(self::$app->db))->action('count')->getOne();
+        $initial_audit_count = (new Audit(self::$app->db))->action('count')->getOne();
 
-        $a = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
+        $a = new BaseModelA(self::$app->db);
         $a->save();
         $a->addAdditionalAudit('bla', []);
         $e = $a->addEmail('lala');
         $a->updateEmail($e->id, 'fdgdfgdf');
         $a->deleteEmail($e->id);
 
-        $this->assertEquals($initial_audit_count, (new \PMRAtk\Data\Audit(self::$app->db))->action('count')->getOne());
+        $this->assertEquals($initial_audit_count, (new Audit(self::$app->db))->action('count')->getOne());
         $_ENV['CREATE_AUDIT'] = true;
     }
 
@@ -167,11 +169,11 @@ class AuditTraitTest extends \PMRAtk\tests\phpunit\TestCase
      */
     public function testMToMAudit()
     {
-        $a = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
+        $a = new BaseModelA(self::$app->db);
         $a->save();
-        $initial_audit_count = (new \PMRAtk\Data\Audit(self::$app->db))->action('count')->getOne();
-        $a->addMToMAudit('ADD', new \PMRAtk\tests\phpunit\Data\BaseModelB(self::$app->db));
-        $this->assertEquals($initial_audit_count + 1, (new \PMRAtk\Data\Audit(self::$app->db))->action('count')->getOne());
+        $initial_audit_count = (new Audit(self::$app->db))->action('count')->getOne();
+        $a->addMToMAudit('ADD', new BaseModelB(self::$app->db));
+        $this->assertEquals($initial_audit_count + 1, (new Audit(self::$app->db))->action('count')->getOne());
     }
 
 
@@ -180,7 +182,7 @@ class AuditTraitTest extends \PMRAtk\tests\phpunit\TestCase
      */
     public function testNoAuditOnNoValueChange()
     {
-        $a = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
+        $a = new BaseModelA(self::$app->db);
         $a->set('name', 'TEST');
         $a->set('dd_test', 1);
         $a->save();
@@ -210,7 +212,7 @@ class AuditTraitTest extends \PMRAtk\tests\phpunit\TestCase
      */
     public function testNoAuditOnNoValueChangeStringsLooseCompare()
     {
-        $a = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
+        $a = new BaseModelA(self::$app->db);
         $a->set('name', '');
         $a->set('dd_test', 1);
         $a->save();
@@ -234,7 +236,7 @@ class AuditTraitTest extends \PMRAtk\tests\phpunit\TestCase
      * This case shouldnt happen, but that line makes sense. Test it here
      */
     public function testContinueIfDirtyValueEqualsNewValue() {
-        $a = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
+        $a = new BaseModelA(self::$app->db);
         $a->set('dd_test', 1);
         $a->dirty = ['dd_test' => 1];
         $a->set('name', 'SomeName');
@@ -250,9 +252,9 @@ class AuditTraitTest extends \PMRAtk\tests\phpunit\TestCase
      *
      */
     public function testFieldsValuePropertyIsCorrectlyAudited() {
-        $withValues = new class extends  \PMRAtk\tests\phpunit\Data\BaseModelA {
+        $withValues = new class extends BaseModelA {
 
-            public function init() {
+            public function init(): void {
                 parent::init();
                 $this->getField('dd_test')->values = [0 => 'Nein', 1 => 'Ja'];
             }

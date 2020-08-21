@@ -1,12 +1,14 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\tests\phpunit\Data\Cron;
 
+use DateTime;
 use PMRAtk\Data\Cron\CronManager;
 use PMRAtk\Data\Cron\BaseCronJob;
+use PMRAtk\tests\phpunit\TestCase;
 
 
-class CronManagerTest extends \PMRAtk\tests\phpunit\TestCase {
+class CronManagerTest extends TestCase {
 
     /**
      *
@@ -42,7 +44,7 @@ class CronManagerTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function testRunYearly() {
         $this->_addStandardEmailAccount();
-        $testTime = new \DateTime('2020-05-05');
+        $testTime = new DateTime('2020-05-05');
         $testTime->setTime(3,3);
         //this one should be executed
         $cm1 = $this->_getRecord([
@@ -83,7 +85,7 @@ class CronManagerTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function testRunMonthly() {
         $this->_addStandardEmailAccount();
-        $testTime = new \DateTime('2020-05-05');
+        $testTime = new DateTime('2020-05-05');
         $testTime->setTime(3,3);
         //this one should be executed
         $cm1 = $this->_getRecord([
@@ -124,7 +126,7 @@ class CronManagerTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function testRunDaily() {
         $this->_addStandardEmailAccount();
-        $testTime = new \DateTime();
+        $testTime = new DateTime();
         $testTime->setTime(3,3);
         //this one should be executed
         $cm1 = $this->_getRecord([
@@ -152,7 +154,7 @@ class CronManagerTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function testRunHourly() {
         $this->_addStandardEmailAccount();
-        $testTime = new \DateTime();
+        $testTime = new DateTime();
         $testTime->setTime(3,3);
         //this one should be executed
         $cm0 = $this->_getRecord([
@@ -185,7 +187,7 @@ class CronManagerTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function testRunMinutely() {
         $this->_addStandardEmailAccount();
-        $testTime = new \DateTime();
+        $testTime = new DateTime();
         $testTime->setTime(3,16);
         //this one should be executed
         $cm0 = $this->_getRecord([
@@ -214,7 +216,7 @@ class CronManagerTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function testSkipYearlyIfNoDateTime()  {
         $this->_addStandardEmailAccount();
-        $testTime = new \DateTime('2020-05-05');
+        $testTime = new DateTime('2020-05-05');
         $testTime->setTime(3,3);
         //this one should be executed
         $cm1 = $this->_getRecord([
@@ -232,7 +234,7 @@ class CronManagerTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function testSkipMonthlyIfNoDateTime()  {
         $this->_addStandardEmailAccount();
-        $testTime = new \DateTime('2020-05-05');
+        $testTime = new DateTime('2020-05-05');
         $testTime->setTime(3,3);
         //this one should be executed
         $cm1 = $this->_getRecord([
@@ -261,7 +263,7 @@ class CronManagerTest extends \PMRAtk\tests\phpunit\TestCase {
         $cm->run();
 
         $cm0->reload();
-        self::assertEquals((new \DateTime())->format('d.m.Y H:i:s'), $cm0->get('last_executed')['last_executed']);
+        self::assertEquals((new DateTime())->format('d.m.Y H:i:s'), $cm0->get('last_executed')['last_executed']);
     }
 
 
@@ -270,7 +272,7 @@ class CronManagerTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function testRunMinutelyOffset() {
         $this->_addStandardEmailAccount();
-        $testTime = new \DateTime();
+        $testTime = new DateTime();
         $testTime->setTime(3,18);
         //this one should be executed
         $cm1 = $this->_getRecord([
@@ -323,7 +325,7 @@ class CronManagerTest extends \PMRAtk\tests\phpunit\TestCase {
         ]]);
         $cm->set('name', 'PMRAtk\tests\phpunit\Data\Cron\TestClasses\SampleCron');
         $cm->set('is_active', 1);
-        $cm->set($set);
+        $cm->setMulti($set);
         $cm->save();
         return $cm;
     }

@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 //Load ATK framework
 require_once(__DIR__.'/vendor/autoload.php');
 

@@ -1,15 +1,17 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\Data\Email;
 
-class EmailRecipient extends \atk4\data\Model {
+use atk4\data\Model;
+
+class EmailRecipient extends Model {
 
     public $table = 'email_recipient';
 
     /*
      *
      */
-    public function init() {
+    public function init(): void {
         parent::init();
         $this->addFields([
             //id of model this email comes from
@@ -21,4 +23,4 @@ class EmailRecipient extends \atk4\data\Model {
             ['lastname',        'type' => 'string'],
         ]);
     }
-};
+}

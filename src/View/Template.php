@@ -1,11 +1,16 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\View;
+
+use atk4\data\Model;
+use DateTimeInterFace;
+use PMRAtk\Data\Traits\DateTimeHelpersTrait;
+use ReflectionClass;
 
 class Template extends \atk4\ui\Template
 {
 
-    use \PMRAtk\Data\Traits\DateTimeHelpersTrait;
+    use DateTimeHelpersTrait;
 
     /*
      *
@@ -43,13 +48,13 @@ class Template extends \atk4\ui\Template
     /*
      * Tries to set each passed tag with its value from passed model
      */
-    public function setTagsFromModel(\atk4\data\Model $model, array $tags = [], string $prefix = null)
+    public function setTagsFromModel(Model $model, array $tags = [], string $prefix = null)
     {
         if (!$tags) {
             $tags = array_keys($model->getFields());
         }
         if ($prefix === null) {
-            $prefix = strtolower((new \ReflectionClass($model))->getShortName()) . '_';
+            $prefix = strtolower((new ReflectionClass($model))->getShortName()) . '_';
         }
 
         foreach ($tags as $tag) {
@@ -62,7 +67,7 @@ class Template extends \atk4\ui\Template
 
             //try converting non-scalar values
             if (!is_scalar($model->get($tag))) {
-                if ($model->get($tag) instanceof \DateTimeInterFace) {
+                if ($model->get($tag) instanceof DateTimeInterFace) {
                     $this->set(
                         $prefix . $tag,
                         $this->castDateTimeToGermanString($model->get($tag), $model->getField($tag)->type, true)

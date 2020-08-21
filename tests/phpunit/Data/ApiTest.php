@@ -1,17 +1,14 @@
-<?php
+<?php declare(strict_types=1);
 
-class NoDateTime extends \atk4\data\Model {
-
-    public $table = 'SecondaryBaseModel';
-
-    public function init() {
-        parent::init();
-        $this->addField('value', ['type' => 'string']);
-    }
-}
+namespace PMRAtk\tests\phpunit\Data;
 
 
-class ApiTest extends \PMRAtk\tests\phpunit\TestCase {
+use atk4\data\Model;
+use Exception;
+use PMRAtk\Data\Api;
+use PMRAtk\tests\phpunit\TestCase;
+
+class ApiTest extends TestCase {
 
 
     /**
@@ -21,9 +18,9 @@ class ApiTest extends \PMRAtk\tests\phpunit\TestCase {
         unset($_REQUEST['token']);
 
         try {
-            $api = new \PMRAtk\Data\Api(self::$app);
+            $api = new Api(self::$app);
         }
-        catch(\Exception $e) {}
+        catch(Exception $e) {}
 
         $this->assertTrue(true);
     }
@@ -36,9 +33,9 @@ class ApiTest extends \PMRAtk\tests\phpunit\TestCase {
         $_REQUEST['token'] = '123456';
 
         try {
-            $api = new \PMRAtk\Data\Api(self::$app);
+            $api = new Api(self::$app);
         }
-        catch(\Exception $e) {}
+        catch(Exception $e) {}
 
         $_REQUEST['token'] = null;
         $this->assertTrue(true);
@@ -53,7 +50,7 @@ class ApiTest extends \PMRAtk\tests\phpunit\TestCase {
         $token = self::$app->auth->user->setNewToken();
         $_REQUEST['token'] = $token;
 
-        $api = new \PMRAtk\Data\Api(self::$app);
+        $api = new Api(self::$app);
 
         $_REQUEST['token'] = null;
         $this->assertTrue(true);
@@ -68,13 +65,13 @@ class ApiTest extends \PMRAtk\tests\phpunit\TestCase {
         $token = self::$app->auth->user->setNewToken();
         $_REQUEST['token'] = $token;
 
-        $api = new \PMRAtk\Data\Api(self::$app);
+        $api = new Api(self::$app);
 
-        $a = new \PMRAtk\tests\phpunit\Data\BaseModelB(self::$app->db);
+        $a = new BaseModelB(self::$app->db);
         $a->set('name', 'A');
         $a->save();
 
-        $b = new \PMRAtk\tests\phpunit\Data\BaseModelB(self::$app->db);
+        $b = new BaseModelB(self::$app->db);
         $b->set('time_test', '10:00');
         $b->set('date_test', '2005-05-05');
         $b->set('name', 'A');
@@ -96,10 +93,18 @@ class ApiTest extends \PMRAtk\tests\phpunit\TestCase {
         $token = self::$app->auth->user->setNewToken();
         $_REQUEST['token'] = $token;
 
-        $api = new \PMRAtk\Data\Api(self::$app);
+        $api = new Api(self::$app);
 
-        $a = new NoDateTime(self::$app->db);
+        $noDateTimeClass = new class extends Model {
+            public $table = 'SecondaryBaseModel';
 
+            public function init(): void {
+                parent::init();
+                $this->addField('value', ['type' => 'string']);
+            }
+        };
+
+        $a = new $noDateTimeClass(self::$app->db);
         $a->save();
 
         $export = $this->callProtected($api, 'exportModel', [$a]);
@@ -116,7 +121,7 @@ class ApiTest extends \PMRAtk\tests\phpunit\TestCase {
         $token = self::$app->auth->user->setNewToken();
         $_REQUEST['token'] = $token;
 
-        $api = new \PMRAtk\Data\Api(self::$app);
+        $api = new Api(self::$app);
         $api->path = 'somepath/?token=Duggu';
         $this->callProtected($api, '_removeURLParamsFromPath');
         $this->assertEquals($api->path, 'somepath/');

@@ -1,13 +1,16 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\Data\Email;
+
+use atk4\core\Exception;
+use Throwable;
 
 trait EmailThrowableToAdminTrait {
 
     /*
      * Sends an Email if an Exception was thrown
      */
-    public function sendErrorEmailToAdmin(\Throwable $e, string $subject, array $additional_recipients = []) {
+    public function sendErrorEmailToAdmin(Throwable $e, string $subject, array $additional_recipients = []) {
         if(!isset($this->phpMailer)
         || !$this->phpMailer instanceof PHPMailer) {
             $this->phpMailer = new PHPMailer($this->app);
@@ -19,7 +22,7 @@ trait EmailThrowableToAdminTrait {
         }
         $this->phpMailer->Subject = $subject;
         $this->phpMailer->setBody('Folgender Fehler ist aufgetreten: <br />' .
-            ($e instanceOf \atk4\core\Exception ? $e->getHTML() : $e->getMessage() . '<br />Line: ' . $e->getLine() . '<br />' . nl2br($e->getTraceAsString())) . '<br />Der Technische Administrator ' . $this->app->getSetting('TECH_ADMIN_NAME') . ' wurde informiert.');
+            ($e instanceOf Exception ? $e->getHTML() : $e->getMessage() . '<br />Line: ' . $e->getLine() . '<br />' . nl2br($e->getTraceAsString())) . '<br />Der Technische Administrator ' . $this->app->getSetting('TECH_ADMIN_NAME') . ' wurde informiert.');
         $this->phpMailer->send();
     }
 }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\View;
 
@@ -52,7 +52,6 @@ class FileDownload
     protected function _failure(int $errorCode = 404): void
     {
         http_response_code($errorCode);
-        return;
     }
 
 

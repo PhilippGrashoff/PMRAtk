@@ -1,33 +1,49 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\tests\phpunit\Data;
 
-class CachedValueTest extends \PMRAtk\tests\phpunit\TestCase {
+use PMRAtk\Data\CachedValue;
+use PMRAtk\tests\phpunit\TestCase;
 
-    /*
-     * test init
-     */
-    public function testInit() {
-        $s = new \PMRAtk\Data\CachedValue(self::$app->db);
-        $this->assertTrue(true);
-    }
+class CachedValueTest extends TestCase {
 
-
-    /*
+    /**
      * make sure setting is only saved once
      */
     public function testUnique() {
-        $initial_count = (new \PMRAtk\Data\CachedValue(self::$app->db))->action('count')->getOne();
-        $s = new \PMRAtk\Data\CachedValue(self::$app->db);
-        $s->set('ident', 'LALA');
-        $s->set('value', '1');
-        $s->save();
+        $initial_count = (new CachedValue(self::$app->db))->action('count')->getOne();
+        $cachedValue = new CachedValue(self::$app->db);
+        $cachedValue->set('ident', 'LALA');
+        $cachedValue->set('value', '1');
+        $cachedValue->save();
 
-        $s = new \PMRAtk\Data\CachedValue(self::$app->db);
-        $s->set('ident', 'LALA');
-        $s->set('value', '2');
-        $s->save();
+        $cachedValue = new CachedValue(self::$app->db);
+        $cachedValue->set('ident', 'LALA');
+        $cachedValue->set('value', '2');
+        $cachedValue->save();
 
-        $this->assertEquals($initial_count + 1, (new \PMRAtk\Data\CachedValue(self::$app->db))->action('count')->getOne());
+        $this->assertEquals($initial_count + 1, (new CachedValue(self::$app->db))->action('count')->getOne());
+    }
+
+
+    /**
+     * Extra check of last_updated.
+     */
+    public function testLastUpdatedIsUpdated() {
+        $cachedValue = new CachedValue(self::$app->db);
+        $cachedValue->set('ident', 'LALA');
+        $cachedValue->set('value', '1');
+        $cachedValue->save();
+        $cachedValue->set('value', '2');
+        $cachedValue->save();
+        $lastUpdated = $cachedValue->get('last_updated');
+        sleep(1);
+        $cachedValue->set('value', '3');
+        $cachedValue->save();
+        $newLastUpdated = $cachedValue->get('last_updated');
+        self::assertNotSame(
+            $lastUpdated,
+            $newLastUpdated
+        );
     }
 }

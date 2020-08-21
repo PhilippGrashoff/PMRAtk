@@ -1,6 +1,15 @@
-<?php
+<?php declare(strict_types=1);
 
-class DBBackupCronTest extends \PMRAtk\tests\phpunit\TestCase {
+namespace PMRAtk\tests\phpunit\Data\Cron;
+
+
+use PMRAtk\Data\Cron\DBBackup;
+use PMRAtk\tests\phpunit\TestCase;
+
+/**
+ *
+ */
+class DBBackupCronTest extends TestCase {
 
     /*
      *
@@ -8,7 +17,7 @@ class DBBackupCronTest extends \PMRAtk\tests\phpunit\TestCase {
     public function testCron() {
 
         $this->_addStandardEmailAccount();
-        $c = new \PMRAtk\Data\Cron\DBBackup(self::$app);
+        $c = new DBBackup(self::$app);
         /*$c->execute();
         /*
         //backup file should be there

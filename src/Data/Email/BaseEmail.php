@@ -1,8 +1,19 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\Data\Email;
 
-class BaseEmail extends \atk4\data\Model
+use atk4\data\Model;
+use DateTime;
+use DirectoryIterator;
+use Exception;
+use PMRAtk\Data\BaseModel;
+use PMRAtk\Data\Email;
+use PMRAtk\Data\File;
+use PMRAtk\View\Template;
+use ReflectionClass;
+use Throwable;
+
+class BaseEmail extends Model
 {
 
     public $table = 'base_email';
@@ -83,7 +94,7 @@ class BaseEmail extends \atk4\data\Model
     /**
      * define fields and references
      */
-    public function init()
+    public function init(): void
     {
         parent::init();
         $this->addFields(
@@ -106,11 +117,11 @@ class BaseEmail extends \atk4\data\Model
 
         $this->containsMany('email_recipient', [EmailRecipient::class]);
 
-        $this->addHook(
+        $this->onHook(
             'beforeSave',
             function ($m, $is_update) {
                 if (!$is_update) {
-                    $m->set('created_date', new \DateTime());
+                    $m->set('created_date', new DateTime());
                 }
             }
         );
@@ -179,7 +190,7 @@ class BaseEmail extends \atk4\data\Model
         }
 
         if ($this->emailTemplateId) {
-            $template = new \PMRAtk\View\Template();
+            $template = new Template();
             $template->app = $this->app;
             $template->loadTemplateFromString(
                 (new EmailTemplate($this->persistence))->load($this->emailTemplateId)->get('value')
@@ -189,8 +200,8 @@ class BaseEmail extends \atk4\data\Model
             try {
                 $template = $this->app->loadEmailTemplate($this->template, false, $this->customTemplateModels);
             }
-            catch (\Exception $e) {
-                $template = new \PMRAtk\View\Template();
+            catch (Exception $e) {
+                $template = new Template();
                 $template->app = $this->app;
                 $template->loadTemplateFromString($this->template);
             }
@@ -257,7 +268,7 @@ class BaseEmail extends \atk4\data\Model
         $r = null;
 
         //object passed: get Email from Email Ref
-        if ($class instanceOf \atk4\data\Model && $class->loaded()) {
+        if ($class instanceOf Model && $class->loaded()) {
             if ($email_id === null) {
                 $r = $this->_addRecipientObject($class);
             } elseif ($email_id) {
@@ -274,7 +285,7 @@ class BaseEmail extends \atk4\data\Model
             $r->set('email', $class);
         }
 
-        if (!$r instanceOf \PMRAtk\Data\Email\EmailRecipient) {
+        if (!$r instanceOf EmailRecipient) {
             return false;
         }
 
@@ -300,7 +311,7 @@ class BaseEmail extends \atk4\data\Model
      * loads model_class, model_id, firstname and lastname from a passed object
      * returns an EmailRecipient object
      */
-    protected function _addRecipientObject(\PMRAtk\Data\BaseModel $object, $email_id = null): ?EmailRecipient
+    protected function _addRecipientObject(BaseModel $object, $email_id = null): ?EmailRecipient
     {
         $r = $this->ref('email_recipient');
         //set firstname and lastname if available
@@ -328,7 +339,7 @@ class BaseEmail extends \atk4\data\Model
      */
     protected function _addRecipientByEmailId(int $id): ?EmailRecipient
     {
-        $e = new \PMRAtk\Data\Email($this->persistence);
+        $e = new Email($this->persistence);
         $e->tryLoad($id);
         if (!$e->loaded()) {
             return null;
@@ -408,15 +419,15 @@ class BaseEmail extends \atk4\data\Model
 
         //create a template from message so tags set in message like
         //{$firstname} can be filled
-        $mt = new \PMRAtk\View\Template();
+        $mt = new Template();
         $mt->loadTemplateFromString($this->get('message'));
 
-        $st = new \PMRAtk\View\Template();
+        $st = new Template();
         $st->loadTemplateFromString($this->get('subject'));
 
         //add Attachments
         if ($this->get('attachments')) {
-            $a_files = new \PMRAtk\Data\File($this->persistence);
+            $a_files = new File($this->persistence);
             $a_files->addCondition('id', 'in', $this->get('attachments'));
             foreach ($a_files as $a) {
                 $this->phpMailer->addAttachment($a->getFullFilePath());
@@ -502,7 +513,7 @@ class BaseEmail extends \atk4\data\Model
      *     'field_name' => 'field_caption'
      * ]
      */
-    public function getModelVars(\atk4\data\Model $m, string $prefix = ''): array
+    public function getModelVars(Model $m, string $prefix = ''): array
     {
         $fields = [];
         if (method_exists($m, 'getFieldsForEmailTemplate')) {
@@ -533,7 +544,7 @@ class BaseEmail extends \atk4\data\Model
             $this->model->getModelCaption() => $this->getModelVars(
                 $this->model,
                 strtolower(
-                    (new \ReflectionClass(
+                    (new ReflectionClass(
                         $this->model
                     ))->getShortName()
                 ) . '_'
@@ -565,7 +576,7 @@ class BaseEmail extends \atk4\data\Model
         $result = [];
 
         foreach ($dirs as $dir => $namespace) {
-            foreach (new \DirectoryIterator($dir) as $file) {
+            foreach (new DirectoryIterator($dir) as $file) {
                 if ($file->getExtension() !== 'php') {
                     continue;
                 }
@@ -575,7 +586,7 @@ class BaseEmail extends \atk4\data\Model
                 }
                 try {
                     $instance = new $className($this->app->db, ['process' => false]);
-                } catch (\Throwable $e) {
+                } catch (Throwable $e) {
                     continue;
                 }
                 if (

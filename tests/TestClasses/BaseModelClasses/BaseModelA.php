@@ -1,21 +1,35 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace PMRAtk\tests\phpunit\Data;
+namespace PMRAtk\tests\TestClasses\BaseModelClasses;
 
-class BaseModelA extends \PMRAtk\Data\BaseModel {
+use PMRAtk\Data\BaseModel;
+use PMRAtk\Data\Traits\AuditTrait;
+use PMRAtk\Data\Traits\EPARelationsTrait;
+use PMRAtk\Data\Traits\MToMTrait;
+use PMRAtk\tests\TestClasses\AToB;
+use PMRAtk\tests\TestClasses\MToMModel;
 
-    use \PMRAtk\Data\Traits\EPARelationsTrait;
-    use \PMRAtk\Data\Traits\MToMTrait;
-    use \PMRAtk\Data\Traits\AuditTrait;
+/**
+ * Class BaseModelA
+ * @package PMRAtk\tests\phpunit\Data\Cron\TestClasses\BaseModelClasses
+ */
+class BaseModelA extends BaseModel {
+
+    use EPARelationsTrait;
+    use MToMTrait;
+    use AuditTrait;
 
     public $table = 'BaseModelA';
 
     public $caption = 'BMACAPTION';
 
-    public function init() {
+
+    /**
+     *
+     */
+    public function init(): void {
         parent::init();
 
-        $this->_addAuditRef();
 
         $this->addFields([
             ['name',      'type' => 'string'],
@@ -28,11 +42,18 @@ class BaseModelA extends \PMRAtk\Data\BaseModel {
 
         ]);
 
+        $this->_addAuditRef();
         $this->_addEPARefs();
 
-        $this->hasMany('MToMModel', new MToMModel());
+        $this->hasMany(
+            'AToB',
+            new AToB()
+        );
 
-        $this->hasOne('BaseModelB_id', new BaseModelB());
+        $this->hasOne(
+            'BaseModelB_id',
+            new BaseModelB()
+        );
     }
 
 

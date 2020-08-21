@@ -1,6 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\Data;
+
+use atk4\data\Exception;
+use DateTimeInterface;
+use PMRAtk\Data\Traits\MToMTrait;
 
 /**
  * This class represents a message for logged in users. The main concept is to display unread messages on login to
@@ -8,7 +12,7 @@ namespace PMRAtk\Data;
  */
 class MessageForUser extends BaseModel {
 
-    use \PMRAtk\Data\Traits\MToMTrait;
+    use MToMTrait;
 
     public $table = 'message_for_user';
 
@@ -17,7 +21,7 @@ class MessageForUser extends BaseModel {
     /**
      *
      */
-    public function init() {
+    public function init(): void {
         parent::init();
         $this->addFields([
             //Message title, e.g. "UI Update"
@@ -43,9 +47,9 @@ class MessageForUser extends BaseModel {
     /**
      * Load all unread messages for the current logged in user
      */
-    public function getUnreadMessagesForLoggedInUser($param1 = null, $param2 = null, $param3 = null, \DateTimeInterface $maxInPast = null):self {
+    public function getUnreadMessagesForLoggedInUser($param1 = null, $param2 = null, $param3 = null, DateTimeInterface $maxInPast = null):self {
         if(!$this->app->auth->user->loaded()) {
-            throw new \atk4\data\Exception('A user needs to be loaded in App for '.__FUNCTION__);
+            throw new Exception('A user needs to be loaded in App for '.__FUNCTION__);
         }
 
         $messages = new self($this->persistence);
@@ -72,7 +76,7 @@ class MessageForUser extends BaseModel {
     /**
      * Add condition to messages if $param is not null
      */
-    protected function _addParamConditionToMessages(self $messages, $param, string $fieldName) {
+    protected function _addParamConditionToMessages(self $messages, $param, string $fieldName): void {
         if($param === null) {
             return;
         }

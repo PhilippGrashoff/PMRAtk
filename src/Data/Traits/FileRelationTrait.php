@@ -1,7 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\Data\Traits;
 
+
+use PMRAtk\Data\File;
+use PMRAtk\Data\UserException;
 
 trait FileRelationTrait {
 
@@ -12,7 +15,7 @@ trait FileRelationTrait {
     protected function _addFileRef() {
         $this->hasMany('File', [
             function() {
-                return (new \PMRAtk\Data\File($this->persistence, ['parentObject' => $this]))->addCondition('model_class', get_class($this));
+                return (new File($this->persistence, ['parentObject' => $this]))->addCondition('model_class', get_class($this));
             },
             'their_field' => 'model_id']);
     }
@@ -21,14 +24,14 @@ trait FileRelationTrait {
     /*
      * Used to map ATK ui file input to data level
      */
-    public function addUploadFileFromAtkUi($temp_file, string $type = ''):?\PMRAtk\Data\File {
+    public function addUploadFileFromAtkUi($temp_file, string $type = ''):?File {
         if($temp_file === 'error') {
             return null;
         }
 
         //if $this was never saved (no id yet), use afterSave hook
         if(!$this->loaded()) {
-            $this->addHook('afterSave', function($m) use ($temp_file, $type) {
+            $this->onHook('afterSave', function($m) use ($temp_file, $type) {
                 $this->_addUploadFile($temp_file, $type);
             });
             return null;
@@ -43,7 +46,7 @@ trait FileRelationTrait {
     /*
      * helper for addUploadFileFromAtkUi
      */
-    protected function _addUploadFile(array $temp_file, string $type):?\PMRAtk\Data\File {
+    protected function _addUploadFile(array $temp_file, string $type):?File {
         $file = $this->ref('File')->newInstance(null, ['parentObject' => $this]);
         if(!$file->uploadFile($temp_file)) {
             $this->app->addUserMessage('Die Datei konnte nicht hochgeladen werden, bitte versuche es erneut', 'error');
@@ -72,7 +75,7 @@ trait FileRelationTrait {
         $file = $this->ref('File');
         $file->tryLoad($file_id);
         if(!$file->loaded()) {
-            throw new \PMRAtk\Data\UserException('Die Datei die gelöscht werden soll kann nicht gefunden werden.');
+            throw new UserException('Die Datei die gelöscht werden soll kann nicht gefunden werden.');
         }
 
         $cfile = clone $file;

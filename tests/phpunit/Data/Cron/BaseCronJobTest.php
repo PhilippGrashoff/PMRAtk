@@ -1,6 +1,11 @@
-<?php
+<?php declare(strict_types=1);
 
-class SampleCronJob extends \PMRAtk\Data\Cron\BaseCronJob {
+namespace EOO\tests\phpunit\Data\Cron;
+
+use PMRAtk\Data\Cron\BaseCronJob;
+use PMRAtk\tests\phpunit\TestCase;
+
+class SampleCronJob extends BaseCronJob {
 
     public $name = 'TestName';
 
@@ -11,7 +16,7 @@ class SampleCronJob extends \PMRAtk\Data\Cron\BaseCronJob {
 }
 
 
-class SampleExceptionCronJob extends \PMRAtk\Data\Cron\BaseCronJob {
+class SampleExceptionCronJob extends BaseCronJob {
 
     public function _execute() {
         $this->recipients[] = 'test2@easyoutdooroffice.com';
@@ -20,19 +25,19 @@ class SampleExceptionCronJob extends \PMRAtk\Data\Cron\BaseCronJob {
 }
 
 
-class DoesNotImplementExecuteCronJob extends \PMRAtk\Data\Cron\BaseCronJob {
+class DoesNotImplementExecuteCronJob extends BaseCronJob {
 
 }
 
 
-class NoMessageNoSuccessEmail extends \PMRAtk\Data\Cron\BaseCronJob {
+class NoMessageNoSuccessEmail extends BaseCronJob {
 
     public function _execute() {
     }
 }
 
 
-class BaseCronJobTest extends \PMRAtk\tests\phpunit\TestCase {
+class BaseCronJobTest extends TestCase {
 
     /*
      *

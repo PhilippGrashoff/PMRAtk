@@ -1,17 +1,20 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\Data\Email;
 
-class EmailAccount extends \PMRAtk\Data\BaseModel {
+use PMRAtk\Data\BaseModel;
+use PMRAtk\Data\Traits\EncryptedFieldTrait;
 
-    use \PMRAtk\Data\Traits\EncryptedFieldTrait;
+class EmailAccount extends BaseModel {
+
+    use EncryptedFieldTrait;
 
     public $table = 'email_account';
 
     /*
      *
      */
-    public function init() {
+    public function init(): void {
         parent::init();
         $this->addFields([
             ['name',                   'type' => 'string',  'caption' => 'Email-Adresse'],
@@ -31,7 +34,7 @@ class EmailAccount extends \PMRAtk\Data\BaseModel {
         $this->encryptField($this->getField('credentials'), ENCRYPTFIELD_KEY);
 
         //after load, unserialize value field
-        $this->addHook('afterLoad', function($m) {
+        $this->onHook('afterLoad', function($m) {
             $a = unserialize($m->get('credentials'));
             foreach($a as $key => $value) {
                 if($m->hasField($key)) {
@@ -41,7 +44,7 @@ class EmailAccount extends \PMRAtk\Data\BaseModel {
         });
 
         //before save, serialize value field
-        $this->addHook('beforeSave', function($m) {
+        $this->onHook('beforeSave', function($m) {
             $a = [
                 'user'                  => $m->get('user'),
                 'password'              => $m->get('password'),

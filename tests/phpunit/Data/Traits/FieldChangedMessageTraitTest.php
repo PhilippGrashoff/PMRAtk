@@ -1,19 +1,45 @@
-<?php
+<?php declare(strict_types=1);
 
-class FCMTraitTest extends \PMRAtk\tests\phpunit\Data\BaseModelA {
-    use \PMRAtk\Data\Traits\FieldChangedMessageTrait;
-    use \PMRAtk\Data\Traits\DateTimeHelpersTrait;
+namespace PMRAtk\tests\phpunit\Data\Traits;
+
+
+use PMRAtk\Data\Traits\DateTimeHelpersTrait;
+use PMRAtk\Data\Traits\FieldChangedMessageTrait;
+use PMRAtk\tests\phpunit\Data\BaseModelA;
+use PMRAtk\tests\phpunit\Data\BaseModelB;
+use PMRAtk\tests\phpunit\TestApp;
+use PMRAtk\tests\phpunit\TestCase;
+use PMRAtk\View\Traits\UserMessageTrait;
+
+/**
+ *
+ */
+class FCMTraitTest extends BaseModelA {
+    use FieldChangedMessageTrait;
+    use DateTimeHelpersTrait;
 }
 
-class FCMTraitTestNoDTH extends \PMRAtk\tests\phpunit\Data\BaseModelA {
-    use \PMRAtk\Data\Traits\FieldChangedMessageTrait;
+
+/**
+ *
+ */
+class FCMTraitTestNoDTH extends BaseModelA {
+    use FieldChangedMessageTrait;
 }
 
-class FCMTApp extends \PMRAtk\tests\phpunit\TestApp {
-    use \PMRAtk\View\Traits\UserMessageTrait;
+
+/**
+ *
+ */
+class FCMTApp extends TestApp {
+    use UserMessageTrait;
 }
 
-class FieldChangedMessageTraitTest extends \PMRAtk\tests\phpunit\TestCase {
+
+/**
+ *
+ */
+class FieldChangedMessageTraitTest extends TestCase {
 
     public $testApp;
 
@@ -22,7 +48,7 @@ class FieldChangedMessageTraitTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function setUp():void {
         parent::setUp();
-        $this->testApp = new \FCMTApp(['admin']);
+        $this->testApp = new FCMTApp(['admin']);
     }
 
 
@@ -42,10 +68,10 @@ class FieldChangedMessageTraitTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function testAddMessageHasOne() {
         //create 2 records of BaseModelB
-        $b1 = new \PMRAtk\tests\phpunit\Data\BaseModelB($this->testApp->db);
+        $b1 = new BaseModelB($this->testApp->db);
         $b1->set('name', 'Lala');
         $b1->save();
-        $b2 = new \PMRAtk\tests\phpunit\Data\BaseModelB($this->testApp->db);
+        $b2 = new BaseModelB($this->testApp->db);
         $b2->set('name', 'Happa');
         $b2->save();
 
@@ -64,8 +90,8 @@ class FieldChangedMessageTraitTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function testDateFields() {
         $m = new FCMTraitTest($this->testApp->db);
-        $m->addFieldChangedMessage('date', new \DateTime(),  (new \DateTime())->modify('+ 1 Day'));
-        $m->addFieldChangedMessage('time', new \DateTime(),  (new \DateTime())->modify('+ 1 Hour'));
+        $m->addFieldChangedMessage('date', new \DateTime(), (new \DateTime())->modify('+ 1 Day'));
+        $m->addFieldChangedMessage('time', new \DateTime(), (new \DateTime())->modify('+ 1 Hour'));
         $m->addFieldsChangedUserMessage();
         $this->assertEquals(1, count($this->testApp->userMessages));
     }

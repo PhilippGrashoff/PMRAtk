@@ -1,7 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\Data;
 
-class UserException extends \atk4\core\Exception {
+use atk4\core\Exception;
+
+class UserException extends Exception {
 
 }

@@ -1,10 +1,17 @@
-<?php
+<?php declare(strict_types=1);
+
 namespace PMRAtk\Data\Email;
+
+use atk4\core\AppScopeTrait;
+use atk4\core\DIContainerTrait;
+use atk4\core\Exception;
+use atk4\ui\App;
+use Throwable;
 
 class PHPMailer extends \PHPMailer\PHPMailer\PHPMailer {
 
-    use \atk4\core\DIContainerTrait;
-    use \atk4\core\AppScopeTrait;
+    use DIContainerTrait;
+    use AppScopeTrait;
 
     //the PMRAtk\Data\Email\EmailAccount to send from. If not set, use first one
     public $emailAccount;
@@ -24,7 +31,7 @@ class PHPMailer extends \PHPMailer\PHPMailer\PHPMailer {
     /*
      *
      */
-    public function __construct(\atk4\ui\App $app, array $defaults = []) {
+    public function __construct(App $app, array $defaults = []) {
         $this->app = $app;
         $this->setDefaults($defaults);
         $this->CharSet = 'utf-8';
@@ -69,7 +76,7 @@ class PHPMailer extends \PHPMailer\PHPMailer\PHPMailer {
      * load default EmailAccount if none is set
      */
     protected function _setEmailAccount() {
-        if($this->emailAccount instanceof \PMRAtk\Data\Email\EmailAccount
+        if($this->emailAccount instanceof EmailAccount
             && $this->emailAccount->loaded()) {
             $this->_copySettingsFromEmailAccount();
             return;
@@ -77,7 +84,7 @@ class PHPMailer extends \PHPMailer\PHPMailer\PHPMailer {
         //maybe just the ID of the emailaccount was passed?
         elseif(is_scalar($this->emailAccount)) {
             $val = $this->emailAccount;
-            $this->emailAccount = new \PMRAtk\Data\Email\EmailAccount($this->app->db);
+            $this->emailAccount = new EmailAccount($this->app->db);
             if ($val) {
                 $this->emailAccount->tryLoad($val);
                 if ($this->emailAccount->loaded()) {
@@ -88,11 +95,11 @@ class PHPMailer extends \PHPMailer\PHPMailer\PHPMailer {
         }
 
         //none found? load default
-        $this->emailAccount = new \PMRAtk\Data\Email\EmailAccount($this->app->db);
+        $this->emailAccount = new EmailAccount($this->app->db);
         $this->emailAccount->tryLoadAny();
 
         if(!$this->emailAccount->loaded()) {
-            throw new \atk4\core\Exception('No EmailAccount to send from found!');
+            throw new Exception('No EmailAccount to send from found!');
         }
         $this->_copySettingsFromEmailAccount();
     }
@@ -154,7 +161,7 @@ class PHPMailer extends \PHPMailer\PHPMailer\PHPMailer {
             }
             imap_close($imapStream);
         }
-        catch (\Throwable $e) {
+        catch (Throwable $e) {
             $this->appendedByIMAP = false;
         }
 

@@ -1,10 +1,14 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\Data;
 
+use DateTime;
+use DateTimeInterFace;
+use PMRAtk\Data\Traits\CryptIdTrait;
+
 class Token extends SecondaryBaseModel {
 
-    use \PMRAtk\Data\Traits\CryptIdTrait;
+    use CryptIdTrait;
 
     public $table = 'token';
 
@@ -16,27 +20,27 @@ class Token extends SecondaryBaseModel {
     /*
      *
      */
-    public function init() {
+    public function init(): void {
         parent::init();
         $this->addField('expires', ['type' => 'datetime']);
 
         //before insert, create token string
-        $this->addHook('beforeSave', function($m) {
+        $this->onHook('beforeSave', function($m) {
             if(!$m->get('value')) {
                 $m->setCryptId('value');
             }
             //set expiration on insert
             if(!$m->get('expires') && $m->expiresInMinutes > 0) {
-                $m->set('expires', (new \DateTime())->modify('+'.$m->expiresInMinutes.' Minutes'));
+                $m->set('expires', (new DateTime())->modify('+'.$m->expiresInMinutes.' Minutes'));
             }
         });
 
 
         //if token is expired do not load but throw exception
-        $this->addHook('afterLoad', function($m) {
-            if($m->get('expires') instanceOf \DateTimeInterFace
-            && $m->get('expires') < new \DateTime()) {
-                throw new \PMRAtk\Data\UserException('Das Token ist abgelaufen.');
+        $this->onHook('afterLoad', function($m) {
+            if($m->get('expires') instanceOf DateTimeInterFace
+            && $m->get('expires') < new DateTime()) {
+                throw new UserException('Das Token ist abgelaufen.');
             }
         });
 

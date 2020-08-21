@@ -1,27 +1,34 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\tests\phpunit\Data;
 
-class UserTest extends \PMRAtk\tests\phpunit\TestCase {
+use atk4\data\ValidationException;
+use Exception;
+use PMRAtk\Data\Token;
+use PMRAtk\Data\User;
+use PMRAtk\Data\UserException;
+use PMRAtk\tests\phpunit\TestCase;
+
+class UserTest extends TestCase {
 
 
     /*
      * test if username is unique
      */
     public function testUserNameUnique() {
-        $c = new \PMRAtk\Data\User(self::$app->db);
+        $c = new User(self::$app->db);
         $c->set('name', 'Duggu');
         $c->set('username', 'ABC');
         $c->save();
 
-        $c2 = new \PMRAtk\Data\User(self::$app->db);
+        $c2 = new User(self::$app->db);
         $c2->set('name', 'sfsdf');
         $c2->set('username', 'ABC');
         $exception_found = false;
         try {
             $c2->save();
         }
-        catch(\Exception $e) {
+        catch(Exception $e) {
             $exception_found = true;
         }
         $this->assertTrue($exception_found);
@@ -32,19 +39,19 @@ class UserTest extends \PMRAtk\tests\phpunit\TestCase {
      * test if name is unique
      */
     public function testNameUnique() {
-        $c = new \PMRAtk\Data\User(self::$app->db);
+        $c = new User(self::$app->db);
         $c->set('name', 'Duggu');
         $c->set('username', 'ABC');
         $c->save();
 
-        $c2 = new \PMRAtk\Data\User(self::$app->db);
+        $c2 = new User(self::$app->db);
         $c2->set('name', 'Duggu');
         $c2->set('username', 'AdasdsadBC');
         $exception_found = false;
         try {
             $c2->save();
         }
-        catch(\Exception $e) {
+        catch(Exception $e) {
             $exception_found = true;
         }
         $this->assertTrue($exception_found);
@@ -55,9 +62,9 @@ class UserTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testValidateEmptyName() {
-        $c = new \PMRAtk\Data\User(self::$app->db);
+        $c = new User(self::$app->db);
         $c->set('username', 'ABC');
-        $this->expectException(\atk4\data\ValidationException::class);
+        $this->expectException(ValidationException::class);
         $c->save();
     }
 
@@ -66,9 +73,9 @@ class UserTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testValidateEmptyUserName() {
-        $c = new \PMRAtk\Data\User(self::$app->db);
+        $c = new User(self::$app->db);
         $c->set('name', 'ABC');
-        $this->expectException(\atk4\data\ValidationException::class);
+        $this->expectException(ValidationException::class);
         $c->save();
     }
 
@@ -78,7 +85,7 @@ class UserTest extends \PMRAtk\tests\phpunit\TestCase {
      * logged in
      */
     public function testExceptionSetNewPasswordOtherUserLoggedIn() {
-        $c = new \PMRAtk\Data\User(self::$app->db);
+        $c = new User(self::$app->db);
         $c->set('name', 'Duggu');
         $c->set('username', 'ABC');
         $c->set('password', 'ABC');
@@ -97,7 +104,7 @@ class UserTest extends \PMRAtk\tests\phpunit\TestCase {
         self::$app->auth->user->set('password', 'EW');
         self::$app->auth->user->save();
 
-        $this->expectException(\PMRAtk\Data\UserException::class);
+        $this->expectException(UserException::class);
         self::$app->auth->user->setNewPassword('ggg', 'ggg', true, 'falseoldpw');
     }
 
@@ -107,7 +114,7 @@ class UserTest extends \PMRAtk\tests\phpunit\TestCase {
      * do not match
      */
     public function testExceptionSetNewPasswordsDoNotMatch() {
-        $this->expectException(\PMRAtk\Data\UserException::class);
+        $this->expectException(UserException::class);
         self::$app->auth->user->setNewPassword('gggfgfg', 'ggg');
     }
 
@@ -126,22 +133,22 @@ class UserTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function testsendResetPasswordEmail() {
         $this->_addStandardEmailAccount();
-        $c = new \PMRAtk\Data\User(self::$app->db);
+        $c = new User(self::$app->db);
 
         //unexisting username should throw exception
         $exception_found = false;
         try {
             $c->sendResetPasswordEmail('LOBO');
         }
-        catch(\Exception $e) {
+        catch(Exception $e) {
             $exception_found = true;
         }
         $this->assertTrue($exception_found);
 
         //with correct username it should work
-        $initial_token_count = (new \PMRAtk\Data\Token(self::$app->db))->action('count')->getOne();
+        $initial_token_count = (new Token(self::$app->db))->action('count')->getOne();
         $c->sendResetPasswordEmail('test');
-        $this->assertEquals($initial_token_count + 1, (new \PMRAtk\Data\Token(self::$app->db))->action('count')->getOne());
+        $this->assertEquals($initial_token_count + 1, (new Token(self::$app->db))->action('count')->getOne());
     }
 
 
@@ -149,7 +156,7 @@ class UserTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testResetPassword() {
-         $c = new \PMRAtk\Data\User(self::$app->db);
+         $c = new User(self::$app->db);
          $c->set('name', 'Duggu');
          $c->set('username', 'Duggudd');
          $c->save();
@@ -160,7 +167,7 @@ class UserTest extends \PMRAtk\tests\phpunit\TestCase {
         try {
             $c->resetPassword('nonexistingtoken', 'nuggu', 'nuggu');
         }
-        catch(\Exception $e) {
+        catch(Exception $e) {
             $exception_found = true;
         }
         $this->assertTrue($exception_found);
@@ -170,7 +177,7 @@ class UserTest extends \PMRAtk\tests\phpunit\TestCase {
         try {
             $c->resetPassword($token, 'nuggu', 'duggu');
         }
-        catch(\Exception $e) {
+        catch(Exception $e) {
             $exception_found = true;
         }
         $this->assertTrue($exception_found);
@@ -179,7 +186,7 @@ class UserTest extends \PMRAtk\tests\phpunit\TestCase {
         $c->resetPassword($token, 'nuggu', 'nuggu');
 
         //token should be deleted
-        $t = new \PMRAtk\Data\Token(self::$app->db);
+        $t = new Token(self::$app->db);
         $t->tryLoadBy('value', $token);
         $this->assertFalse($t->loaded());
     }
@@ -189,19 +196,19 @@ class UserTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testResetPasswordTokenNotConnectedToModel() {
-        $c = new \PMRAtk\Data\User(self::$app->db);
+        $c = new User(self::$app->db);
         $c->set('name', 'Duggu');
         $c->set('username', 'Duggudd');
         $c->save();
         $token = $c->setNewToken();
 
         //token should be deleted
-        $t = new \PMRAtk\Data\Token(self::$app->db);
+        $t = new Token(self::$app->db);
         $t->loadBy('value', $token);
         $t->set('model_id', 99999);
         $t->save();
 
-        $this->expectException(\PMRAtk\Data\UserException::class);
+        $this->expectException(UserException::class);
         $c->resetPassword($token, 'DEDE', 'DEDE');
     }
 
@@ -214,7 +221,7 @@ class UserTest extends \PMRAtk\tests\phpunit\TestCase {
         $this->assertTrue($this->callProtected(self::$app->auth->user, '_standardUserRights'));
 
         //different user than the logged in one, should be false
-        $u = new \PMRAtk\Data\User(self::$app->db);
+        $u = new User(self::$app->db);
         $this->assertFalse($this->callProtected($u, '_standardUserRights'));
 
         //no logged in user? false

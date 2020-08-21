@@ -1,15 +1,19 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\tests\phpunit\Data;
 
-class FileLoggerTest extends \PMRAtk\tests\phpunit\TestCase {
+use atk4\data\Exception;
+use PMRAtk\Data\FileLogger;
+use PMRAtk\tests\phpunit\TestCase;
+
+class FileLoggerTest extends TestCase {
 
 
     /*
      *
      */
     public function testLogger() {
-        $fl = new \PMRAtk\Data\FileLogger(FILE_BASE_PATH.'tests/logs/testlog.txt');
+        $fl = new FileLogger(FILE_BASE_PATH.'tests/logs/testlog.txt');
         $fl->emptyLogFile();
         $fl->log('1', 'bla');
         $this->assertTrue(file_exists(FILE_BASE_PATH.'tests/logs/testlog.txt'));
@@ -20,8 +24,8 @@ class FileLoggerTest extends \PMRAtk\tests\phpunit\TestCase {
      * test exceptions
      */
     public function testEmptyLogFileException() {
-        $fl = new \PMRAtk\Data\FileLogger(FILE_BASE_PATH.'tests/logs/forbiddenlog.txt');
-        $this->expectException(\atk4\data\Exception::class);
+        $fl = new FileLogger(FILE_BASE_PATH.'tests/logs/forbiddenlog.txt');
+        $this->expectException(Exception::class);
         $fl->emptyLogFile();
     }
 
@@ -30,8 +34,8 @@ class FileLoggerTest extends \PMRAtk\tests\phpunit\TestCase {
      * test exceptions
      */
     public function testLogException() {
-        $fl = new \PMRAtk\Data\FileLogger(FILE_BASE_PATH.'tests/logs/forbiddenlog.txt');
-        $this->expectException(\atk4\data\Exception::class);
+        $fl = new FileLogger(FILE_BASE_PATH.'tests/logs/forbiddenlog.txt');
+        $this->expectException(Exception::class);
         $fl->log('1', 'bla');
     }
 }

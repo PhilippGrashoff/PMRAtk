@@ -1,11 +1,15 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\tests\phpunit\Data;
 
+use atk4\data\Exception;
+use DateTime;
 use PMRAtk\Data\MessageForUser;
 use PMRAtk\Data\User;
+use PMRAtk\tests\phpunit\TestCase;
+use Throwable;
 
-class MessageForUserTest extends \PMRAtk\tests\phpunit\TestCase
+class MessageForUserTest extends TestCase
 {
 
 
@@ -25,7 +29,7 @@ class MessageForUserTest extends \PMRAtk\tests\phpunit\TestCase
     public function testMtoM()
     {
         $user = new User(self::$app->db);
-        $user->set(['username' => 'LALA', 'name' => 'BLABLAs']);
+        $user->setMulti(['username' => 'LALA', 'name' => 'BLABLAs']);
         $this->_testMToM(new MessageForUser(self::$app->db), $user);
     }
 
@@ -103,7 +107,7 @@ class MessageForUserTest extends \PMRAtk\tests\phpunit\TestCase
             $m = new MessageForUser(self::$app->db);
             $m->getUnreadMessagesForLoggedInUser();
         }
-        catch(\atk4\data\Exception $e) {
+        catch(Exception $e) {
             $exceptionFound = true;
         }
         self::$app->auth->user = $cache;
@@ -116,7 +120,7 @@ class MessageForUserTest extends \PMRAtk\tests\phpunit\TestCase
      */
     public function testExceptionMarkAsReadNotLoaded() {
         $message1 = new MessageForUser(self::$app->db);
-        self::expectException(\atk4\data\Exception::class);
+        self::expectException(Exception::class);
         $message1->markAsRead();
     }
 
@@ -135,7 +139,7 @@ class MessageForUserTest extends \PMRAtk\tests\phpunit\TestCase
         $message2->set('param1', 'gege');
         $message2->set('param2', 'Hansi');
         $message2->set('param3', '');
-        $message2->set('created_date', (new \DateTime())->modify('-2 Month'));
+        $message2->set('created_date', (new DateTime())->modify('-2 Month'));
         $message2->save();
         
         $res = $message1->getUnreadMessagesForLoggedInUser();
@@ -168,24 +172,24 @@ class MessageForUserTest extends \PMRAtk\tests\phpunit\TestCase
         $message1->save();
 
         $message2 = new MessageForUser(self::$app->db);
-        $message2->set('created_date', (new \DateTime())->modify('-2 Month'));
+        $message2->set('created_date', (new DateTime())->modify('-2 Month'));
         $message2->save();
         
         $message3 = new MessageForUser(self::$app->db);
-        $message3->set('created_date',  (new \DateTime())->modify('-2 Month'));
+        $message3->set('created_date',  (new DateTime())->modify('-2 Month'));
         $message3->save();
 
         try {
-            $res = $message1->getUnreadMessagesForLoggedInUser(null, null, null, (new \DateTime())->modify('-1 Month'));
+            $res = $message1->getUnreadMessagesForLoggedInUser(null, null, null, (new DateTime())->modify('-1 Month'));
             self::assertEquals(1, $res->action('count')->getOne());
         }
-        catch(\Throwable $e) {
+        catch(Throwable $e) {
             echo $e->getColorfulText();
         }
 
         $message3->set('never_invalid', 1);
         $message3->save();
-        $res = $message1->getUnreadMessagesForLoggedInUser(null,null, null, (new \DateTime())->modify('-1 Month'));
+        $res = $message1->getUnreadMessagesForLoggedInUser(null,null, null, (new DateTime())->modify('-1 Month'));
         self::assertEquals(2, $res->action('count')->getOne());
     }
     

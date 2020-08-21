@@ -1,22 +1,25 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\tests\phpunit\Data\Traits;
 
 
 use atk4\ui\Persistence\UI;
+use PMRAtk\Data\Email;
+use PMRAtk\Data\Traits\EncryptedFieldTrait;
+use PMRAtk\tests\phpunit\TestCase;
 
-class EmailWithEncryptedField extends \PMRAtk\Data\Email {
+class EmailWithEncryptedField extends Email {
 
-    use \PMRAtk\Data\Traits\EncryptedFieldTrait;
+    use EncryptedFieldTrait;
 
-    public function init() {
+    public function init(): void {
         parent::init();
         $this->encryptField($this->getField('value'), ENCRYPTFIELD_KEY);
     }
 }
 
 
-class EncryptedFieldTraitTest extends \PMRAtk\tests\phpunit\TestCase {
+class EncryptedFieldTraitTest extends TestCase {
 
     /*
      *
@@ -41,7 +44,7 @@ class EncryptedFieldTraitTest extends \PMRAtk\tests\phpunit\TestCase {
         $e->set('value', 'Duggu');
         $e->save();
 
-        $e2 = new \PMRAtk\Data\Email(self::$app->db);
+        $e2 = new Email(self::$app->db);
         $e2->load($e->id);
         $this->assertNotEquals($e2->get('value'), 'Duggu');
         $this->assertTrue(strlen($e2->get('value')) > 50);

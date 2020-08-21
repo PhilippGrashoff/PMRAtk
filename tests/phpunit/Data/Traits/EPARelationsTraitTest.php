@@ -1,10 +1,18 @@
-<?php
+<?php declare(strict_types=1);
 
+
+namespace PMRAtk\tests\phpunit\Data\Traits;
+
+
+use PMRAtk\Data\Email;
+use PMRAtk\tests\phpunit\Data\BaseModelA;
+use PMRAtk\tests\phpunit\Data\BaseModelB;
+use PMRAtk\tests\phpunit\TestCase;
 
 /**
  * Class EPARelationsTraitTest
  */
-class EPARelationsTraitTest extends \PMRAtk\tests\phpunit\TestCase {
+class EPARelationsTraitTest extends TestCase {
 
     /*
      * Tests adding of new Email, Phone, Address, altering it and then deleting it
@@ -21,7 +29,7 @@ class EPARelationsTraitTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function testGetFirstEPAException() {
         //pass some inexisting reference
-        $g = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
+        $g = new BaseModelA(self::$app->db);
         $this->expectException(\atk4\data\Exception::class);
         $this->callProtected($g, '_getFirstEPA', ['Duggu']);
     }
@@ -32,7 +40,7 @@ class EPARelationsTraitTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function testGetEPAByIdException() {
         //pass some inexisting reference
-        $g = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
+        $g = new BaseModelA(self::$app->db);
         $this->expectException(\atk4\data\Exception::class);
         $this->callProtected($g, '_getEPAById', ['Duggu', 1]);
     }
@@ -43,7 +51,7 @@ class EPARelationsTraitTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function testCreateEPAException() {
         //pass some inexisting reference
-        $g = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
+        $g = new BaseModelA(self::$app->db);
         $this->expectException(\atk4\data\Exception::class);
         $g->createEPA('Duggu', 'luggu');
     }
@@ -53,7 +61,7 @@ class EPARelationsTraitTest extends \PMRAtk\tests\phpunit\TestCase {
      * createEPA should return null when value is empty
      */
     public function testCreateEPAWithEmptyValue() {
-        $g = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
+        $g = new BaseModelA(self::$app->db);
         $this->assertEquals(null, $g->createEPA('Email', ''));
     }
 
@@ -63,7 +71,7 @@ class EPARelationsTraitTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function testUpdateEPAException() {
         //pass some inexisting reference
-        $g = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
+        $g = new BaseModelA(self::$app->db);
         $this->expectException(\atk4\data\Exception::class);
         $g->updateEPA('Duggu', 1, 'luggu');
     }
@@ -74,7 +82,7 @@ class EPARelationsTraitTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function testDeleteEPAException() {
         //pass some inexisting reference
-        $g = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
+        $g = new BaseModelA(self::$app->db);
         $this->expectException(\atk4\data\Exception::class);
         $g->deleteEPA('Duggu', 'luggu');
     }
@@ -117,7 +125,7 @@ class EPARelationsTraitTest extends \PMRAtk\tests\phpunit\TestCase {
      * tests convenience functions for EPA
      */
     public function testEPAConvenienceFunctions() {
-        $m = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
+        $m = new BaseModelA(self::$app->db);
         $m->save();
 
         $id = $m->addEmail('Lala')->get('id');
@@ -147,7 +155,7 @@ class EPARelationsTraitTest extends \PMRAtk\tests\phpunit\TestCase {
      * tests convenience functions for EPA
      */
     public function testaddEPAExpressions() {
-        $m = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
+        $m = new BaseModelA(self::$app->db);
         $m->addEPAExpressions();
         $m->save();
 
@@ -173,7 +181,7 @@ class EPARelationsTraitTest extends \PMRAtk\tests\phpunit\TestCase {
      * tests convenience functions for EPA
      */
     public function testExportEPAsAsArray() {
-        $m = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
+        $m = new BaseModelA(self::$app->db);
         $m->save();
 
         $m->addEmail('lara1');
@@ -200,7 +208,7 @@ class EPARelationsTraitTest extends \PMRAtk\tests\phpunit\TestCase {
      * tests if EPA creation works also if model has no id yet
      */
     public function testCreateEPAHook() {
-        $m = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
+        $m = new BaseModelA(self::$app->db);
         $m->addEmail('Duggu1');
         $m->addPhone('Duggu2');
         $m->addAddress('Duggu3');
@@ -244,7 +252,7 @@ class EPARelationsTraitTest extends \PMRAtk\tests\phpunit\TestCase {
      * tests if loadEmailByID etc work as expected
      */
     public function testloadEPAById() {
-        $m = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
+        $m = new BaseModelA(self::$app->db);
         $m->save();
 
         $m->addEmail('Lala')->get('id');
@@ -265,7 +273,7 @@ class EPARelationsTraitTest extends \PMRAtk\tests\phpunit\TestCase {
      * tests getFirstPhone, getFirstAddres and getFirstEmail functions
      */
     public function testGetFirstEPA() {
-        $m = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
+        $m = new BaseModelA(self::$app->db);
         $m->save();
 
         $m->addEmail('hansi@easyoutdooroffice.com');
@@ -286,17 +294,17 @@ class EPARelationsTraitTest extends \PMRAtk\tests\phpunit\TestCase {
      * tests if EPAs get deleted when parent object is deleted
      */
     public function testdeleteEPAsOnParentDelete() {
-        $m = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
+        $m = new BaseModelA(self::$app->db);
         $m->save();
-        $initial_count = (new \PMRAtk\Data\Email(self::$app->db))->action('count')->getOne();
+        $initial_count = (new Email(self::$app->db))->action('count')->getOne();
         $m->addEmail('hansi@easyoutdooroffice.com');
         $m->addEmail('gfgdgdgfd');
 
-        $this->assertEquals($initial_count + 2, (new \PMRAtk\Data\Email(self::$app->db))->action('count')->getOne());
+        $this->assertEquals($initial_count + 2, (new Email(self::$app->db))->action('count')->getOne());
 
         $m->delete();
 
-        $this->assertEquals($initial_count, (new \PMRAtk\Data\Email(self::$app->db))->action('count')->getOne());
+        $this->assertEquals($initial_count, (new Email(self::$app->db))->action('count')->getOne());
 
     }
 
@@ -305,7 +313,7 @@ class EPARelationsTraitTest extends \PMRAtk\tests\phpunit\TestCase {
      * test if _getEpaById throws an exception if record wasnt found
      */
     public function testGetEPAByIdExceptionIfRefNotFound() {
-        $m = new \PMRAtk\tests\phpunit\Data\BaseModelA(self::$app->db);
+        $m = new BaseModelA(self::$app->db);
         $m->save();
         $this->expectException(\atk4\data\Exception::class);
         $m->getEmailById(111);
@@ -316,10 +324,10 @@ class EPARelationsTraitTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testModelClassAndModelIdPropertiesCanBeUsedToSaveToDifferentModel() {
-        $bmb = new \PMRAtk\tests\phpunit\Data\BaseModelB(self::$app->db);
+        $bmb = new BaseModelB(self::$app->db);
         $bmb->save();
 
-        $saveToDifferentModel = new class extends \PMRAtk\tests\phpunit\Data\BaseModelA {
+        $saveToDifferentModel = new class extends BaseModelA {
             protected $_epaRefModelClass = 'PMRAtk\tests\phpunit\Data\BaseModelB';
             protected $_epaRefModelIdField = 'BaseModelB_id';
         };
@@ -340,10 +348,10 @@ class EPARelationsTraitTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testExceptionOnCreateIfNoModelIdIsPassed() {
-        $bmb = new \PMRAtk\tests\phpunit\Data\BaseModelB(self::$app->db);
+        $bmb = new BaseModelB(self::$app->db);
         $bmb->save();
 
-        $saveToDifferentModel = new class extends \PMRAtk\tests\phpunit\Data\BaseModelA {
+        $saveToDifferentModel = new class extends BaseModelA {
             protected $_epaRefModelClass = 'PMRAtk\tests\phpunit\Data\BaseModelB';
             protected $_epaRefModelIdField = 'name';
         };

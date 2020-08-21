@@ -1,10 +1,12 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\Data;
 
+use PMRAtk\Data\Traits\EncryptedFieldTrait;
+
 class Setting extends BaseModel {
 
-    use \PMRAtk\Data\Traits\EncryptedFieldTrait;
+    use EncryptedFieldTrait;
 
     public $table = 'setting';
 
@@ -12,7 +14,7 @@ class Setting extends BaseModel {
     /*
      *
      */
-    public function init() {
+    public function init(): void {
         parent::init();
 
         $this->addFields([
@@ -31,14 +33,14 @@ class Setting extends BaseModel {
         $this->encryptField($this->getField('value'), ENCRYPTFIELD_KEY);
 
         //system settings cannot be deleted
-        $this->addHook('beforeDelete', function($m) {
+        $this->onHook('beforeDelete', function($m) {
             if($m->get('system')) {
-                throw new \PMRAtk\Data\UserException('Diese Einstellung ist eine Systemeinstellung und kann nicht gelöscht werden.');
+                throw new UserException('Diese Einstellung ist eine Systemeinstellung und kann nicht gelöscht werden.');
             }
         });
 
         //ident of system setting cannot be edited if set
-        $this->addHook('afterLoad', function($m) {
+        $this->onHook('afterLoad', function($m) {
             if($m->get('system') && $m->get('ident')) {
                 $m->getField('ident')->read_only = true;
             }

@@ -1,6 +1,16 @@
-<?php
+<?php declare(strict_types=1);
 
-class PHPMailerTest extends \PMRAtk\tests\phpunit\TestCase {
+namespace PMRAtk\tests\phpunit\Data\Email;
+
+
+use PMRAtk\Data\Email\EmailAccount;
+use PMRAtk\Data\Email\PHPMailer;
+use PMRAtk\tests\phpunit\TestCase;
+
+/**
+ * Class PHPMailerTest
+ */
+class PHPMailerTest extends TestCase {
 
 
     /*
@@ -8,7 +18,7 @@ class PHPMailerTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function testAddUUID() {
         $this->_addStandardEmailAccount();
-        $tt = new \PMRAtk\Data\Email\PHPMailer(self::$app);
+        $tt = new PHPMailer(self::$app);
         $_ENV['IS_TEST_MODE'] = true;
         $_ENV['TEST_EMAIL_UUID'] = 'DUDUDU';
         $this->assertFalse($tt->send());
@@ -20,9 +30,9 @@ class PHPMailerTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function testCustomEmailAccount() {
         $this->_addStandardEmailAccount();
-        $pm = new \PMRAtk\Data\Email\PHPMailer(self::$app);
+        $pm = new PHPMailer(self::$app);
 
-        $ea = new \PMRAtk\Data\Email\EmailAccount(self::$app->db);
+        $ea = new EmailAccount(self::$app->db);
         $ea->set('name',        'DUDU');
         $ea->set('sender_name', 'DUDU');
         $ea->set('user',        'DUDU');
@@ -34,7 +44,7 @@ class PHPMailerTest extends \PMRAtk\tests\phpunit\TestCase {
         $ea->set('imap_sent_folder', 'DUDU');
         $ea->save();
 
-        $pm = new \PMRAtk\Data\Email\PHPMailer(self::$app, ['emailAccount' => $ea]);
+        $pm = new PHPMailer(self::$app, ['emailAccount' => $ea]);
         $this->callProtected($pm, '_setEmailAccount');
         self::assertEquals('DUDU', $pm->Host);
     }
@@ -45,9 +55,9 @@ class PHPMailerTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function testCustomEmailAccountById() {
         $this->_addStandardEmailAccount();
-        $pm = new \PMRAtk\Data\Email\PHPMailer(self::$app);
+        $pm = new PHPMailer(self::$app);
 
-        $ea = new \PMRAtk\Data\Email\EmailAccount(self::$app->db);
+        $ea = new EmailAccount(self::$app->db);
         $ea->set('name',        'DUDU');
         $ea->set('sender_name', 'DUDU');
         $ea->set('user',        'DUDU');
@@ -59,7 +69,7 @@ class PHPMailerTest extends \PMRAtk\tests\phpunit\TestCase {
         $ea->set('imap_sent_folder', 'DUDU');
         $ea->save();
 
-        $pm = new \PMRAtk\Data\Email\PHPMailer(self::$app, ['emailAccount' => $ea->get('id')]);
+        $pm = new PHPMailer(self::$app, ['emailAccount' => $ea->get('id')]);
         $this->callProtected($pm, '_setEmailAccount');
         self::assertEquals('DUDU', $pm->Host);
     }
@@ -76,19 +86,19 @@ class PHPMailerTest extends \PMRAtk\tests\phpunit\TestCase {
         //first unset some needed Imap field
         $ea->set('imap_host', '');
         $ea->save();
-        $pm = new \PMRAtk\Data\Email\PHPMailer(self::$app, ['emailAccount' => $ea->get('id')]);
+        $pm = new PHPMailer(self::$app, ['emailAccount' => $ea->get('id')]);
         self::assertFalse($pm->addSentEmailByIMAP());
 
         //now set it to some false value
         $ea->set('imap_host', 'fsdfd');
         $ea->save();
-        $pm = new \PMRAtk\Data\Email\PHPMailer(self::$app, ['emailAccount' => $ea->get('id')]);
+        $pm = new PHPMailer(self::$app, ['emailAccount' => $ea->get('id')]);
         self::assertFalse($pm->addSentEmailByIMAP());
 
         //now back to initial value, should work
         $ea->set('imap_host', $imapHost);
         $ea->save();
-        $pm = new \PMRAtk\Data\Email\PHPMailer(self::$app, ['emailAccount' => $ea->get('id')]);
+        $pm = new PHPMailer(self::$app, ['emailAccount' => $ea->get('id')]);
         $pm->addAddress($ea->get('name'));
         $pm->setBody('JJAA');
         $pm->Subject = 'KKAA';
@@ -105,7 +115,7 @@ class PHPMailerTest extends \PMRAtk\tests\phpunit\TestCase {
         $ea->set('allow_self_signed_ssl', 1);
         $ea->save();
         $ea->reload();
-        $pm = new \PMRAtk\Data\Email\PHPMailer(self::$app, ['emailAccount' => $ea->get('id')]);
+        $pm = new PHPMailer(self::$app, ['emailAccount' => $ea->get('id')]);
         $pm->addAddress($ea->get('name'));
         $pm->setBody('ssltest');
         $pm->Subject = 'ssltest';
@@ -118,7 +128,7 @@ class PHPMailerTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testExceptionNoEmailAccountAvailable() {
-        $pm = new \PMRAtk\Data\Email\PHPMailer(self::$app);
+        $pm = new PHPMailer(self::$app);
         self::expectException(\atk4\core\Exception::class);
         $this->callProtected($pm, '_setEmailAccount');
     }
@@ -133,7 +143,7 @@ class PHPMailerTest extends \PMRAtk\tests\phpunit\TestCase {
         //now back to initial value, should work
         $ea->set('imap_sent_folder', 'SomeNonExistantFolder');
         $ea->save();
-        $pm = new \PMRAtk\Data\Email\PHPMailer(self::$app, ['emailAccount' => $ea->get('id')]);
+        $pm = new PHPMailer(self::$app, ['emailAccount' => $ea->get('id')]);
         $pm->addAddress($ea->get('name'));
         $pm->addImapDebugInfo = true;
         $pm->setBody('JJAA');

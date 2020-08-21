@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\Data\Traits;
 
@@ -7,17 +7,22 @@ namespace PMRAtk\Data\Traits;
  * Useful for storing credentials that are needed in clear text at some point
  * like Api Tokens
  */
+
+use atk4\data\Exception;
+use atk4\data\Field;
+use atk4\ui\Persistence\UI;
+
 trait EncryptedFieldTrait {
 
     /*
      * encryption and decryption taken from PHP manual
      *
      */
-    public function encryptField(\atk4\data\Field $field, string $key) {
+    public function encryptField(Field $field, string $key) {
         $field->typecast = [
             function($value, $field, $persistence) use ($key) {
                 //hack until https://github.com/atk4/ui/issues/798 is resolved
-                if($persistence instanceof \atk4\ui\Persistence\UI) {
+                if($persistence instanceof UI) {
                     return $value;
                 }
                 //sodium needs string
@@ -32,18 +37,14 @@ trait EncryptedFieldTrait {
             function($value, $field, $persistence) use ($key) {
                 $decoded = base64_decode($value);
                 if(mb_strlen($decoded, '8bit') < (SODIUM_CRYPTO_SECRETBOX_NONCEBYTES + SODIUM_CRYPTO_SECRETBOX_MACBYTES)) {
-                    //temporary for migrating EOO settings
-                    return $value;
-                    throw new \atk4\data\Exception('An error occured decrypting an encrypted field: '.$field->short_name);
+                     throw new Exception('An error occured decrypting an encrypted field: '.$field->short_name);
                 }
                 $nonce = mb_substr($decoded, 0, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES, '8bit');
                 $ciphertext = mb_substr($decoded, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES, null, '8bit');
 
                 $plain = sodium_crypto_secretbox_open($ciphertext, $nonce, $key);
                 if($plain === false) {
-                    //temporary for migrating EOO settings
-                    return $value;
-                    throw new \atk4\data\Exception('An error occured decrypting an encrypted field: '.$field->short_name);
+                    throw new Exception('An error occured decrypting an encrypted field: '.$field->short_name);
                 }
                 sodium_memzero($ciphertext);
                 sodium_memzero($key);

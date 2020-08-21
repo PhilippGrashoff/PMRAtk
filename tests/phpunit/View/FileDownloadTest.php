@@ -1,11 +1,13 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\tests\phpunit\View;
 
+use PMRAtk\Data\File;
+use PMRAtk\tests\phpunit\TestCase;
 use PMRAtk\View\FileDownload;
 use PMRAtk\View\FileDownloadInline;
 
-class FileDownloadTest extends \PMRAtk\tests\phpunit\TestCase
+class FileDownloadTest extends TestCase
 {
 
     /**
@@ -27,7 +29,7 @@ class FileDownloadTest extends \PMRAtk\tests\phpunit\TestCase
     public function testExitOnFileNotFound()
     {
         ob_start();
-        $fd = new \PMRAtk\View\FileDownload(self::$app);
+        $fd = new FileDownload(self::$app);
         $_REQUEST[$fd->paramNameForCryptID] = 'Duggu';
         $fd->sendFile();
         self::assertEquals('', ob_get_contents());
@@ -42,7 +44,7 @@ class FileDownloadTest extends \PMRAtk\tests\phpunit\TestCase
      */
     public function testSendFileByCryptId()
     {
-        $file = new \PMRAtk\Data\File(self::$app->db);
+        $file = new File(self::$app->db);
         $file->set('value', 'demo_file.txt');
         $file->set('path', 'tests/');
         $file->save();
@@ -67,7 +69,7 @@ class FileDownloadTest extends \PMRAtk\tests\phpunit\TestCase
      */
     public function testSendInlineFileByCryptId()
     {
-        $file = new \PMRAtk\Data\File(self::$app->db);
+        $file = new File(self::$app->db);
         $file->set('value', 'demo_file.txt');
         $file->set('path', 'tests/');
         $file->save();
