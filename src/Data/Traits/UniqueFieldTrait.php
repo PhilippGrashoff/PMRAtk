@@ -4,6 +4,10 @@ namespace PMRAtk\Data\Traits;
 
 use atk4\data\Exception;
 
+
+/**
+ *
+ */
 trait UniqueFieldTrait {
 
     /*
@@ -14,13 +18,11 @@ trait UniqueFieldTrait {
         if(empty($this->get($field_name))) {
             throw new Exception('The value for a unique field may not be empty. Field name: '.$field_name.' in '.__FUNCTION__);
         }
-        $other = $this->newInstance();
+        $other = new static($this->persistence);
         $other->only_fields = [$this->id_field, $field_name];
         $other->addCondition($this->id_field, '!=', $this->get($this->id_field));
         $other->tryLoadBy($field_name, $this->get($field_name));
-        if($other->loaded()) {
-            return false;
-        }
-        return true;
+
+        return $other->loaded();
     }
 }

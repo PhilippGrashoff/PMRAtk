@@ -30,9 +30,12 @@ class TokenTest extends TestCase {
      */
      public function testSetExpires() {
         //try to set to 180 minutes
-        $t = new Token(self::$app->db, ['expiresInMinutes' => 180]);
+        $t = new Token(self::$app->db, ['expiresAfterInMinutes' => 180]);
         $t->save();
-        $this->assertEquals((new DateTime())->modify('+180 Minutes')->format('Ymd Hi'), $t->get('expires')->format('Ymd Hi'));
+        $this->assertEquals(
+            (new DateTime())->modify('+180 Minutes')->format('Ymd Hi'),
+            $t->get('expires')->format('Ymd Hi')
+        );
     }
 
 

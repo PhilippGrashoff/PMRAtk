@@ -4,15 +4,15 @@ namespace PMRAtk\App;
 
 use atk4\login\Auth;
 use atk4\ui\Exception;
-use atk4\ui\Template;
 use PMRAtk\Data\Email\BaseEmail;
-use atk4\data\Persistence;
 use PMRAtk\Data\Email\EmailTemplate;
+use PMRAtk\Data\PersistenceWithApp;
 use PMRAtk\Data\Setting;
 use PMRAtk\Data\Token;
 use PMRAtk\Data\User;
 use PMRAtk\View\Traits\UserMessageTrait;
 use ReflectionClass;
+use PMRAtk\View\Template as Template;
 
 
 /**
@@ -23,6 +23,15 @@ class App extends \atk4\ui\App
 {
 
     use UserMessageTrait;
+
+    //should audits be created? Disabled e.g. for speeding up tests
+    public bool $createAudit = true;
+    //should notifications be created? Disabled e.g. for speeding up tests
+    public bool $createNotification = true;
+    //indicates if phpunit tests are running.
+    public bool $isTestMode = false;
+    //in test mode, an id can be added to the email subject to clearly retrieve that email from a mailserver to check it
+    public string $testEmailIdToSubject;
 
     //used to determine which layout to use
     public $deviceWidth;
@@ -65,7 +74,8 @@ class App extends \atk4\ui\App
         $this->userRolesMaySeeThisPage = $user_roles_may_see;
 
         //Database Connection
-        $this->db = Persistence::connect(DB_STRING, DB_USER, DB_PASSWORD);
+        $this->db = PersistenceWithApp::connect(DB_STRING, DB_USER, DB_PASSWORD);
+        $this->db->app = $this;
 
         //try to know device width; used in some views
         $this->getDeviceWidth();
@@ -109,7 +119,8 @@ class App extends \atk4\ui\App
         if (!$token->loaded()) {
             throw new \atk4\data\Exception('Token could not be found', 401);
         }
-        if (!$user = $token->getParentObject()) {
+        $user = $token->getParentObject();
+        if (!$user || !$user instanceof User) {
             throw new \atk4\data\Exception('No matching User for Token found', 403);
         }
 
@@ -130,27 +141,6 @@ class App extends \atk4\ui\App
 
 
     /**
-     * overwrite standard atk method to return \PMRAtk\View\Template
-     */
-    public function loadTemplate($name)
-    {
-        $template = new Template();
-        $template->app = $this;
-
-        if (in_array($name[0], ['.', '/', '\\']) || strpos($name, ':\\') !== false) {
-            return $template->load($name);
-        } else {
-            $dir = is_array($this->template_dir) ? $this->template_dir : [$this->template_dir];
-            foreach ($dir as $td) {
-                if ($t = $template->tryLoad($td . '/' . $name)) {
-                    return $t;
-                }
-            }
-        }
-
-        throw new Exception('Can not find template file: ' . $name);
-    }
-
 
     /**
      *
@@ -279,10 +269,6 @@ class App extends \atk4\ui\App
 
         if (isset($this->_settings[$ident])) {
             return $this->_settings[$ident];
-        } elseif (isset($_ENV[$ident])) {
-            return $_ENV[$ident];
-        } elseif (defined($ident)) {
-            return constant($ident);
         }
 
         return null;
@@ -416,7 +402,7 @@ class App extends \atk4\ui\App
         };
         $email->loadInitialTemplate();
         $email->set('subject', $subject);
-        $email->addRecipient($this->app->getSetting('STD_EMAIL'));
+        $email->addRecipient(CUSTOMER_ADMIN_EMAIL);
         $email->send();
 
         return $email;

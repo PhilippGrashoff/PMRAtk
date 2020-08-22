@@ -8,32 +8,43 @@ use PMRAtk\Data\Audit;
 use PMRAtk\Data\BaseModel;
 use PMRAtk\Data\SecondaryBaseModel;
 use ReflectionClass;
+use atk4\data\Model;
 
 trait AuditTrait {
 
-    /*
+    /**
      * use in Model::init() to add the audit Ref
      */
     protected function _addAuditRef() {
-        $this->hasMany('Audit', [
-            function() {
-                return (new Audit($this->persistence, ['parentObject' => $this]))->addCondition('model_class', get_class($this));
-            },
-            'their_field' => 'model_id']);
+        $this->hasMany(
+            'Audit',
+            [
+                function() {
+                    return (new Audit($this->persistence, ['parentObject' => $this]))->addCondition('model_class', get_class($this));
+                },
+                'their_field' => 'model_id'
+            ]
+        );
 
         //after save, create Audit
-        $this->onHook('afterSave', function($m, $is_update) {
-            $m->createAudit($is_update ? 'CHANGE' : 'CREATE');
-        });
+        $this->onHook(
+            Model::HOOK_AFTER_SAVE,
+            function($model, $isUpdate) {
+                $model->createAudit($isUpdate ? 'CHANGE' : 'CREATE');
+            }
+        );
 
         //after delete, create Audit
-        $this->onHook('afterDelete', function($m) {
-            $m->createDeleteAudit();
-        });
+        $this->onHook(
+            Model::HOOK_AFTER_DELETE,
+            function($model) {
+                $model->createDeleteAudit();
+            }
+        );
     }
 
 
-    /*
+    /**
      * usually returns $this->ref('Audit'). May be overwritten by descendants
      * to add a more complex Audit model (e.g. Coupons and AccountingItems)
      */
@@ -42,30 +53,13 @@ trait AuditTrait {
     }
 
 
-    /*
-     * if this function returns false, no audit is created. Defaults to checking
-     * ENV setting, but can be overweritten on a per class basis
-     */
-    protected function _auditEnabled():bool {
-        if(!isset($_ENV['CREATE_AUDIT']) || !$_ENV['CREATE_AUDIT']) {
-            return false;
-        }
-
-        return true;
-    }
-
-
-    /*
+    /**
      * Save any change to Audit
      */
     public function createAudit($type) {
-        if(!$this->_auditEnabled()) {
+        if(!$this->app->createAudit) {
             return;
         }
-
-        $audit = new Audit($this->persistence, ['parentObject' => $this]);
-        $audit->reload_after_save = false;
-        $audit->set('value', $type);
 
         $data = [];
         foreach($this->dirty as $field_name => $dirty_field) {
@@ -81,8 +75,10 @@ trait AuditTrait {
             }
             //strings special treatment
             //money due to GermanMoneyFormatFieldTrait
-            if(in_array($this->getField($field_name)->type, ['string', 'text', 'money'])
-                && $dirty_field == $this->get($field_name)) {
+            if(
+                in_array($this->getField($field_name)->type, ['string', 'text', 'money'])
+                && $dirty_field == $this->get($field_name)
+            ) {
                 continue;
             }
 
@@ -95,7 +91,10 @@ trait AuditTrait {
                 $data[$field_name] = $this->_dateFieldAudit($field_name, $dirty_field);
             }
             //hasOne relationship
-            elseif($this->hasRef($field_name) && $this->getRef($field_name) instanceOf HasOne) {
+            elseif(
+                $this->hasRef($field_name)
+                && $this->getRef($field_name) instanceOf HasOne
+            ) {
                 $old = $this->ref($field_name)->newInstance();
                 $old->tryLoad($dirty_field);
                 $new = $this->ref($field_name)->newInstance();
@@ -103,7 +102,10 @@ trait AuditTrait {
                 $data[$field_name] = $this->_hasOneAudit($field_name, $dirty_field, $new, $old);
             }
             //dropdowns
-            elseif(isset($this->getField($field_name)->ui['form']) && in_array('DropDown', $this->getField($field_name)->ui['form'])) {
+            elseif(
+                isset($this->getField($field_name)->ui['form'])
+                && in_array('DropDown', $this->getField($field_name)->ui['form'])
+            ) {
                 $data[$field_name] = $this->_dropDownAudit($field_name, $dirty_field);
             }
             //any other field
@@ -113,6 +115,9 @@ trait AuditTrait {
 
         }
         if($type == 'CREATE' || $data) {
+            $audit = new Audit($this->persistence, ['parentObject' => $this]);
+            $audit->reload_after_save = false;
+            $audit->set('value', $type);
             $audit->set('data', $data);
             $audit->save();
         }
@@ -123,7 +128,7 @@ trait AuditTrait {
      * save delete to Audit
      */
     public function createDeleteAudit() {
-        if(!$this->_auditEnabled()) {
+        if(!$this->app->createAudit) {
             return;
         }
         $audit = new Audit($this->persistence, ['parentObject' => $this]);
@@ -143,7 +148,7 @@ trait AuditTrait {
         string $modelClass = null,
         int $modelId = null
     ) {
-        if(!$this->_auditEnabled()) {
+        if(!$this->app->createAudit) {
             return;
         }
 
@@ -171,7 +176,7 @@ trait AuditTrait {
      * creates an Audit for adding/removing MToM Relations
      */
     public function addMToMAudit(string $type, BaseModel $model, $nameField = 'name') {
-        if(!$this->_auditEnabled()) {
+        if(!$this->app->createAudit) {
             return;
         }
 
@@ -190,7 +195,7 @@ trait AuditTrait {
      * Adds an additional audit entry which is not related to one of the model's fields
      */
     public function addAdditionalAudit(string $type, array $data) {
-        if(!$this->_auditEnabled()) {
+        if(!$this->app->createAudit) {
             return;
         }
         $audit = new Audit($this->persistence, ['parentObject' => $this]);

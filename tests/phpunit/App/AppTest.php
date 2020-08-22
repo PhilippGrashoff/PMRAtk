@@ -1,14 +1,15 @@
 <?php declare(strict_types=1);
 
-namespace EOO\tests\phpunit\App;
+namespace PMRAtk\tests\phpunit\App;
 
 use PMRAtk\Data\Email\EmailTemplate;
 use PMRAtk\Data\Setting;
 use PMRAtk\Data\Token;
-use PMRAtk\tests\phpunit\Data\BaseModelA;
-use PMRAtk\tests\phpunit\Data\BaseModelB;
+use PMRAtk\tests\TestClasses\BaseModelClasses\BaseModelA;
+use PMRAtk\tests\TestClasses\BaseModelClasses\BaseModelB;
 use PMRAtk\tests\phpunit\TestCase;
-use PMRAtk\View\App;
+use PMRAtk\App\App;
+use PMRAtk\View\Template;
 
 
 class AppTest extends TestCase {
@@ -19,6 +20,16 @@ class AppTest extends TestCase {
     public function testAppConstruct() {
         $app = new App(['nologin'], ['always_run' => false]);
         $this->assertTrue($app->auth->user instanceOf \PMRAtk\Data\User);
+    }
+
+
+    /**
+     * @throws \atk4\data\Exception
+     */
+    public function testPMRAtkTemplateClassIsReturnedInLoadTemplate() {
+        $app = new App(['nologin'], ['always_run' => false]);
+        $t = $app->loadTemplate(FILE_BASE_PATH.'/template/email/default_footer.html');
+        self::assertInstanceOf(Template::class, $t);
     }
 
 

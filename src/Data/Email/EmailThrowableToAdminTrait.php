@@ -16,13 +16,13 @@ trait EmailThrowableToAdminTrait {
             $this->phpMailer = new PHPMailer($this->app);
         }
         //always send to tech admin
-        $this->phpMailer->addAddress($this->app->getSetting('TECH_ADMIN_EMAIL'));
+        $this->phpMailer->addAddress(TECH_ADMIN_EMAIL);
         foreach ($additional_recipients as $email_address) {
             $this->phpMailer->addAddress($email_address);
         }
         $this->phpMailer->Subject = $subject;
         $this->phpMailer->setBody('Folgender Fehler ist aufgetreten: <br />' .
-            ($e instanceOf Exception ? $e->getHTML() : $e->getMessage() . '<br />Line: ' . $e->getLine() . '<br />' . nl2br($e->getTraceAsString())) . '<br />Der Technische Administrator ' . $this->app->getSetting('TECH_ADMIN_NAME') . ' wurde informiert.');
+            ($e instanceOf Exception ? $e->getHTML() : $e->getMessage() . '<br />Line: ' . $e->getLine() . '<br />' . nl2br($e->getTraceAsString())) . '<br />Der Technische Administrator ' . TECH_ADMIN_NAME . ' wurde informiert.');
         $this->phpMailer->send();
     }
 }

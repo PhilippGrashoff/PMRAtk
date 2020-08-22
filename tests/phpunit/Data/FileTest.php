@@ -11,7 +11,7 @@ use PMRAtk\tests\phpunit\TestCase;
  */
 class FileTest extends TestCase {
 
-    /*
+    /**
      *
      */
     public function testDelete() {
@@ -29,7 +29,7 @@ class FileTest extends TestCase {
     }
 
 
-    /*
+    /**
      * should return false
      */
     public function testDeleteNonExistantFile() {
@@ -39,7 +39,7 @@ class FileTest extends TestCase {
     }
 
 
-    /*
+    /**
      * test exception on save if file does not exist
      */
     public function testExceptionOnSaveNonExistantFile() {
@@ -50,7 +50,7 @@ class FileTest extends TestCase {
     }
 
 
-    /*
+    /**
      *
      */
     public function testCreateNewFileNameIfExists() {

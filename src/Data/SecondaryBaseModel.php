@@ -2,6 +2,7 @@
 
 namespace PMRAtk\Data;
 
+use atk4\core\AppScopeTrait;
 use atk4\data\Exception;
 use atk4\data\Model;
 use PMRAtk\Data\Traits\CreatedDateAndLastUpdatedTrait;
@@ -15,8 +16,20 @@ abstract class SecondaryBaseModel extends Model
 {
 
     use CreatedDateAndLastUpdatedTrait;
+    use AppScopeTrait;
 
     public ?Model $parentObject;
+
+
+    /**
+     *
+     */
+    public function __construct($persistence = null, $defaults = [])
+    {
+        parent::__construct($persistence, $defaults);
+        $this->app = $persistence->app;
+    }
+
 
     /**
      *
@@ -57,7 +70,8 @@ abstract class SecondaryBaseModel extends Model
         $this->addCreatedDateAndLastUpdateFields();
         $this->addCreatedDateAndLastUpdatedHook();
 
-        //set model_class and model_id if parentObject was set. If parentObject is already set, data is automatically pulled
+        //set model_class and model_id if parentObject was set. If parentObject is already set,
+        //data is automatically pulled
         if (
             isset($this->parentObject)
             && $this->parentObject instanceof Model
@@ -90,6 +104,6 @@ abstract class SecondaryBaseModel extends Model
         $parentObject = new $className($this->persistence);
         $parentObject->load($this->get('model_id'));
 
-        return clone $parentObject;
+        return $parentObject;
     }
 }

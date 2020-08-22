@@ -12,8 +12,13 @@ if(file_exists(__DIR__.'/config_local.php')) {
 //Start Session, used for user login
 session_start();
 
+//Tech Contact
+define('TECH_ADMIN_EMAIL',   'test1@easyoutdooroffice.com');
+define('TECH_ADMIN_NAME',    'Philipp Reisigl');
+
 //Standard path to root dir
 define('FILE_BASE_PATH',        __DIR__.'/');
+
 //where cronjobs creating files should store them. Password protect that folder/disable http access
 define('CRON_FILE_PATH',        'cron/files/');
 

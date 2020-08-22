@@ -2,6 +2,7 @@
 
 namespace PMRAtk\Data;
 
+use atk4\core\AppScopeTrait;
 use atk4\data\Exception;
 use atk4\data\Model;
 use atk4\data\Reference\HasMany;
@@ -15,6 +16,18 @@ class BaseModel extends Model
 {
 
     use CreatedDateAndLastUpdatedTrait;
+    use AppScopeTrait;
+
+
+    /**
+     *
+     */
+    public function __construct($persistence = null, $defaults = [])
+    {
+        parent::__construct($persistence, $defaults);
+        $this->app = $persistence->app;
+    }
+
 
     /**
      *

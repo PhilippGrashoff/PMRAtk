@@ -255,7 +255,7 @@ class CronManager extends BaseModel {
     public function getAvailableCrons():array {
         $res = [];
         foreach($this->cronFilesPath as $path => $namespace) {
-            $dirName = $this->app->getSetting('FILE_BASE_PATH').$path;
+            $dirName = FILE_BASE_PATH . $path;
             if(!file_exists($dirName)) {
                 continue;
             }

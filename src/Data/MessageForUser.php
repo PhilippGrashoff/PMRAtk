@@ -7,7 +7,8 @@ use DateTimeInterface;
 use PMRAtk\Data\Traits\MToMTrait;
 
 /**
- * This class represents a message for logged in users. The main concept is to display unread messages on login to
+ * This class represents a message for logged in users. The main concept is to display
+ * unread messages on login to
  * inform each individual user about updates, usually in a modal.
  */
 class MessageForUser extends BaseModel {

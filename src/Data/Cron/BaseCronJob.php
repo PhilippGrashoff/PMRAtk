@@ -101,7 +101,7 @@ abstract class BaseCronJob {
             $this->phpMailer->addAddress($email_address);
         }
         if ($this->addAdminToSuccessEmail) {
-            $this->phpMailer->addAddress($this->app->getSetting('TECH_ADMIN_EMAIL'));
+            $this->phpMailer->addAddress(TECH_ADMIN_EMAIL);
         }
 
         $this->phpMailer->Subject = 'Der Cronjob ' . $this->getName() . ' war erfolgreich';

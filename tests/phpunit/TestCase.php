@@ -32,6 +32,12 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase {
     }
 
 
+    public function someTest() {
+        FILE_BASE_PATH;
+        $_ENV['FILE_BASE_PATH'];
+        self::$app->FILE_BASE_PATH;
+    }
+
     /*
      *
      */
