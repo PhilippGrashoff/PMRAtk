@@ -9,36 +9,21 @@ use PMRAtk\tests\TestClasses\BaseModelClasses\BaseModelB;
 use PMRAtk\tests\phpunit\TestCase;
 
 
-/**
- * Class AuditTraitTest
- * @package PMRAtk\tests\phpunit\Data\Traits
- */
 class AuditTraitTest extends TestCase
 {
 
-    /**
-     *
-     */
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
-        $_ENV['CREATE_AUDIT'] = true;
+        self::$app->createAudit = true;
     }
 
-
-    /**
-     *
-     */
     public static function tearDownAfterClass(): void
     {
         parent::tearDownAfterClass();
-        $_ENV['CREATE_AUDIT'] = false;
+        self::$app->createAudit = false;
     }
 
-
-    /**
-     *
-     */
     public function testAuditCreatedForFields()
     {
         $a = new BaseModelA(self::$app->db);
@@ -88,10 +73,6 @@ class AuditTraitTest extends TestCase
         $this->assertTrue($create_found);
     }
 
-
-    /**
-     * test create delete Audit
-     */
     public function testDeleteAudit()
     {
         $a = new BaseModelA(self::$app->db);
@@ -108,10 +89,6 @@ class AuditTraitTest extends TestCase
         $this->assertEquals('DELETE', $a->get('value'));
     }
 
-
-    /**
-     * test secondary audit is created on EPA things
-     */
     public function testEPAAudit()
     {
         $a = new BaseModelA(self::$app->db);
@@ -143,13 +120,9 @@ class AuditTraitTest extends TestCase
         $this->assertTrue($delete_found);
     }
 
-
-    /**
-     * test if Audit is not created
-     */
     public function testNoAuditCreatedOnSetting()
     {
-        $_ENV['CREATE_AUDIT'] = false;
+        self::$app->createAudit = false;
         $initial_audit_count = (new Audit(self::$app->db))->action('count')->getOne();
 
         $a = new BaseModelA(self::$app->db);
@@ -160,13 +133,9 @@ class AuditTraitTest extends TestCase
         $a->deleteEmail($e->id);
 
         $this->assertEquals($initial_audit_count, (new Audit(self::$app->db))->action('count')->getOne());
-        $_ENV['CREATE_AUDIT'] = true;
+        self::$app->createAudit = true;
     }
 
-
-    /**
-     *
-     */
     public function testMToMAudit()
     {
         $a = new BaseModelA(self::$app->db);
@@ -176,10 +145,6 @@ class AuditTraitTest extends TestCase
         $this->assertEquals($initial_audit_count + 1, (new Audit(self::$app->db))->action('count')->getOne());
     }
 
-
-    /**
-     *
-     */
     public function testNoAuditOnNoValueChange()
     {
         $a = new BaseModelA(self::$app->db);
@@ -206,10 +171,6 @@ class AuditTraitTest extends TestCase
         self::assertEquals(2, $i);
     }
 
-
-    /**
-     *
-     */
     public function testNoAuditOnNoValueChangeStringsLooseCompare()
     {
         $a = new BaseModelA(self::$app->db);
@@ -231,10 +192,6 @@ class AuditTraitTest extends TestCase
         self::assertEquals(2, $i);
     }
 
-
-    /**
-     * This case shouldnt happen, but that line makes sense. Test it here
-     */
     public function testContinueIfDirtyValueEqualsNewValue() {
         $a = new BaseModelA(self::$app->db);
         $a->set('dd_test', 1);
@@ -247,10 +204,6 @@ class AuditTraitTest extends TestCase
         self::assertFalse(isset($data['dd_test']));
     }
 
-
-    /**
-     *
-     */
     public function testFieldsValuePropertyIsCorrectlyAudited() {
         $withValues = new class extends BaseModelA {
 
@@ -272,10 +225,6 @@ class AuditTraitTest extends TestCase
         }
     }
 
-
-    /**
-     *
-     */
     public function testAddSecondaryAudit() {
         $baseModelA = new BaseModelA(self::$app->db);
         $baseModelA->save();

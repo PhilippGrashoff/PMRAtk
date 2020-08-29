@@ -4,6 +4,8 @@ namespace PMRAtk\tests\phpunit;
 
 use atk4\data\Model;
 use DirectoryIterator;
+use mtomforatk\MToMModel;
+use PMRAtk\App\App;
 use PMRAtk\Data\BaseModel;
 use PMRAtk\Data\Email\EmailAccount;
 use PMRAtk\Data\File;
@@ -14,17 +16,12 @@ use PMRAtk\tests\TestClasses\DeleteSetting;
 abstract class TestCase extends \atk4\core\AtkPhpunit\TestCase
 {
 
-    public static $app;
+    public static App $app;
 
     public static function setUpBeforeClass(): void
     {
         self::$app = new TestApp(['admin']);
         self::$app->isTestMode = true;
-    }
-
-    public static function tearDownAfterClass(): void
-    {
-        self::$app = null;
     }
 
     public function setUp(): void
@@ -97,31 +94,37 @@ abstract class TestCase extends \atk4\core\AtkPhpunit\TestCase
         return clone $file;
     }
 
-    protected function _testMToM(Model $o, Model $other)
-    {
-        if (!$o->loaded()) {
-            $o->save();
-        }
-        if (!$other->loaded()) {
-            $other->save();
-        }
 
-        $shortname = (new ReflectionClass($other))->getShortName();
+    protected function _testMToM(Model $model, Model $otherModel)
+    {
+        $shortname = (new ReflectionClass($otherModel))->getShortName();
         $hasname = 'has' . $shortname . 'Relation';
         $addname = 'add' . $shortname;
         $removename = 'remove' . $shortname;
         $getRelationName = 'get' . $shortname . 's';
-        $this->assertFalse($o->$hasname($other));
-        $this->assertTrue($o->$addname($other));
-        $this->assertTrue($o->$hasname($other));
-        if (method_exists($o, $getRelationName)) {
-            $m = $o->$getRelationName();
+
+        if(!method_exists($model, $addname)) {
+            return;
+        }
+
+        if (!$model->loaded()) {
+            $model->save();
+        }
+        if (!$otherModel->loaded()) {
+            $otherModel->save();
+        }
+
+        $this->assertFalse($model->$hasname($otherModel));
+        $this->assertTrue($model->$addname($otherModel));
+        $this->assertTrue($model->$hasname($otherModel));
+        if (method_exists($model, $getRelationName)) {
+            $m = $model->$getRelationName();
             if ($m instanceof Model) {
-                self::assertEquals(1, $o->$getRelationName()->action('count')->getOne());
+                self::assertEquals(1, $model->$getRelationName()->action('count')->getOne());
             }
         }
-        $this->assertTrue($o->$removename($other));
-        $this->assertFalse($o->$hasname($other));
+        $this->assertTrue($model->$removename($otherModel));
+        $this->assertFalse($model->$hasname($otherModel));
     }
 
     public function countModelRecords(string $model_class)

@@ -2,23 +2,24 @@
 
 namespace PMRAtk\Data\Traits;
 
-/*
- * EPA is short for Email, Address, Phone. This adds functions to add,
- * alter and delete related EPAs
- */
-
 use atk4\data\Exception;
+use atk4\data\Model;
 use PMRAtk\Data\Address;
 use PMRAtk\Data\Email;
 use PMRAtk\Data\Phone;
 
+
+/**
+ * EPA is short for Email, Address, Phone. This adds functions to add,
+ * alter and delete related EPAs
+ */
 trait EPARelationsTrait
 {
 
     protected $_epaRefModelClass;
     protected $_epaRefModelIdField = 'id';
 
-    /*
+    /**
      * use this in init() to quickly setup email, phone and address relations
      */
     protected function _addEPARefs(bool $addDelete = true)
@@ -65,18 +66,17 @@ trait EPARelationsTrait
 
         if($addDelete) {
             $this->onHook(
-                'beforeDelete',
-                function ($m) {
-                    $m->deleteHasMany('Phone');
-                    $m->deleteHasMany('Email');
-                    $m->deleteHasMany('Address');
+                Model::HOOK_AFTER_DELETE,
+                function (Model $model) {
+                    $model->deleteHasMany('Phone');
+                    $model->deleteHasMany('Email');
+                    $model->deleteHasMany('Address');
                 }
             );
         }
     }
 
-
-    /*
+    /**
      * Helper function for getFirstEmail, getFirstAddress, getFirstPhone
      */
     protected function _getFirstEPA(string $type): string
@@ -93,7 +93,7 @@ trait EPARelationsTrait
     }
 
 
-    /*
+    /**
      * returns first Email/Phone/Address that is not empty if found,
      * else an empty string
      *

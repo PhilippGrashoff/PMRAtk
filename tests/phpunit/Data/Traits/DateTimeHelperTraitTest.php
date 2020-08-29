@@ -3,52 +3,72 @@
 namespace PMRAtk\tests\phpunit\Data\Traits;
 
 
+use atk4\data\Model;
 use PMRAtk\Data\Traits\DateTimeHelpersTrait;
 use PMRAtk\tests\phpunit\TestCase;
 
-/**
- * Class DTHTest
- */
-class DTHTest {
-    use DateTimeHelpersTrait;
-}
 
-
-/**
- * Class DateTimeHelperTraitTest
- */
 class DateTimeHelperTraitTest extends TestCase {
 
-    /*
-     *
-     */
     public function testGetDiffMinutes() {
         $d1 = new \DateTime();
         $d2 = clone $d1;
-        $dth = new DTHTest();
+        $dth = $this->getTestClass();
         $this->assertEquals(0, $dth->getDateDiffTotalMinutes($d1, $d2));
         $d2->modify('+100 Days');
         $this->assertEquals(100*24*60, $dth->getDateDiffTotalMinutes($d1, $d2));
     }
 
-
-    /*
-     *
-     */
     public function testDateCasting() {
-        $m = new DTHTest();
-        $this->assertEquals((new \DateTime())->format('d.m.Y H:i:s'), $this->callProtected($m, 'castDateTimeToGermanString', [new \DateTime(), 'datetime']));
-        $this->assertEquals((new \DateTime())->format('d.m.Y'), $this->callProtected($m, 'castDateTimeToGermanString', [new \DateTime(), 'date']));
-        $this->assertEquals((new \DateTime())->format('H:i:s'), $this->callProtected($m, 'castDateTimeToGermanString', [new \DateTime(), 'time']));
-        $this->assertEquals('',                                       $this->callProtected($m, 'castDateTimeToGermanString', [new \DateTime(), 'lalala']));
+        $dth = $this->getTestClass();
+        $this->assertEquals(
+            (new \DateTime())->format('d.m.Y H:i:s'),
+            $dth->castDateTimeToGermanString($dth->getField('datetime'))
+        );
+        $this->assertEquals(
+            (new \DateTime())->format('d.m.Y'),
+            $dth->castDateTimeToGermanString($dth->getField('date'))
+        );
+        $this->assertEquals(
+            (new \DateTime())->format('H:i:s'),
+            $dth->castDateTimeToGermanString($dth->getField('time'))
+        );
+        $this->assertEquals(
+            '',
+            $dth->castDateTimeToGermanString($dth->getField('some_other_field'))
+        );
     }
 
-
-    /*
-     *
-     */
     public function testNoDateTimeInterFaceValue() {
-        $m = new DTHTest();
-        $this->assertEquals('lala', $this->callProtected($m, 'castDateTimeToGermanString', ['lala', 'datetime']));
+        $dth = $this->getTestClass();
+        $dth->set('some_other_field', 'lala');
+        $this->assertEquals(
+            'lala',
+            $dth->castDateTimeToGermanString($dth->getField('some_other_field'))
+        );
+    }
+
+    protected function getTestClass(): Model {
+        $class = new class() extends Model {
+
+            use DateTimeHelpersTrait;
+
+            public $table = 'some_table';
+
+            public function init(): void
+            {
+                parent::init();
+                $this->addField('datetime', ['type' => 'datetime']);
+                $this->addField('date', ['type' => 'date']);
+                $this->addField('time', ['type' => 'time']);
+                $this->addField('some_other_field');
+
+                $this->set('datetime', new \DateTime());
+                $this->set('date', new \DateTime());
+                $this->set('time', new \DateTime());
+            }
+        };
+
+        return new $class(self::$app->db);
     }
 }

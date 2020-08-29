@@ -20,7 +20,7 @@ use Facebook\WebDriver\Remote\LocalFileDetector;
  */
 trait BaseFunctionsTrait {
 
-    public static $windowWidth  = 1560;
+    public static $windowWidth  = 1920;
     public static $windowHeight = 1080;
 
     public static $mobileWindowWidth  = 400;

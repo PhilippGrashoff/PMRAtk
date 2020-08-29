@@ -19,7 +19,7 @@ class PHPMailerTest extends TestCase {
     public function testAddUUID() {
         $this->_addStandardEmailAccount();
         $tt = new PHPMailer(self::$app);
-        $_ENV['IS_TEST_MODE'] = true;
+        self::$app->isTestMode = true;
         $_ENV['TEST_EMAIL_UUID'] = 'DUDUDU';
         $this->assertFalse($tt->send());
     }

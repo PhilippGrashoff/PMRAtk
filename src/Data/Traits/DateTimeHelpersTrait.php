@@ -2,47 +2,46 @@
 
 namespace PMRAtk\Data\Traits;
 
+use atk4\data\Field;
 use DateTimeInterface;
 
-trait DateTimeHelpersTrait {
+trait DateTimeHelpersTrait
+{
 
-
-    /*
+    /**
      * returns the difference of 2 datetime objects in minutes
      */
-    public function getDateDiffTotalMinutes(DateTimeInterFace $s, DateTimeInterFace $e) {
+    public function getDateDiffTotalMinutes(DateTimeInterFace $s, DateTimeInterFace $e)
+    {
         $diff = $s->diff($e);
-        return $diff->days*24*60+$diff->h*60+$diff->i;
+        return $diff->days * 24 * 60 + $diff->h * 60 + $diff->i;
     }
 
-
-    /*
+    /**
      * makes german formatted strings from date, time and datetime fields
-     * //TODO: Pass field would make more sense
      */
-    public function castDateTimeToGermanString($value, string $type, bool $shorten_time = false):string {
+    public function castDateTimeToGermanString(Field $field, bool $shortenTime = false): string
+    {
         //no DateTimeInterFace passed? Just return given value
-        if(!$value instanceof DateTimeInterface) {
-            return (string) $value;
+        if (!$field->get() instanceof DateTimeInterface) {
+            return (string) $field->get();
         }
 
-        if($type == 'datetime') {
-            if($shorten_time) {
-                return $value->format('d.m.Y H:i');
-            }
-            else {
-                return $value->format('d.m.Y H:i:s');
+        if ($field->type == 'datetime') {
+            if ($shortenTime) {
+                return $field->get()->format('d.m.Y H:i');
+            } else {
+                return $field->get()->format('d.m.Y H:i:s');
             }
         }
-        if($type == 'date') {
-            return $value->format('d.m.Y');
+        if ($field->type == 'date') {
+            return $field->get()->format('d.m.Y');
         }
-        if($type == 'time') {
-            if($shorten_time) {
-                return $value->format('H:i');
-            }
-            else {
-                return $value->format('H:i:s');
+        if ($field->type == 'time') {
+            if ($shortenTime) {
+                return $field->get()->format('H:i');
+            } else {
+                return $field->get()->format('H:i:s');
             }
         }
 
