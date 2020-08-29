@@ -1,20 +1,15 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace PMRAtk\tests\phpunit\Data;
 
-use PMRAtk\Data\Address;
 use PMRAtk\Data\SafeFileName;
 use PMRAtk\tests\phpunit\TestCase;
 
 
-/**
- *
- */
 class SafeFileNameTest extends TestCase {
 
-    /**
-     * see if created_by and created_by_name are set on save
-     */
     public function testReplaceSpecialChars() {
         $res = SafeFileName::replaceSpecialChars('äöüÄÖÜß-:');
         self::assertSame(
@@ -23,10 +18,6 @@ class SafeFileNameTest extends TestCase {
         );
     }
 
-
-    /**
-     * see if created_by and created_by_name are set on save
-     */
     public function testRemoveDisallowedChars() {
         $res = SafeFileName::removeDisallowedChars(';,! alla.jpg,?=)(');
         self::assertSame(
@@ -35,10 +26,6 @@ class SafeFileNameTest extends TestCase {
         );
     }
 
-
-    /**
-     *
-     */
     public function testcreateSafeFileName() {
         $res = SafeFileName::replaceSpecialChars('Änderung-02.jpg');
         self::assertSame(

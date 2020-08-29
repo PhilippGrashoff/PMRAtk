@@ -42,17 +42,20 @@ class Audit extends SecondaryBaseModel {
 
         $this->setOrder('created_date desc');
 
-        //if the model also has a field created_by_name (Audit models), fill in the current name of the admin user.
-        $this->onHook(Model::HOOK_BEFORE_SAVE, function($model, $isUpdate) {
-            if($isUpdate) {
-                return;
+        // add Name of currently logged in user to "created_by_name" field
+        $this->onHook(
+            Model::HOOK_BEFORE_SAVE,
+            function($model, $isUpdate) {
+                if($isUpdate) {
+                    return;
+                }
+                if(
+                    isset($model->app->auth->user)
+                    && $model->app->auth->user->loaded()
+                ) {
+                    $model->set('created_by_name', $model->app->auth->user->get('name'));
+                }
             }
-            if(
-                isset($model->app->auth->user)
-                && $model->app->auth->user->loaded()
-            ) {
-                $model->set('created_by_name', $model->app->auth->user->get('name'));
-            }
-        });
+        );
     }
 }

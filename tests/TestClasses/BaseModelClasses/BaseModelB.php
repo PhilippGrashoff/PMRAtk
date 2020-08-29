@@ -2,19 +2,19 @@
 
 namespace PMRAtk\tests\TestClasses\BaseModelClasses;
 
+use mtomforatk\ModelWithMToMTrait;
 use PMRAtk\Data\BaseModel;
 use PMRAtk\Data\Traits\AuditTrait;
 use PMRAtk\Data\Traits\EPARelationsTrait;
 use PMRAtk\Data\Traits\FileRelationTrait;
-use PMRAtk\Data\Traits\MToMTrait;
 use PMRAtk\tests\TestClasses\AToB;
 
 class BaseModelB extends BaseModel {
 
     use EPARelationsTrait;
-    use MToMTrait;
     use AuditTrait;
     use FileRelationTrait;
+    use ModelWithMToMTrait;
 
     public $table = 'BaseModelB';
 
@@ -31,6 +31,6 @@ class BaseModelB extends BaseModel {
         $this->_addAuditRef();
         $this->_addFileRef();
 
-        $this->hasMany('AToB', new AToB());
+        $this->addMToMReferenceAndDeleteHook(AToB::class);
     }
 }

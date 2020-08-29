@@ -42,29 +42,6 @@ class BaseModel extends Model
 
 
     /**
-     * loads all objects for this reference and deletes them one by one.
-     * Like this, it is ensured the delete hooks of these objects are executed
-     */
-
-    public function deleteHasMany(string $refName): void
-    {
-        //first check if reference exists
-        if (!$this->hasRef($refName)) {
-            throw new Exception('The reference ' . $refName . ' is not defined for this class: ' . __CLASS__);
-        }
-        $this->_exceptionIfThisNotLoaded();
-
-        //distinguish MtoM and 1toM relations, only use each for MtoM
-        if($this->getRef($refName) instanceof HasMany) {
-            $this->ref($refName)->each('delete');
-        }
-        else {
-            throw new Exception('The Reference ' . $refName . ' is not of type \atk4\data\Reference\HasMany in ' . __FUNCTION__);
-        }
-    }
-
-
-    /**
      * simply checks if $this is loaded, if not, throws exception
      */
     protected function _exceptionIfThisNotLoaded(): void

@@ -4,8 +4,8 @@ namespace PMRAtk\tests\phpunit\Data\Traits;
 
 use PMRAtk\Data\Audit;
 use PMRAtk\Data\Email;
-use PMRAtk\tests\phpunit\Data\BaseModelA;
-use PMRAtk\tests\phpunit\Data\BaseModelB;
+use PMRAtk\tests\TestClasses\BaseModelClasses\BaseModelA;
+use PMRAtk\tests\TestClasses\BaseModelClasses\BaseModelB;
 use PMRAtk\tests\phpunit\TestCase;
 
 

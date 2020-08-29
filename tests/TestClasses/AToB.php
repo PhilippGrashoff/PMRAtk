@@ -2,8 +2,8 @@
 
 namespace PMRAtk\tests\TestClasses;
 
-use PMRAtk\Data\MToMModel;
 use atk4\data\Model;
+use mtomforatk\MToMModel;
 use PMRAtk\tests\TestClasses\BaseModelClasses\BaseModelA;
 use PMRAtk\tests\TestClasses\BaseModelClasses\BaseModelB;
 
@@ -16,10 +16,10 @@ class AToB extends MToMModel {
 
     public $table = 'AToB';
 
-    protected string $className1 = BaseModelA::class;
-    protected string $fieldName1 = 'BaseModelA_id';
-    protected string $className2 = BaseModelB::class;
-    protected string $fieldName2 = 'BaseModelB_id';
+    protected $fieldNamesForReferencedClasses = [
+        'BaseModelA_id' => BaseModelA::class,
+        'BaseModelB_id' => BaseModelB::class
+    ];
 
 
     /**
@@ -30,11 +30,15 @@ class AToB extends MToMModel {
 
         $this->addField('test1');
 
-        $this->onHook(MODEL::HOOK_AFTER_INSERT, function($m) {
-            $baseModelA = $m->ref('BaseModelA_id');
-            $baseModelB = $m->ref('BaseModelB_id');
-            $baseModelA->addMToMAudit('ADD', $baseModelB);
-            $baseModelB->addMToMAudit('ADD', $baseModelB);
-        });
+        //add Audit to both ref models
+        $this->onHook(
+            MODEL::HOOK_AFTER_INSERT,
+            function(AToB $model) {
+                $baseModelA = $model->getObject(BaseModelA::class);
+                $baseModelB = $model->getObject(BaseModelB::class);
+                $baseModelA->addMToMAudit('ADD', $baseModelB);
+                $baseModelB->addMToMAudit('ADD', $baseModelA);
+            }
+        );
     }
 }

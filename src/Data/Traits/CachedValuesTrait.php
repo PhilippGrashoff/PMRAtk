@@ -51,21 +51,18 @@ trait CachedValuesTrait {
     }
 
 
-    /*
-     * set a cached value in the App
-     */
     public function setCachedValue(string $ident, $value) {
         if(is_callable($value)) {
             $value = call_user_func($value);
         }
-        $s = new CachedValue($this->db);
+        $cachedValue = new CachedValue($this->db);
         //make sure its unique
-        $s->tryLoad($ident);
-        if(!$s->loaded()) {
-            $s->set('ident', $ident);
+        $cachedValue->tryLoad($ident);
+        if(!$cachedValue->loaded()) {
+            $cachedValue->set('ident', $ident);
         }
-        $s->set('value', $value);
-        $s->save();
-        $this->_cachedValues[$ident] = clone $s;
+        $cachedValue->set('value', $value);
+        $cachedValue->save();
+        $this->_cachedValues[$ident] = clone $cachedValue;
     }
 }

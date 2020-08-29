@@ -5,9 +5,8 @@ namespace PMRAtk\tests\TestClasses\BaseModelClasses;
 use PMRAtk\Data\BaseModel;
 use PMRAtk\Data\Traits\AuditTrait;
 use PMRAtk\Data\Traits\EPARelationsTrait;
-use PMRAtk\Data\Traits\MToMTrait;
+use mtomforatk\ModelWithMToMTrait;
 use PMRAtk\tests\TestClasses\AToB;
-use PMRAtk\tests\TestClasses\MToMModel;
 
 /**
  * Class BaseModelA
@@ -16,7 +15,7 @@ use PMRAtk\tests\TestClasses\MToMModel;
 class BaseModelA extends BaseModel {
 
     use EPARelationsTrait;
-    use MToMTrait;
+    use ModelWithMToMTrait;
     use AuditTrait;
 
     public $table = 'BaseModelA';
@@ -24,12 +23,8 @@ class BaseModelA extends BaseModel {
     public $caption = 'BMACAPTION';
 
 
-    /**
-     *
-     */
     public function init(): void {
         parent::init();
-
 
         $this->addFields([
             ['name',      'type' => 'string'],
@@ -45,21 +40,11 @@ class BaseModelA extends BaseModel {
         $this->_addAuditRef();
         $this->_addEPARefs();
 
-        $this->hasMany(
-            'AToB',
-            new AToB()
-        );
+        $this->addMToMReferenceAndDeleteHook(AToB::class);
 
-        $this->hasOne(
-            'BaseModelB_id',
-            new BaseModelB()
-        );
+        $this->hasOne('BaseModelB_id', new BaseModelB());
     }
 
-
-    /*
-     *
-     */
     public function getFieldsForEmailTemplate():array {
         return ['name', 'firstname'];
     }

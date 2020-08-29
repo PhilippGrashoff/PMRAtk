@@ -18,6 +18,7 @@ define('TECH_ADMIN_NAME',    'Philipp Reisigl');
 
 //Standard path to root dir
 define('FILE_BASE_PATH',        __DIR__.'/');
+define('SAVE_FILES_IN',         'output');
 
 //where cronjobs creating files should store them. Password protect that folder/disable http access
 define('CRON_FILE_PATH',        'cron/files/');
