@@ -62,13 +62,6 @@ class PHPMailer extends \PHPMailer\PHPMailer\PHPMailer {
      * for testing: add uuid to email subject if set
      */
     public function send():bool {
-        if(
-            $this->app->isTestMode
-            && $this->app->testEmailIdToSubject
-        ) {
-            $this->Subject .= $this->app->testEmailIdToSubject;
-        }
-
         $this->_setEmailAccount();
         return parent::send();
     }

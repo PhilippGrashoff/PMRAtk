@@ -6,14 +6,11 @@ use atk4\data\Reference\HasOne;
 use DateTime;
 use PMRAtk\Data\Audit;
 use PMRAtk\Data\BaseModel;
-use PMRAtk\Data\SecondaryBaseModel;
+use secondarymodelforatk\SecondaryModel;
 use ReflectionClass;
 use atk4\data\Model;
 
 
-/**
- *
- */
 trait AuditTrait
 {
 
@@ -150,7 +147,7 @@ trait AuditTrait
      */
     public function addSecondaryAudit(
         string $type,
-        SecondaryBaseModel $model,
+        SecondaryModel $model,
         string $field = 'value',
         string $modelClass = null,
         int $modelId = null

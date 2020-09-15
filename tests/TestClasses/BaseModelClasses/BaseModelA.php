@@ -4,18 +4,19 @@ namespace PMRAtk\tests\TestClasses\BaseModelClasses;
 
 use PMRAtk\Data\BaseModel;
 use PMRAtk\Data\Traits\AuditTrait;
-use PMRAtk\Data\Traits\EPARelationsTrait;
 use mtomforatk\ModelWithMToMTrait;
 use PMRAtk\tests\TestClasses\AToB;
+use PMRAtk\tests\TestClasses\SecondaryModelClasses\Email;
+use secondarymodelforatk\SecondaryModelRelationTrait;
 
 /**
  * Class BaseModelA
- * @package PMRAtk\tests\phpunit\Data\Cron\TestClasses\BaseModelClasses
+ * @package PMRAtk\tests\phpunit\Data\Cron\CronTestClasses\BaseModelClasses
  */
 class BaseModelA extends BaseModel {
 
-    use EPARelationsTrait;
     use ModelWithMToMTrait;
+    use SecondaryModelRelationTrait;
     use AuditTrait;
 
     public $table = 'BaseModelA';
@@ -38,7 +39,7 @@ class BaseModelA extends BaseModel {
         ]);
 
         $this->_addAuditRef();
-        $this->_addEPARefs();
+        $this->addSecondaryModelHasMany(Email::class);
 
         $this->addMToMReferenceAndDeleteHook(AToB::class);
 

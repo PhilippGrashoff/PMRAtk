@@ -3,7 +3,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- -----------------------------------------------------
 -- Table `SecondaryBaseModel`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `SecondaryBaseModel`
+CREATE TABLE IF NOT EXISTS `SecondaryModelA`
 (
     `id`           INT          NOT NULL AUTO_INCREMENT,
     `last_updated` DATETIME     NULL,
@@ -73,6 +73,7 @@ CREATE TABLE IF NOT EXISTS `audit`
     `id`              INT          NOT NULL AUTO_INCREMENT,
     `last_updated`    DATETIME     NULL,
     `created_date`    DATETIME     NULL,
+    `last_checked`    DATETIME     NULL,
     `rendered_output` TEXT         NULL,
     `created_by_name` VARCHAR(255) NULL,
     `value`           TEXT         NULL,
@@ -125,6 +126,7 @@ CREATE TABLE IF NOT EXISTS `setting`
     `name`             VARCHAR(255) NULL,
     `created_date`     DATETIME     NULL,
     `last_updated`     DATETIME     NULL,
+    `last_checked`     DATETIME     NULL,
     `description`      TEXT         NULL,
     `system`           TINYINT      NULL,
     `value`            TEXT         NULL,
@@ -157,6 +159,7 @@ CREATE TABLE IF NOT EXISTS `email_template`
     `id`           INT          NOT NULL AUTO_INCREMENT,
     `last_updated` DATETIME     NULL,
     `created_date` DATETIME     NULL,
+    `last_checked` DATETIME     NULL,
     `value`        TEXT         NULL,
     `model_class`  VARCHAR(255) NULL,
     `model_id`     INT          NULL,
@@ -222,6 +225,54 @@ CREATE TABLE IF NOT EXISTS `BaseModelB`
     ENGINE = InnoDB
     DEFAULT CHARACTER SET = latin1
     COLLATE = latin1_german1_ci;
+
+
+CREATE TABLE IF NOT EXISTS `BaseModelC`
+(
+    `name`         VARCHAR(255) NULL,
+    `id`           INT          NOT NULL AUTO_INCREMENT,
+    `created_date` DATETIME     NULL,
+    `last_updated` DATETIME     NULL,
+    `time_test`    TIME         NULL,
+    `date_test`    DATE         NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX `id_UNIQUE` (`id` ASC)
+)
+    ENGINE = InnoDB
+    DEFAULT CHARACTER SET = latin1
+    COLLATE = latin1_german1_ci;
+
+
+CREATE TABLE IF NOT EXISTS `BaseModelD`
+(
+    `name`         VARCHAR(255) NULL,
+    `id`           INT          NOT NULL AUTO_INCREMENT,
+    `created_date` DATETIME     NULL,
+    `last_updated` DATETIME     NULL,
+    `time_test`    TIME         NULL,
+    `date_test`    DATE         NULL,
+    `some_other_id_field`    INT         NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX `id_UNIQUE` (`id` ASC)
+)
+    ENGINE = InnoDB
+    DEFAULT CHARACTER SET = latin1
+    COLLATE = latin1_german1_ci;
+
+
+CREATE TABLE IF NOT EXISTS `BaseModelE`
+(
+    `name`         VARCHAR(255) NULL,
+    `id`           INT          NOT NULL AUTO_INCREMENT,
+    `created_date` DATETIME     NULL,
+    `last_updated` DATETIME     NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX `id_UNIQUE` (`id` ASC)
+)
+    ENGINE = InnoDB
+    DEFAULT CHARACTER SET = latin1
+    COLLATE = latin1_german1_ci;
+
 
 
 -- -----------------------------------------------------
@@ -360,6 +411,8 @@ CREATE TABLE IF NOT EXISTS `cron`
     `time_yearly`       TIME         NULL,
     `day_monthly`       INT          NULL,
     `time_monthly`      TIME         NULL,
+    `weekday_weekly`    INT          NULL,
+    `time_weekly`       TIME         NULL,
     `execute_hourly`    INT          NULL,
     `execute_minutely`  INT          NULL,
     `time_daily`        TIME         NULL,

@@ -1,19 +1,17 @@
 <?php declare(strict_types=1);
 
-namespace PMRAtk\Data\Traits;
+namespace traitsforatkdata;
 
 use DateTime;
-use PMRAtk\Data\CachedValue;
+use traitsforatkdata\CachedValue;
 
 trait CachedValuesTrait {
 
-
     protected $_cachedValues = [];
-
     protected $_cachedValuesLoaded = false;
 
 
-    /*
+    /**
      * Load a cached value by ident
      * a timeout in seconds can be defined after which the setting becomes invalid
      * $value is usually a callable which can be used to recalculate the value in case its
@@ -49,7 +47,6 @@ trait CachedValuesTrait {
             return $this->_cachedValues[$ident]->get('value');
         }
     }
-
 
     public function setCachedValue(string $ident, $value) {
         if(is_callable($value)) {

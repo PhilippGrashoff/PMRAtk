@@ -2,9 +2,9 @@
 
 namespace PMRAtk\Data\Email;
 
-use PMRAtk\Data\SecondaryBaseModel;
+use secondarymodelforatk\SecondaryModel;
 
-class EmailTemplate extends SecondaryBaseModel {
+class EmailTemplate extends SecondaryModel {
 
     public $table = 'email_template';
 

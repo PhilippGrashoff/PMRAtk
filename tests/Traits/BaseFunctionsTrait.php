@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace PMRAtk\tests\selenium\Traits;
+namespace PMRAtk\tests\Traits;
 
 use Datetime;
 use Exception;

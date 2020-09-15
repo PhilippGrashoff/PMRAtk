@@ -3,15 +3,16 @@
 namespace PMRAtk\Data;
 
 use atk4\data\Exception;
-use PMRAtk\Data\Traits\CryptIdTrait;
+use traitsforatkdata\CryptIdTrait;
 use PMRAtk\Data\SafeFileName;
 use atk4\data\Model;
+use secondarymodelforatk\SecondaryModel;
 
 
 /**
  *
  */
-class File extends SecondaryBaseModel
+class File extends SecondaryModel
 {
     use CryptIdTrait;
 

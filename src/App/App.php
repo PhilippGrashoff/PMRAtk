@@ -3,25 +3,22 @@
 namespace PMRAtk\App;
 
 use atk4\login\Auth;
-use atk4\ui\Exception;
 use PMRAtk\Data\Email\BaseEmail;
 use PMRAtk\Data\Email\EmailTemplate;
 use PMRAtk\Data\PersistenceWithApp;
-use PMRAtk\Data\Setting;
 use PMRAtk\Data\Token;
 use PMRAtk\Data\User;
 use PMRAtk\View\Traits\UserMessageTrait;
 use ReflectionClass;
-use PMRAtk\View\Template as Template;
+use PMRAtk\View\Template;
+use PMRAtk\Data\Traits\SettingsTrait;
+use atk4\data\Exception;
 
 
-/**
- * Class App
- * @package PMRAtk\App
- */
 class App extends \atk4\ui\App
 {
 
+    use SettingsTrait;
     use UserMessageTrait;
 
     //should audits be created? Disabled e.g. for speeding up tests
@@ -30,8 +27,6 @@ class App extends \atk4\ui\App
     public bool $createNotification = true;
     //indicates if phpunit tests are running.
     public bool $isTestMode = false;
-    //in test mode, an id can be added to the email subject to clearly retrieve that email from a mailserver to check it
-    public string $testEmailIdToSubject;
 
     //used to determine which layout to use
     public $deviceWidth;
@@ -41,23 +36,16 @@ class App extends \atk4\ui\App
 
     //atk login Auth
     public $auth;
-
     //array of user roles which may see the requested page. Checked in __construct
     public $userRolesMaySeeThisPage = [];
-
-    //most settings are now stored in database. The Settings are loaded once and stored in _settings array
-    protected $_settings = [];
-    protected $_settingsLoaded = false;
-
-    //models which are requested often during a single script can be loaded once in here and re-used. Make sure its
-    //read-only usage otherwise caching may cause trouble
-    protected $_cachedModels = [];
 
     //if Api uses App, it sets this property to true
     public $isApiRequest = false;
 
     //the dir in which the email templates are stored
     public $emailTemplateDir = 'template/email';
+    //overwrite standard ATK Template seed
+    public $templateClass = Template::class;
 
 
     /**
@@ -117,18 +105,18 @@ class App extends \atk4\ui\App
         $token = new Token($this->db);
         $token->tryLoadBy('value', $token_string);
         if (!$token->loaded()) {
-            throw new \atk4\data\Exception('Token could not be found', 401);
+            throw new Exception('Token could not be found', 401);
         }
         $user = $token->getParentObject();
         if (!$user || !$user instanceof User) {
-            throw new \atk4\data\Exception('No matching User for Token found', 403);
+            throw new Exception('No matching User for Token found', 403);
         }
 
         $this->auth->user = $user;
     }
 
 
-    /*
+    /**
      * set Date format to german
      */
     public function setPersistenceFormat()
@@ -140,40 +128,16 @@ class App extends \atk4\ui\App
     }
 
 
-    /**
 
     /**
-     *
-     */
-    protected function _getCustomTemplateFromModel(string $name, array $customFromModels): ?EmailTemplate
-    {
-        foreach ($customFromModels as $model) {
-            if (!$model->loaded()) {
-                throw new \atk4\data\Exception('Model needs to be loaded in ' . __FUNCTION__);
-            }
-            $et = new EmailTemplate($this->db);
-            $et->addCondition('model_class', get_class($model));
-            $et->addCondition('model_id', $model->get('id'));
-            $et->tryLoadBy('ident', $name);
-            if ($et->loaded()) {
-                return clone $et;
-            }
-        }
-
-        return null;
-    }
-
-
-    /**
-     * email templates get an extra function to load to distinguish
-     * from HTML element templates
+     * email templates get an extra function to load to distinguish from HTML element templates
      */
     public function loadEmailTemplate(string $name, bool $raw_template = false, array $customFromModels = [])
     {
-        $template = new \PMRAtk\View\Template();
+        $template = new Template();
         $template->app = $this;
         //try to load From EmailTemplate per Model
-        $et = $this->_getCustomTemplateFromModel($name, $customFromModels);
+        $et = $this->_getCustomEmailTemplateFromModel($name, $customFromModels);
         //else try to load from DB
         if (!$et) {
             $et = new EmailTemplate($this->db);
@@ -201,32 +165,26 @@ class App extends \atk4\ui\App
             }
         }
 
-        throw new \atk4\data\Exception('Can not find email template file: ' . $name);
+        throw new Exception('Can not find email template file: ' . $name);
     }
 
-
-    /**
-     * Save a setting into Settings table
-     */
-    public function saveEmailTemplate(string $ident, string $value, string $model_class = '', $model_id = null)
+    protected function _getCustomEmailTemplateFromModel(string $name, array $customFromModels): ?EmailTemplate
     {
-        $et = new EmailTemplate($this->db);
-        if ($model_class && $model_id) {
-            $et->addCondition('model_class', $model_class);
-            $et->addCondition('model_id', $model_id);
+        foreach ($customFromModels as $model) {
+            if (!$model->loaded()) {
+                throw new Exception('Model needs to be loaded in ' . __FUNCTION__);
+            }
+            $et = new EmailTemplate($this->db);
+            $et->addCondition('model_class', get_class($model));
+            $et->addCondition('model_id', $model->get('id'));
+            $et->tryLoadBy('ident', $name);
+            if ($et->loaded()) {
+                return clone $et;
+            }
         }
-        $et->tryLoadBy('ident', $ident);
-        if (!$et->loaded()) {
-            $et->set('ident', $ident);
-        }
-        $et->set('value', $value);
-        if ($model_class && $model_id) {
-            $et->set('model_class', $model_class);
-            $et->set('model_id', $model_id);
-        }
-        $et->save();
-    }
 
+        return null;
+    }
 
     /**
      * Adds Js and CSS needed for summernote Textareas
@@ -258,123 +216,6 @@ class App extends \atk4\ui\App
     }
 
 
-    /**
-     * Function to load all saved settings into the app as they are needed often
-     * during a single request
-     */
-    public function getSetting(string $ident)
-    {
-        //load settings once
-        $this->_loadSettings();
-
-        if (isset($this->_settings[$ident])) {
-            return $this->_settings[$ident];
-        }
-
-        return null;
-    }
-
-
-    /**
-     *
-     */
-    protected function _loadSettings()
-    {
-        if ($this->_settingsLoaded) {
-            return;
-        }
-        foreach (new Setting($this->db) as $m) {
-            $this->_settings[$m->get('ident')] = $m->get('value');
-        }
-        $this->_settingsLoaded = true;
-    }
-
-
-    /**
-     * Force reload of settings
-     */
-    public function unloadSettings()
-    {
-        $this->_settings = [];
-        $this->_settingsLoaded = false;
-    }
-
-
-    /**
-     * returns all STD_ settings, which are typically used in templates
-     */
-    public function getAllSTDSettings(): array
-    {
-        $return = [];
-        $this->_loadSettings();
-
-        foreach ($this->_settings as $key => $value) {
-            if (substr($key, 0, 4) == 'STD_') {
-                $return[$key] = $value;
-            }
-        }
-        return $return;
-    }
-
-
-    /**
-     *
-     */
-    public function settingExists(string $ident): bool
-    {
-        $this->_loadSettings();
-        return array_key_exists($ident, $this->_settings);
-    }
-
-
-    /*
-     * For "installers": Add a setting if it does not exist yet
-     */
-    public function addSetting(Setting $s)
-    {
-        $this->_loadSettings();
-        if (!array_key_exists($s->get('ident'), $this->_settings)) {
-            $s->save();
-            $this->_settingsLoaded = false;
-        }
-    }
-
-
-    /*
-     * Can be used to overwrite a setting, mostly for tests
-     */
-    public function setSetting(Setting $s)
-    {
-        $s->save();
-        $this->_settingsLoaded = false;
-        $this->_loadSettings();
-    }
-
-
-    /**
-     * get a cached model. Cached means within the same request. If Model
-     * wasnt cached yet, load, else return cached value
-     */
-    public function getCachedModel(string $modelName): array
-    {
-        if (!class_exists($modelName)) {
-            throw new Exception('Class ' . $modelName . ' does not exist in ' . __FUNCTION__);
-        }
-
-        //if isset already, return that
-        if (isset($this->_cachedModels[$modelName])) {
-            return $this->_cachedModels[$modelName];
-        }
-
-        $model = new $modelName($this->db);
-        $a = [];
-        foreach ($model as $m) {
-            $a[$m->id] = clone $m;
-        }
-
-        $this->_cachedModels[$modelName] = $a;
-        return $this->_cachedModels[$modelName];
-    }
 
 
     /**

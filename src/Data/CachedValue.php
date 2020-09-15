@@ -1,15 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace PMRAtk\Data;
+namespace traitsforatkdata;
 
 use atk4\data\Model;
 
 
-/**
- * Class CachedValue
- * @package PMRAtk\Data
- */
-class CachedValue extends BaseModel {
+class CachedValue extends Model {
 
     public $table    = 'cached_value';
 
@@ -19,9 +15,6 @@ class CachedValue extends BaseModel {
     public $reload_after_save = false;
 
 
-    /**
-     *
-     */
     public function init(): void {
         parent::init();
 
@@ -34,7 +27,7 @@ class CachedValue extends BaseModel {
             ]
         );
 
-        //if setting with ident exists, only update
+        //if setting with ident exists, only update existing one
         //TODO: If somehow ON DUPLICATE KEY UPDATE is available in ATK, it would save a query
         $this->onHook(Model::HOOK_BEFORE_SAVE, function($model, $isUpdate) {
             if($isUpdate) {

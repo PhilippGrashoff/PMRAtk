@@ -2,37 +2,20 @@
 
 namespace PMRAtk\tests\phpunit\Data\Email;
 
-use PMRAtk\Data\Email;
 use PMRAtk\Data\Email\BaseEmail;
 use PMRAtk\Data\Email\EmailAccount;
 use PMRAtk\Data\Email\EmailTemplate;
 use PMRAtk\Data\Email\PHPMailer;
-use PMRAtk\tests\BaseEmailTestClasses\SomeBaseEmailImplementation;
-use PMRAtk\tests\phpunit\Data\BaseModelA;
-use PMRAtk\tests\phpunit\Data\BaseModelB;
+use PMRAtk\tests\TestClasses\BaseEmailTestClasses\EditPerRecipientEmail;
+use PMRAtk\tests\TestClasses\BaseEmailTestClasses\SomeBaseEmailImplementation;
+use PMRAtk\tests\TestClasses\BaseModelClasses\BaseModelA;
+use PMRAtk\tests\TestClasses\BaseModelClasses\BaseModelB;
 use PMRAtk\tests\phpunit\TestCase;
-
-
-class Signature extends \PMRAtk\Data\User {
-    public function getSignature() {
-        return 'TestSignature';
-    }
-}
-
-
-class EditPerRecipient extends BaseEmail {
-    public function loadInitialTemplate() {
-        $this->set('subject', 'Bla{$testsubject}');
-        $this->set('message', 'Bla{$testbody}');
-    }
-}
+use PMRAtk\tests\TestClasses\SecondaryModelClasses\Email;
 
 
 class BaseEmailTest extends TestCase {
 
-    /*
-     * tests the addRecipient and removeRecipient Function passing various params
-     */
     public function testAddRecipient() {
         $this->_addStandardEmailAccount();
         $base_email = new BaseEmail(self::$app->db);
@@ -43,7 +26,7 @@ class BaseEmailTest extends TestCase {
         $g->set('firstname', 'Lala');
         $g->set('lastname', 'Dusu');
         $g->save();
-        $g->addEmail('test1@easyoutdooroffice.com');
+        $g->addSecondaryModelRecord(Email::class, 'test1@easyoutdooroffice.com');
         $this->assertTrue($base_email->addRecipient($g));
         $this->assertEquals(1, $base_email->ref('email_recipient')->action('count')->getOne());
 
@@ -63,7 +46,7 @@ class BaseEmailTest extends TestCase {
         //pass an email id
         $g = new BaseModelA(self::$app->db);
         $g->save();
-        $e = $g->addEmail('test3@easyoutdooroffice.com');
+        $e = $g->addSecondaryModelRecord(Email::class, 'test3@easyoutdooroffice.com');
         $this->assertTrue($base_email->addRecipient($e->get('id')));
         $this->assertEquals(2, $base_email->ref('email_recipient')->action('count')->getOne());
 
@@ -96,8 +79,8 @@ class BaseEmailTest extends TestCase {
         //test adding not the first, but some other email
         $g = new BaseModelA(self::$app->db);
         $g->save();
-        $g->addEmail('test1@easyoutdooroffice.com');
-        $test2_id = $g->addEmail('test2@easyoutdooroffice.com');
+        $g->addSecondaryModelRecord(Email::class, 'test1@easyoutdooroffice.com');
+        $test2_id = $g->addSecondaryModelRecord(Email::class, 'test2@easyoutdooroffice.com');
         $this->assertTrue($base_email->addRecipient($g, $test2_id->get('id')));
         //now there should be a single recipient and its email should be test2...
         foreach($base_email->ref('email_recipient') as $rec) {
@@ -234,7 +217,7 @@ class BaseEmailTest extends TestCase {
      */
     public function testProcessSubjectAndMessagePerRecipient() {
         $this->_addStandardEmailAccount();
-        $base_email = new EditPerRecipient(self::$app->db, ['template' => '{Subject}BlaDu{$testsubject}{/Subject}BlaDu{$testbody}']);
+        $base_email = new EditPerRecipientEmail(self::$app->db, ['template' => '{Subject}BlaDu{$testsubject}{/Subject}BlaDu{$testbody}']);
         $base_email->loadInitialValues();
         $base_email->processSubjectPerRecipient = function($recipient, $template) {
             $template->set('testsubject', 'HARALD');

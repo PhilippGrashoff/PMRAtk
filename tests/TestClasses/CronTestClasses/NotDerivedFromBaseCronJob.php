@@ -1,11 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace PMRAtk\tests\phpunit\Data\Cron\TestClasses;
+namespace PMRAtk\tests\TestClasses\CronTestClasses;
 
 
-/**
- * Dummy Cron for Tests
- */
 class NotDerivedFromBaseCronJob {
 
     public $name = 'SomeTestCron';

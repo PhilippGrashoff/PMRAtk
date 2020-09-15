@@ -1,28 +1,35 @@
 <?php declare(strict_types=1);
 
-namespace  PMRAtk\Data\Cron;
+namespace PMRAtk\Data\Cron;
 
+use atk4\data\Model;
+use atk4\ui\Dropdown;
 use DateTime;
 use DateTimeInterface;
 use DirectoryIterator;
 use PMRAtk\Data\BaseModel;
+use PMRAtk\View\Control\Date;
+use PMRAtk\View\Control\Integer;
+use PMRAtk\View\Control\Time;
 use ReflectionClass;
 
-class CronManager extends BaseModel {
+class CronManager extends BaseModel
+{
 
     public $table = 'cron';
 
     public $intervalSettings = [
         'YEARLY' => 'Jährlich',
         'MONTHLY' => 'Monatlich',
+        'WEEKLY' => 'Wöchentlich',
         'DAILY' => 'Täglich',
         'HOURLY' => 'Stündlich',
         'MINUTELY' => 'Minütlich'
     ];
 
     public $minutelyIntervalSettings = [
-        'EVERY_MINUTE'           => 'Jede Minute',
-        'EVERY_FIFTH_MINUTE'     => 'Alle 5 Minuten',
+        'EVERY_MINUTE' => 'Jede Minute',
+        'EVERY_FIFTH_MINUTE' => 'Alle 5 Minuten',
         'EVERY_FIFTEENTH_MINUTE' => 'Alle 15 Minuten'
     ];
 
@@ -40,250 +47,420 @@ class CronManager extends BaseModel {
     public $executedCrons = [];
 
 
-    /**
-     *
-     */
-    public function init(): void {
+    public $currentDate;
+    public $currentWeekday;
+    public $currentDay;
+    public $currentTime;
+    public $currentMinute;
+
+
+    public function init(): void
+    {
         parent::init();
-        $this->addFields([
-            ['name',              'type' => 'string',    'caption' => 'Diesen Cronjob ausführen',                                                             'ui' => ['form' => ['DropDown', 'values' => $this->getAvailableCrons()]]],
-            ['description',       'type' => 'text',      'caption' => 'Beschreibung'],
-            ['defaults',          'type' => 'array',     'caption' => 'Zusätzliche Optionen für Cronjob',   'serialize' => 'json'],
-            ['is_active',         'type' => 'integer',   'caption' => 'Aktiv',                              'values' => [0 => 'Nein', 1 => 'Ja'],             'ui' => ['form' => ['DropDown']]],
-            ['interval',          'type' => 'string',    'caption' => 'Ausführungshäufigkeit',              'values' => $this->intervalSettings,              'ui' => ['form' => ['DropDown']]],
-            ['date_yearly',       'type' => 'date',      'caption' => 'am diesem Datum (Jahr wird ignoriert)',                                                'ui' => ['form' => ['\PMRAtk\View\FormField\Date']]],
-            ['time_yearly',       'type' => 'time',      'caption' => 'zu dieser Uhrzeit',                                                                    'ui' => ['form' => ['\PMRAtk\View\FormField\Time']]],
-            ['day_monthly',       'type' => 'integer',   'caption' => 'am diesem Tag (1-28)',                                                                 'ui' => ['form' => ['\PMRAtk\View\FormField\Integer']]],
-            ['time_monthly',      'type' => 'time',      'caption' => 'zu dieser Uhrzeit',                                                                    'ui' => ['form' => ['\PMRAtk\View\FormField\Time']]],
-            ['time_daily',        'type' => 'time',      'caption' => 'Ausführen um',                                                                         'ui' => ['form' => ['\PMRAtk\View\FormField\Time']]],
-            ['minute_hourly',     'type' => 'integer',   'caption' => 'Zu dieser Minute ausführen (0-59)',                                                    'ui' => ['form' => ['\PMRAtk\View\FormField\Integer']]],
-            ['interval_minutely', 'type' => 'string',    'caption' => 'Intervall',                          'values' => $this->minutelyIntervalSettings,      'ui' => ['form' => ['DropDown']]],
-            ['offset_minutely',   'type' => 'integer',   'caption' => 'Verschiebung in Minuten (0-14)',     'default' => 0,                                   'ui' => ['form' => ['\PMRAtk\View\FormField\Integer']]],
-            ['last_executed',     'type' => 'array',     'system' => true,                                  'serialize' => 'json'],
-        ]);
+        $this->addFields(
+            [
+                [
+                    'name',
+                    'type' => 'string',
+                    'caption' => 'Diesen Cronjob ausführen',
+                    'ui' => ['form' => [Dropdown::class, 'values' => $this->getAvailableCrons()]]
+                ],
+                [
+                    'description',
+                    'type' => 'text',
+                    'caption' => 'Beschreibung'
+                ],
+                [
+                    'defaults',
+                    'type' => 'array',
+                    'caption' => 'Zusätzliche Optionen für Cronjob',
+                    'serialize' => 'json'
+                ],
+                [
+                    'is_active',
+                    'type' => 'integer',
+                    'caption' => 'Aktiv',
+                    'values' => [0 => 'Nein', 1 => 'Ja'],
+                    'ui' => ['form' => [Dropdown::class]]
+                ],
+                [
+                    'interval',
+                    'type' => 'string',
+                    'caption' => 'Ausführungshäufigkeit',
+                    'values' => $this->intervalSettings,
+                    'ui' => ['form' => [Dropdown::class]]
+                ],
+                [
+                    'date_yearly',
+                    'type' => 'date',
+                    'caption' => 'am diesem Datum (Jahr wird ignoriert)',
+                    'ui' => ['form' => [Date::class]]
+                ],
+                [
+                    'time_yearly',
+                    'type' => 'time',
+                    'caption' => 'zu dieser Uhrzeit',
+                    'ui' => ['form' => [Time::class]]
+                ],
+                [
+                    'day_monthly',
+                    'type' => 'integer',
+                    'caption' => 'am diesem Tag (1-28)',
+                    'ui' => ['form' => [Integer::class]]
+                ],
+                [
+                    'time_monthly',
+                    'type' => 'time',
+                    'caption' => 'zu dieser Uhrzeit',
+                    'ui' => ['form' => [Time::class]]
+                ],
 
-        $this->addCalculatedField('schedule_info', [
-            function($record) {
-                if(!$record->get('is_active')) {
-                    return '';
-                }
-                if(
-                    $record->get('interval') == 'YEARLY'
-                    && $record->get('date_yearly')
-                    && $record->get('time_yearly')
-                ) {
-                    return 'Jährlich am ' .$record->get('date_yearly')->format('d.m.Y') . ' um ' . $record->get('time_yearly')->format('H:i');
-                }
-                if(
-                    $record->get('interval') == 'MONTHLY'
-                    && $record->get('day_monthly')
-                    && $record->get('time_monthly')
-                ) {
-                    return 'Monatlich am ' .$record->get('day_monthly') . '. um ' . $record->get('time_monthly')->format('H:i');
-                }
-                if(
-                    $record->get('interval') == 'DAILY'
-                    && $record->get('time_daily')
-                ) {
-                    return 'Täglich um ' . $record->get('time_daily')->format('H:i');
-                }
-                if(
-                    $record->get('interval') == 'HOURLY'
-                    && $record->get('minute_hourly')
-                ) {
-                    return 'Stündlich zur '.$record->get('minute_hourly').'. Minute';
-                }
-                if(
-                    $record->get('interval') == 'MINUTELY'
-                    && $record->get('interval_minutely')
-                ) {
-                    if($record->get('interval_minutely') == 'EVERY_MINUTE') {
-                        return 'Zu jeder Minute';
-                    }
-                    elseif($record->get('interval_minutely') == 'EVERY_FIFTH_MINUTE') {
-                        return '5-Minütig um '.(0 + $record->get('offset_minutely')).', '.(5 + $record->get('offset_minutely')).', ...';
-                    }
-                    elseif($record->get('interval_minutely') == 'EVERY_FIFTEENTH_MINUTE') {
-                        return 'Viertelstündlich um '.(0 + $record->get('offset_minutely')).', '.(15 + $record->get('offset_minutely')).', ...';
-                    }
-                }
+                [
+                    'weekday_weekly',
+                    'type' => 'integer',
+                    'caption' => 'an Wochentag',
+                    'values' => GERMAN_WEEKDAYS,
+                    'ui' => ['form' => [Integer::class]]
+                ],
+                [
+                    'time_weekly',
+                    'type' => 'time',
+                    'caption' => 'zu dieser Uhrzeit',
+                    'ui' => ['form' => [Time::class]]
+                ],
 
-                return '';
-            },
-            'type' => 'string',
-            'caption' => 'wird ausgeführt',
-        ]);
+                [
+                    'time_daily',
+                    'type' => 'time',
+                    'caption' => 'Ausführen um',
+                    'ui' => ['form' => [Time::class]]
+                ],
+                [
+                    'minute_hourly',
+                    'type' => 'integer',
+                    'caption' => 'Zu dieser Minute ausführen (0-59)',
+                    'ui' => ['form' => [Integer::class]]
+                ],
+                [
+                    'interval_minutely',
+                    'type' => 'string',
+                    'caption' => 'Intervall',
+                    'values' => $this->minutelyIntervalSettings,
+                    'ui' => ['form' => [Dropdown::class]]
+                ],
+                [
+                    'offset_minutely',
+                    'type' => 'integer',
+                    'caption' => 'Verschiebung in Minuten (0-14)',
+                    'default' => 0,
+                    'ui' => ['form' => [Integer::class]]
+                ],
+                [
+                    'last_executed',
+                    'type' => 'array',
+                    'system' => true,
+                    'serialize' => 'json'
+                ],
+            ]
+        );
 
-        $this->onHook('beforeSave', function($m, $isUpdate) {
-            if(!$m->isDirty('name')) {
-                return;
+        $this->addCalculatedField(
+            'schedule_info',
+            [
+                function (Model $record): string {
+                    return $record->getScheduleInfo();
+                },
+                'type' => 'string',
+                'caption' => 'wird ausgeführt',
+            ]
+        );
+
+        $this->addCreatedDateAndLastUpdateFields();
+        $this->addCreatedDateAndLastUpdatedHook();
+
+        $this->onHook(
+            Model::HOOK_BEFORE_SAVE,
+            function (Model $model, $isUpdate) {
+                if (!$model->isDirty('name')) {
+                    return;
+                }
+                $className = $model->get('name');
+                if (!class_exists($className)) {
+                    return;
+                }
+                $cronClass = new $className($model->app, is_array($model->get('defaults')) ? $model->get('defaults') : []);
+                $model->set('description', $cronClass->description);
             }
-            $className = $m->get('name');
-            if(!class_exists($className)) {
-                return;
-            }
-            $cronClass = new $className($m->app, is_array($m->get('defaults')) ? $m->get('defaults') : []);
-            $m->set('description', $cronClass->description);
-        });
+        );
 
         //execute yearly first, minutely last!
-        $this->setOrder([
-            ["interval = 'YEARLY' DESC"],
-            ["interval = 'MONTHLY' DESC"],
-            ["interval = 'DAILY' DESC"],
-            ["interval = 'HOURLY' DESC"],
-            ["interval = 'MINUTELY' DESC"],
-        ]);
+        $this->setOrder(
+            [
+                ["interval = 'YEARLY' DESC"],
+                ["interval = 'MONTHLY' DESC"],
+                ["interval = 'WEEKLY' DESC"],
+                ["interval = 'DAILY' DESC"],
+                ["interval = 'HOURLY' DESC"],
+                ["interval = 'MINUTELY' DESC"],
+            ]
+        );
     }
 
 
     /**
      *
      */
-    public function run(DateTime $dateTime = null) {
+    public function run(DateTime $dateTime = null): void
+    {
         //for testing settings, a dateTime object can be provided. In Normal operation, do not pass anything to use
-        //curret time
-        if(!$dateTime) {
+        //current time
+        if (!$dateTime) {
             $dateTime = new DateTime();
         }
-        foreach($this as $cron) {
-            if(!$cron->get('is_active')) {
+
+        $this->currentDate    = $dateTime->format('m-d');
+        $this->currentWeekday = $dateTime->format('N');
+        $this->currentDay     = $dateTime->format('m');
+        $this->currentTime    = $dateTime->format('H:i');
+        $this->currentMinute  = $dateTime->format('i');
+
+        foreach ($this as $cron) {
+            if (!$cron->get('is_active')) {
                 continue;
             }
-            $currentDate   = $dateTime->format('m-d');
-            $currentDay    = $dateTime->format('m');
-            $currentTime   = $dateTime->format('H:i');
-            $currentMinute = $dateTime->format('i');
-            //yearly execution
-            if($cron->get('interval') == 'YEARLY') {
-                if(!$cron->get('date_yearly') instanceof DateTimeInterface
-                || !$cron->get('time_yearly') instanceof  DateTimeInterface) {
-                    continue;
-                }
-                if($currentDate !== $cron->get('date_yearly')->format('m-d')
-                || $currentTime !== $cron->get('time_yearly')->format('H:i')) {
-                    continue;
-                }
-                $cron->executeCron();
-            }
-            //monthly execution
-            elseif($cron->get('interval') == 'MONTHLY') {
-                if($cron->get('day_monthly') < 1
-                || $cron->get('day_monthly') > 28
-                || !$cron->get('time_monthly') instanceof DateTimeInterface) {
-                    continue;
-                }
-                if(intval($currentDay) !== $cron->get('day_monthly')
-                || $currentTime !== $cron->get('time_monthly')->format('H:i')) {
-                    continue;
-                }
-                $cron->executeCron();
-            }
-            //daily execution
-            elseif($cron->get('interval') == 'DAILY') {
-                if($currentTime !== $cron->get('time_daily')->format('H:i')) {
-                    continue;
-                }
-                $cron->executeCron();
-            }
-            //hourly
-            elseif($cron->get('interval') == 'HOURLY') {
-                if(intval($currentMinute) !== $cron->get('minute_hourly')) {
-                    continue;
-                }
-                $cron->executeCron();
-            }
-            elseif($cron->get('interval') == 'MINUTELY') {
-                if($this->get('offset_minutely') > 0) {
-                    $currentMinute = (clone $dateTime)->modify('-'.$this->get('offset_minutely').' Minutes')->format('i');
-                }
-                if($cron->get('interval_minutely') == 'EVERY_MINUTE') {
-                    $cron->executeCron();
-                }
-                elseif($cron->get('interval_minutely') == 'EVERY_FIFTH_MINUTE'
-                    && ($currentMinute % 5) === 0) {
-                    $cron->executeCron();
-                }
-                elseif($cron->get('interval_minutely') == 'EVERY_FIFTEENTH_MINUTE'
-                    && ($currentMinute % 15) === 0) {
-                    $cron->executeCron();
-                }
-            }
+            $cron->executeCronIfScheduleMatches();
         }
     }
 
 
+    private function executeCronIfScheduleMatches(): void {
+        //yearly execution
+        if ($this->get('interval') == 'YEARLY') {
+            $this->executeYearlyIfMatches();
+        } //monthly execution
+        elseif ($this->get('interval') == 'MONTHLY') {
+            $this->executeMonthlyIfMatches();
+        } //weekly execution
+        elseif ($this->get('interval') == 'WEEKLY') {
+            $this->executeWeeklyIfMatches();
+        } //daily execution
+        elseif ($this->get('interval') == 'DAILY') {
+            if ($this->currentTime !== $this->get('time_daily')->format('H:i')) {
+                return;
+            }
+            $this->executeCron();
+        } //hourly
+        elseif ($this->get('interval') == 'HOURLY') {
+            if (intval($this->currentMinute) !== $this->get('minute_hourly')) {
+                return;
+            }
+            $this->executeCron();
+        } elseif ($this->get('interval') == 'MINUTELY') {
+            $this->executeMinutelyIfMatches();
+        }
+    }
+    private function executeYearlyIfMatches() {
+        if (
+            !$this->get('date_yearly') instanceof DateTimeInterface
+            || !$this->get('time_yearly') instanceof DateTimeInterface
+        ) {
+            return;
+        }
+        if (
+            $this->currentDate !== $this->get('date_yearly')->format('m-d')
+            || $this->currentTime !== $this->get('time_yearly')->format('H:i')
+        ) {
+            return;
+        }
+
+        $this->executeCron();
+    }
+
+
+    private function executeMonthlyIfMatches() {
+        if (
+            $this->get('day_monthly') < 1
+            || $this->get('day_monthly') > 28
+            || !$this->get('time_monthly') instanceof DateTimeInterface
+        ) {
+            return;
+        }
+        if (
+            intval($this->currentDay) !== $this->get('day_monthly')
+            || $this->currentTime !== $this->get('time_monthly')->format('H:i')) {
+            return;
+        }
+
+        $this->executeCron();
+    }
+
+    private function executeWeeklyIfMatches() {
+        if (
+            $this->get('weekday_weekly') !== (int) $this->currentWeekday
+            || $this->currentTime !== $this->get('time_weekly')->format('H:i')
+        ) {
+            return;
+        }
+
+        $this->executeCron();
+    }
+
+
+    private function executeMinutelyIfMatches() {
+        if ($this->get('interval_minutely') == 'EVERY_MINUTE') {
+            $this->executeCron();
+        } elseif (
+            $this->get('interval_minutely') == 'EVERY_FIFTH_MINUTE'
+            && ($this->currentMinute % 5) === $this->get('offset_minutely')
+        ) {
+            $this->executeCron();
+        } elseif (
+            $this->get('interval_minutely') == 'EVERY_FIFTEENTH_MINUTE'
+            && ($this->currentMinute % 15) === $this->get('offset_minutely')
+        ) {
+            $this->executeCron();
+        }
+    }
+
     /**
      *
      */
-    public function executeCron():bool {
-        $this->_exceptionIfThisNotLoaded();
-        $className = $this->get('name');
-        if(!class_exists($className)) {
+    public function executeCron(): bool
+    {
+        try {
+            $this->_exceptionIfThisNotLoaded();
+            $className = $this->get('name');
+            if (!class_exists($className)) {
+                return false;
+            }
+
+            $cronClass = new $className($this->app, is_array($this->get('defaults')) ? $this->get('defaults') : []);
+            $info = ['name' => $className];
+            $time_start = microtime(true);
+            ob_start();
+            $cronClass->execute();
+            $info['execution_time'] = microtime(true) - $time_start;
+            $info['status'] = $cronClass->successful;
+            $info['last_executed'] = (new DateTime())->format('d.m.Y H:i:s');
+            $info['output'] = ob_get_contents();
+            ob_end_clean();
+
+            if (!isset($this->executedCrons[$this->get('name')])) {
+                $this->executedCrons[$this->get('name')] = [$info];
+            } else {
+                $this->executedCrons[$this->get('name')][] = $info;
+            }
+
+            $this->set('last_executed', $info);
+            $this->save();
+
+            return $cronClass->successful;
+        }
+        //catch any errors as more than one cron could be executed per minutely run
+        catch (\Throwable $e) {
+            //TODO: ERROR Reporting
             return false;
         }
-
-        $cronClass = new $className($this->app, is_array($this->get('defaults')) ? $this->get('defaults') : []);
-        $info = ['name' => $className];
-        $time_start = microtime(true);
-        ob_start();
-        $cronClass->execute();
-        $info['execution_time'] = microtime(true) - $time_start;
-        $info['status']         = $cronClass->successful;
-        $info['last_executed']  = (new DateTime())->format('d.m.Y H:i:s');
-        $info['output']         = ob_get_contents();
-        ob_end_clean();
-
-        if(!isset($this->executedCrons[$this->get('name')])) {
-            $this->executedCrons[$this->get('name')] = [$info];
-        }
-        else {
-            $this->executedCrons[$this->get('name')][] = $info;
-        }
-
-        $this->set('last_executed', $info);
-        $this->save();
-
-        return $cronClass->successful;
     }
 
 
     /**
      * Loads all Cronjob Files and returns them as array:
-     * Fully\Qualifiee\ClassName => Name property
+     * Fully\Qualified\ClassName => Name property
      */
-    public function getAvailableCrons():array {
+    public function getAvailableCrons(): array
+    {
         $res = [];
-        foreach($this->cronFilesPath as $path => $namespace) {
+        foreach ($this->cronFilesPath as $path => $namespace) {
             $dirName = FILE_BASE_PATH . $path;
-            if(!file_exists($dirName)) {
+            if (!file_exists($dirName)) {
                 continue;
             }
 
-            foreach(new DirectoryIterator($dirName) as $file) {
-                if($file->getExtension() !== 'php') {
+            foreach (new DirectoryIterator($dirName) as $file) {
+                if ($file->getExtension() !== 'php') {
                     continue;
                 }
 
-                $className = $namespace.'\\'.$file->getBasename('.php');
-                if(!class_exists($className)
+                $className = $namespace . '\\' . $file->getBasename('.php');
+                if (!class_exists($className)
                     || (new ReflectionClass($className))->isAbstract()) {
                     continue;
                 }
 
-                foreach($this->ignoreClassNames as $name) {
-                    if(strpos($className, $name) !== false) {
+                foreach ($this->ignoreClassNames as $name) {
+                    if (strpos($className, $name) !== false) {
                         continue 2;
                     }
                 }
 
                 $class = new $className($this->app);
-                if(!$class instanceof BaseCronJob) {
+                if (!$class instanceof BaseCronJob) {
                     continue;
                 }
                 $res[get_class($class)] = $class->getName();
             }
         }
+
         return $res;
+    }
+
+    public function getScheduleInfo(): string {
+        if (!$this->get('is_active')) {
+            return '';
+        }
+        if (
+            $this->get('interval') == 'YEARLY'
+            && $this->get('date_yearly')
+            && $this->get('time_yearly')
+        ) {
+            return 'Jährlich am ' . $this->get('date_yearly')->format('d.m.Y')
+                . ' um ' . $this->get('time_yearly')->format('H:i');
+        }
+        if (
+            $this->get('interval') == 'MONTHLY'
+            && $this->get('day_monthly')
+            && $this->get('time_monthly')
+        ) {
+            return 'Monatlich am ' . $this->get('day_monthly')
+                . '. um ' . $this->get('time_monthly')->format('H:i');
+        }
+        if (
+            $this->get('interval') == 'WEEKLY'
+            && $this->get('weekday_weekly')
+            && $this->get('time_weekly')
+        ) {
+            return 'Wöchentlich am ' . GERMAN_WEEKDAYS[$this->get('weekday_weekly')]
+                . ' um ' . $this->get('time_weekly')->format('H:i');
+        }
+        if (
+            $this->get('interval') == 'DAILY'
+            && $this->get('time_daily')
+        ) {
+            return 'Täglich um ' . $this->get('time_daily')->format('H:i');
+        }
+        if (
+            $this->get('interval') == 'HOURLY'
+            && $this->get('minute_hourly')
+        ) {
+            return 'Stündlich zur ' . $this->get('minute_hourly') . '. Minute';
+        }
+        if (
+            $this->get('interval') == 'MINUTELY'
+            && $this->get('interval_minutely')
+        ) {
+            if ($this->get('interval_minutely') == 'EVERY_MINUTE') {
+                return 'Zu jeder Minute';
+            } elseif ($this->get('interval_minutely') == 'EVERY_FIFTH_MINUTE') {
+                return '5-Minütig um ' . (0 + $this->get('offset_minutely'))
+                    . ', ' . (5 + $this->get(
+                            'offset_minutely')) . ', ...';
+            } elseif ($this->get('interval_minutely') == 'EVERY_FIFTEENTH_MINUTE') {
+                return 'Viertelstündlich um ' . (0 + $this->get('offset_minutely'))
+                    . ', ' . (15 + $this->get('offset_minutely')) . ', ...';
+            }
+        }
+
+        return '';
     }
 }

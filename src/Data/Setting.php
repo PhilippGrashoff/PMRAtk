@@ -2,7 +2,7 @@
 
 namespace PMRAtk\Data;
 
-use PMRAtk\Data\Traits\EncryptedFieldTrait;
+use traitsforatkdata\EncryptedFieldTrait;
 use atk4\data\Model;
 
 /**
@@ -54,6 +54,9 @@ class Setting extends BaseModel
                 ],
             ]
         );
+
+        $this->addCreatedDateAndLastUpdateFields();
+        $this->addCreatedDateAndLastUpdatedHook();
 
         $this->hasOne(
             'setting_group_id',

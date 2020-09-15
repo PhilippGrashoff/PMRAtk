@@ -4,11 +4,13 @@
   "prefer-stable": true,
   "config":{
     "platform":{
-      "php":"7.4"
+      "php":"7.3"
     }
   },
   "require":{
     "philippgrashoff/mtomforatk": "master",
+    "philippgrashoff/secondarymodelforatk": "master",
+    "philippgrashoff/traitsforatkdata": "master",
     "atk4/ui": "2.2.0",
     "atk4/data": "2.2.0",
     "atk4/dsql": "2.2.0",
@@ -31,12 +33,6 @@
     "phpunit/phpunit": ">8",
     "php-webdriver/webdriver": "^1.8.2"
   },
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "git@github.com:PhilippGrashoff/mtomforatk.git"
-    }
-  ],
   "autoload":{
     "psr-4":{
       "PMRAtk\\":"src"

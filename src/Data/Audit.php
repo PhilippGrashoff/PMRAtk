@@ -3,13 +3,14 @@
 namespace PMRAtk\Data;
 
 use atk4\data\Model;
+use secondarymodelforatk\SecondaryModel;
 
 
 /**
  * Class Audit
  * @package PMRAtk\Data
  */
-class Audit extends SecondaryBaseModel {
+class Audit extends SecondaryModel {
 
     public $table = 'audit';
 

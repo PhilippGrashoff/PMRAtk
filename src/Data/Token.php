@@ -2,15 +2,16 @@
 
 namespace PMRAtk\Data;
 
-use PMRAtk\Data\Traits\CryptIdTrait;
+use traitsforatkdata\CryptIdTrait;
 use atk4\data\Model;
+use secondarymodelforatk\SecondaryModel;
 
 
 /**
  * Class Token
  * @package PMRAtk\Data
  */
-class Token extends SecondaryBaseModel
+class Token extends SecondaryModel
 {
 
     use CryptIdTrait;

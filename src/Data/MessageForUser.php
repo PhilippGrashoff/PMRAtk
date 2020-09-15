@@ -74,6 +74,9 @@ class MessageForUser extends BaseModel
             ]
         );
 
+        $this->addCreatedDateAndLastUpdateFields();
+        $this->addCreatedDateAndLastUpdatedHook();
+
         $this->addMToMReferenceAndDeleteHook(MessageForUserToUser::class);
     }
 

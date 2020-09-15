@@ -4,7 +4,7 @@ namespace PMRAtk\View;
 
 use atk4\data\Model;
 use DateTimeInterFace;
-use PMRAtk\Data\Traits\DateTimeHelpersTrait;
+use traitsforatkdata\DateTimeHelpersTrait;
 use ReflectionClass;
 
 class Template extends \atk4\ui\Template

@@ -36,6 +36,9 @@ class SettingGroup extends BaseModel {
             ]
         );
 
+        $this->addCreatedDateAndLastUpdateFields();
+        $this->addCreatedDateAndLastUpdatedHook();
+
         $this->hasMany('Setting', Setting::class);
     }
 }

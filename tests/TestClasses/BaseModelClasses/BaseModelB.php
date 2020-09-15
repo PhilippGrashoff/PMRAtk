@@ -5,16 +5,17 @@ namespace PMRAtk\tests\TestClasses\BaseModelClasses;
 use mtomforatk\ModelWithMToMTrait;
 use PMRAtk\Data\BaseModel;
 use PMRAtk\Data\Traits\AuditTrait;
-use PMRAtk\Data\Traits\EPARelationsTrait;
 use PMRAtk\Data\Traits\FileRelationTrait;
 use PMRAtk\tests\TestClasses\AToB;
+use PMRAtk\tests\TestClasses\SecondaryModelClasses\Email;
+use secondarymodelforatk\SecondaryModelRelationTrait;
 
 class BaseModelB extends BaseModel {
 
-    use EPARelationsTrait;
     use AuditTrait;
     use FileRelationTrait;
     use ModelWithMToMTrait;
+    use SecondaryModelRelationTrait;
 
     public $table = 'BaseModelB';
 
@@ -27,7 +28,7 @@ class BaseModelB extends BaseModel {
             ['date_test', 'type' => 'date',   'caption' => 'Startdatum'],
         ]);
 
-        $this->_addEPARefs();
+        $this->addSecondaryModelHasMany(Email::class);
         $this->_addAuditRef();
         $this->_addFileRef();
 

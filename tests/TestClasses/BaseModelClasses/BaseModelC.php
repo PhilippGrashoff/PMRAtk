@@ -3,14 +3,14 @@
 namespace PMRAtk\tests\TestClasses\BaseModelClasses;
 
 use PMRAtk\Data\BaseModel;
-use PMRAtk\Data\Traits\AuditTrait;
-use PMRAtk\Data\Traits\EPARelationsTrait;
-use PMRAtk\Data\Traits\FileRelationTrait;
-use PMRAtk\Data\Traits\MToMTrait;
+use PMRAtk\Data\Token;
+use secondarymodelforatk\SecondaryModelRelationTrait;
 
 class BaseModelC extends BaseModel {
 
-    public $table = 'BaseModelB';
+    use SecondaryModelRelationTrait;
+
+    public $table = 'BaseModelC';
 
     public function init(): void {
         parent::init();
@@ -20,5 +20,8 @@ class BaseModelC extends BaseModel {
             ['time_test', 'type' => 'time',   'caption' => 'Startzeit'],
             ['date_test', 'type' => 'date',   'caption' => 'Startdatum'],
         ]);
+
+        $this->addSecondaryModelHasMany(Token::class);
+
     }
 }

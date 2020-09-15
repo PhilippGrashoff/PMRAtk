@@ -43,14 +43,17 @@ abstract class TestCase extends \atk4\core\AtkPhpunit\TestCase
     }
 
     protected function copyFile(string $filename, string $path = ''): bool {
-        if(file_exists(FILE_BASE_PATH . SAVE_FILES_IN . $filename)) {
+        if(!$path) {
+            $path = FILE_BASE_PATH . SAVE_FILES_IN;
+        }
+        if(file_exists($this->addDirectorySeperatorToPath(FILE_BASE_PATH . SAVE_FILES_IN) . $filename)) {
             return copy(
-                FILE_BASE_PATH . SAVE_FILES_IN . $filename,
+                $this->addDirectorySeperatorToPath(FILE_BASE_PATH . SAVE_FILES_IN) . $filename,
                 $this->addDirectorySeperatorToPath($path) . $filename
             );
         }
         return copy(
-            FILE_BASE_PATH . SAVE_FILES_IN . '/demo-img.jpg',
+            $this->addDirectorySeperatorToPath(FILE_BASE_PATH . SAVE_FILES_IN) . 'demo-img.jpg',
             $this->addDirectorySeperatorToPath($path) . $filename
         );
     }
@@ -138,7 +141,7 @@ abstract class TestCase extends \atk4\core\AtkPhpunit\TestCase
         return $_ENV['TEST_EMAIL_UUID'];
     }
 
-    protected function _addStandardEmailAccount()
+    protected function _addStandardEmailAccount(): EmailAccount
     {
         $ea = new EmailAccount(self::$app->db);
         $ea->set('name', STD_EMAIL);

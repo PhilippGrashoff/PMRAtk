@@ -13,7 +13,7 @@ use PMRAtk\View\Template;
 use ReflectionClass;
 use Throwable;
 
-class BaseEmail extends Model
+class BaseEmail extends BaseModel
 {
 
     public $table = 'base_email';

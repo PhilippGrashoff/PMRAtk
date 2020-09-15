@@ -2,10 +2,10 @@
 
 namespace PMRAtk\tests\TestClasses\BaseModelClasses;
 
-use PMRAtk\Data\SecondaryBaseModel;
 use PMRAtk\Data\Traits\CryptIdTrait;
+use secondarymodelforatk\SecondaryModel;
 
-class CryptIdSecondaryModel extends SecondaryBaseModel {
+class CryptIdSecondaryModel extends SecondaryModel {
     use CryptIdTrait;
 
     public $table = 'SecondaryBaseModel';
