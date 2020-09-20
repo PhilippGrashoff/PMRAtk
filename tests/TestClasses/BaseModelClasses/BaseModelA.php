@@ -6,7 +6,7 @@ use PMRAtk\Data\BaseModel;
 use PMRAtk\Data\Traits\AuditTrait;
 use mtomforatk\ModelWithMToMTrait;
 use PMRAtk\tests\TestClasses\AToB;
-use PMRAtk\tests\TestClasses\SecondaryModelClasses\Email;
+use PMRAtk\Data\Email;
 use secondarymodelforatk\SecondaryModelRelationTrait;
 
 /**
@@ -38,7 +38,7 @@ class BaseModelA extends BaseModel {
 
         ]);
 
-        $this->_addAuditRef();
+        $this->addAuditRefAndAuditHooks();
         $this->addSecondaryModelHasMany(Email::class);
 
         $this->addMToMReferenceAndDeleteHook(AToB::class);

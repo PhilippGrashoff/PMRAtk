@@ -28,21 +28,21 @@ class AuditTraitTest extends TestCase
     {
         $a = new BaseModelA(self::$app->db);
         $a->save();
-        $this->assertEquals(1, $a->getAuditViewModel()->action('count')->getOne());
+        self::assertEquals(1, $a->getAuditViewModel()->action('count')->getOne());
         $a->set('name', 'TEST');
         $a->save();
-        $this->assertEquals(2, $a->getAuditViewModel()->action('count')->getOne());
+        self::assertEquals(2, $a->getAuditViewModel()->action('count')->getOne());
         $a->set('dd_test', 1);
         $a->save();
-        $this->assertEquals(3, $a->getAuditViewModel()->action('count')->getOne());
+        self::assertEquals(3, $a->getAuditViewModel()->action('count')->getOne());
         $a->set('time', '10:00');
         $a->set('date', '2019-05-05');
         $a->set('dd_test', 2);
         $a->set('dd_test_2', 'bla');
         $a->save();
-        $this->assertEquals(4, $a->getAuditViewModel()->action('count')->getOne());
+        self::assertEquals(4, $a->getAuditViewModel()->action('count')->getOne());
         $a->addAdditionalAudit('SOMETYPE', []);
-        $this->assertEquals(5, $a->getAuditViewModel()->action('count')->getOne());
+        self::assertEquals(5, $a->getAuditViewModel()->action('count')->getOne());
 
         //hasOne Audit field all possibilities
         $b1 = new BaseModelB(self::$app->db);
@@ -69,8 +69,8 @@ class AuditTraitTest extends TestCase
                 $change_found = true;
             }
         }
-        $this->assertTrue($change_found);
-        $this->assertTrue($create_found);
+        self::assertTrue($change_found);
+        self::assertTrue($create_found);
     }
 
     public function testDeleteAudit()
@@ -79,45 +79,14 @@ class AuditTraitTest extends TestCase
         $a->save();
         $initial_audit_count = (new Audit(self::$app->db))->action('count')->getOne();
         $a->delete();
-        $this->assertEquals($initial_audit_count + 1, (new Audit(self::$app->db))->action('count')->getOne());
+        self::assertEquals($initial_audit_count + 1, (new Audit(self::$app->db))->action('count')->getOne());
 
         //make sure newest audit is of type delete
         $a = new Audit(self::$app->db);
         $a->setOrder('id DESC');
         $a->setLimit(0, 1);
         $a->loadAny();
-        $this->assertEquals('DELETE', $a->get('value'));
-    }
-
-    public function testEPAAudit()
-    {
-        $a = new BaseModelA(self::$app->db);
-        $a->save();
-        $initial_audit_count = (new Audit(self::$app->db))->action('count')->getOne();
-        $e = $a->addEmail('tetete');
-        $a->updateEmail($e->get('id'), 'jzjzjz');
-        $a->deleteEmail($e->get('id'));
-
-        $this->assertEquals($initial_audit_count + 3, (new Audit(self::$app->db))->action('count')->getOne());
-
-        //make sure ADD_EMAIL, CHANGE_EMAIL AND DELETE_EMAIL Audits are there
-        $change_found = false;
-        $create_found = false;
-        $delete_found = false;
-        foreach ($a->getAuditViewModel() as $audit) {
-            if ($audit->get('value') == 'ADD_EMAIL') {
-                $create_found = true;
-            }
-            if ($audit->get('value') == 'CHANGE_EMAIL') {
-                $change_found = true;
-            }
-            if ($audit->get('value') == 'REMOVE_EMAIL') {
-                $delete_found = true;
-            }
-        }
-        $this->assertTrue($change_found);
-        $this->assertTrue($create_found);
-        $this->assertTrue($delete_found);
+        self::assertEquals('DELETE', $a->get('value'));
     }
 
     public function testNoAuditCreatedOnSetting()
@@ -128,11 +97,8 @@ class AuditTraitTest extends TestCase
         $a = new BaseModelA(self::$app->db);
         $a->save();
         $a->addAdditionalAudit('bla', []);
-        $e = $a->addEmail('lala');
-        $a->updateEmail($e->id, 'fdgdfgdf');
-        $a->deleteEmail($e->id);
 
-        $this->assertEquals($initial_audit_count, (new Audit(self::$app->db))->action('count')->getOne());
+        self::assertEquals($initial_audit_count, (new Audit(self::$app->db))->action('count')->getOne());
         self::$app->createAudit = true;
     }
 
@@ -142,7 +108,7 @@ class AuditTraitTest extends TestCase
         $a->save();
         $initial_audit_count = (new Audit(self::$app->db))->action('count')->getOne();
         $a->addMToMAudit('ADD', new BaseModelB(self::$app->db));
-        $this->assertEquals($initial_audit_count + 1, (new Audit(self::$app->db))->action('count')->getOne());
+        self::assertEquals($initial_audit_count + 1, (new Audit(self::$app->db))->action('count')->getOne());
     }
 
     public function testNoAuditOnNoValueChange()

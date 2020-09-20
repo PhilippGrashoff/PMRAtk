@@ -16,7 +16,7 @@ class FileLoggerTest extends TestCase {
         $fl = new FileLogger(FILE_BASE_PATH.'tests/logs/testlog.txt');
         $fl->emptyLogFile();
         $fl->log('1', 'bla');
-        $this->assertTrue(file_exists(FILE_BASE_PATH.'tests/logs/testlog.txt'));
+        self::assertTrue(file_exists(FILE_BASE_PATH.'tests/logs/testlog.txt'));
     }
 
 

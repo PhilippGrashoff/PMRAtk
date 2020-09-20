@@ -34,9 +34,9 @@ class FormHelpersTraitTest extends TestCase {
         $f->id = 'testForm';
         $field1 = $f->addControl('test1');
         $field2 = $f->addControl('test2');
-        $this->assertNotEquals('test1', $field1->id);
+        self::assertNotEquals('test1', $field1->id);
         $v->setHTMLIds($f);
-        $this->assertEquals('test1', $field1->id);
-        $this->assertEquals('testForm_submit', $f->buttonSave->id);
+        self::assertEquals('test1', $field1->id);
+        self::assertEquals('testForm_submit', $f->buttonSave->id);
     }
 }

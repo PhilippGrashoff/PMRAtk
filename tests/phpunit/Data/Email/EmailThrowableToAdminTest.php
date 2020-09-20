@@ -38,6 +38,6 @@ class EmailThrowableToAdminTest extends TestCase {
         $this->_addStandardEmailAccount();
         $tt = new ThrowableTest();
         $tt->app = self::$app;
-        $this->assertFalse($tt->throwThat());
+        self::assertFalse($tt->throwThat());
     }
 }

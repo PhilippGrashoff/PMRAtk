@@ -22,7 +22,7 @@ class CachedValueTest extends TestCase {
         $cachedValue->set('value', '2');
         $cachedValue->save();
 
-        $this->assertEquals($initial_count + 1, (new CachedValue(self::$app->db))->action('count')->getOne());
+        self::assertEquals($initial_count + 1, (new CachedValue(self::$app->db))->action('count')->getOne());
     }
 
 

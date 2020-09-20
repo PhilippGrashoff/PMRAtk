@@ -29,7 +29,7 @@ class BaseModelB extends BaseModel {
         ]);
 
         $this->addSecondaryModelHasMany(Email::class);
-        $this->_addAuditRef();
+        $this->addAuditRefAndAuditHooks();
         $this->_addFileRef();
 
         $this->addMToMReferenceAndDeleteHook(AToB::class);

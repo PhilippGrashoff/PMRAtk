@@ -114,7 +114,7 @@ class File extends SecondaryModel
     /**
      * For File, use a 21 char long cryptic ID
      */
-    protected function _generateCryptId(): string
+    protected function generateCryptId(): string
     {
         $return = '';
         for ($i = 0; $i < 21; $i++) {

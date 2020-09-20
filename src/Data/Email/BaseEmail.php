@@ -30,12 +30,10 @@ class BaseEmail extends BaseModel
     //can be filled per Implementation and used for filtering. Values like "customers", "administrators" for example
     public $recipientCategories = [];
 
+    public $emailClassName = Email::class;
+
     //usually an Email is per Model record, e.g. per Group. Save in here to make work easier
     public $model;
-
-    //in test mode, all initial recipients are removed and only the logged in user added
-    //this functionality is used for easily being able to write test emails with real life data
-    public $isTestMode = false;
 
     //You can define an ID of an EmailTemplate to use. If so, this will be taken instead of the normal one used for the implementation
     public $emailTemplateId = null;
@@ -141,20 +139,7 @@ class BaseEmail extends BaseModel
      */
     public function loadInitialValues()
     {
-        if ($this->isTestMode) {
-            foreach ($this->ref('email_recipient') as $r) {
-                $r->delete();
-            }
-            if (
-                isset($this->app->auth->user)
-                && $this->app->auth->user->loaded()
-            ) {
-                $this->addRecipient($this->app->auth->user);
-            }
-        } else {
-            $this->loadInitialRecipients();
-        }
-
+        $this->loadInitialRecipients();
         $this->loadInitialAttachments();
         $this->loadInitialTemplate();
     }
@@ -244,7 +229,10 @@ class BaseEmail extends BaseModel
         }
 
         //use EOOUser signature if available
-        if (!empty($this->app->auth->user->getSignature())) {
+        if (
+            isset($this->app->auth->user)
+            && !empty($this->app->auth->user->getSignature())
+        ) {
             $template->del('Signature');
             $template->appendHTML('Signature', nl2br(htmlspecialchars($this->app->auth->user->getSignature())));
         } //if not, use standard signature if set
@@ -321,13 +309,27 @@ class BaseEmail extends BaseModel
         $r->set('model_id', $object->get($object->id_field));
 
         //go for first email if no email_id was specified
-        if ($email_id == null && $e = filter_var($object->getFirstEmail(), FILTER_VALIDATE_EMAIL)) {
-            $r->set('email', $e);
-            return clone $r;
+        if(
+            $email_id == null
+            && method_exists($object, 'getFirstSecondaryModelRecord')
+        ) {
+            echo "here";
+            $emailObject = $object->getFirstSecondaryModelRecord($this->emailClassName);
+            if(
+                $emailObject
+                && filter_var($emailObject->get('value'), FILTER_VALIDATE_EMAIL)
+            ) {
+                $r->set('email', $emailObject->get('value'));
+                return clone $r;
+            }
         } //else go for specified email id
-        elseif ($email_id && $e = filter_var($object->getEmailById($email_id), FILTER_VALIDATE_EMAIL)) {
-            $r->set('email', $e);
-            return clone $r;
+        elseif ($email_id) {
+            $emailObject = new $this->emailClassName($this->persistence);
+            $emailObject->tryLoad($email_id);
+            if($emailObject->loaded()) {
+                $r->set('email', $emailObject->get('value'));
+                return clone $r;
+            }
         }
 
         return null;
@@ -387,7 +389,7 @@ class BaseEmail extends BaseModel
      *
      * @param int
      */
-    public function removeAttachment(int $id)
+    public function removeAttachment($id)
     {
         $a = $this->get('attachments');
         if (in_array($id, $a)) {
@@ -420,10 +422,10 @@ class BaseEmail extends BaseModel
         //create a template from message so tags set in message like
         //{$firstname} can be filled
         $mt = new Template();
-        $mt->loadTemplateFromString($this->get('message'));
+        $mt->loadTemplateFromString((string) $this->get('message'));
 
         $st = new Template();
-        $st->loadTemplateFromString($this->get('subject'));
+        $st->loadTemplateFromString((string) $this->get('subject'));
 
         //add Attachments
         if ($this->get('attachments')) {
@@ -556,7 +558,7 @@ class BaseEmail extends BaseModel
     /**
      * can be implemented in descendants. Can be used to set a standard Email Account to send from when more than one is available
      */
-    public function getDefaultEmailAccountId(): ?int
+    public function getDefaultEmailAccountId()
     {
         $ea = new EmailAccount($this->persistence);
         $ea->tryLoadAny();

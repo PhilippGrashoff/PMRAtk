@@ -36,7 +36,7 @@ class BaseModelTest extends TestCase {
         $u->set('BaseModelB_id', $b->get('id'));
         $u->save();
         $ref = $u->loadedHasOneRef('BaseModelB_id');
-        $this->assertEquals($b->get('id'), $ref->get('id'));
+        self::assertEquals($b->get('id'), $ref->get('id'));
         $b->delete();
         $this->expectException(\atk4\data\Exception::class);
         $u->loadedHasOneRef('BaseModelB_id');

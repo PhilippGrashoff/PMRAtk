@@ -22,7 +22,7 @@ class ApiTest extends TestCase {
         }
         catch(Exception $e) {}
 
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
 
@@ -38,7 +38,7 @@ class ApiTest extends TestCase {
         catch(Exception $e) {}
 
         $_REQUEST['token'] = null;
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
 
@@ -53,7 +53,7 @@ class ApiTest extends TestCase {
         $api = new Api(self::$app);
 
         $_REQUEST['token'] = null;
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
 
@@ -79,9 +79,9 @@ class ApiTest extends TestCase {
 
         $export = $this->callProtected($api, 'exportModel', [$a]);
         //date and time fields should been converted for export
-        $this->assertEquals($export[0]['created_date'], $a->get('created_date')->format(DATE_ATOM));
-        $this->assertEquals($export[1]['time_test'], '10:00:00');
-        $this->assertEquals($export[1]['date_test'], '2005-05-05');
+        self::assertEquals($export[0]['created_date'], $a->get('created_date')->format(DATE_ATOM));
+        self::assertEquals($export[1]['time_test'], '10:00:00');
+        self::assertEquals($export[1]['date_test'], '2005-05-05');
     }
 
 
@@ -109,7 +109,7 @@ class ApiTest extends TestCase {
 
         $export = $this->callProtected($api, 'exportModel', [$a]);
 
-        $this->assertTrue(isset($export[0]));
+        self::assertTrue(isset($export[0]));
     }
 
 
@@ -124,6 +124,6 @@ class ApiTest extends TestCase {
         $api = new Api(self::$app);
         $api->path = 'somepath/?token=Duggu';
         $this->callProtected($api, '_removeURLParamsFromPath');
-        $this->assertEquals($api->path, 'somepath/');
+        self::assertEquals($api->path, 'somepath/');
     }
 }

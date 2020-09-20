@@ -21,11 +21,11 @@ class FileTest extends TestCase {
         $f->createFileName('filetest.jpg');
         $this->_copyFile($f->get('value'));
         $f->save();
-        $this->assertTrue($f->checkFileExists());
+        self::assertTrue($f->checkFileExists());
         $cf = clone $f;
         $f->delete();
-        $this->assertFalse($cf->checkFileExists());
-        $this->assertEquals($initial_file_count, (new File(self::$app->db))->action('count')->getOne());
+        self::assertFalse($cf->checkFileExists());
+        self::assertEquals($initial_file_count, (new File(self::$app->db))->action('count')->getOne());
     }
 
 
@@ -35,7 +35,7 @@ class FileTest extends TestCase {
     public function testDeleteNonExistantFile() {
         $f = new File(self::$app->db);
         $f->set('value', 'SomeNonExistantFile');
-        $this->assertFalse($f->deleteFile());
+        self::assertFalse($f->deleteFile());
     }
 
 
@@ -57,8 +57,8 @@ class FileTest extends TestCase {
         $f = new File(self::$app->db);
         $f1 = $this->createTestFile('LALA.jpg');
         $f->createFileName($f1->get('value'));
-        $this->assertNotEquals($f->get('value'), $f1->get('value'));
-        $this->assertEquals($f->get('filetype'), $f1->get('filetype'));
+        self::assertNotEquals($f->get('value'), $f1->get('value'));
+        self::assertEquals($f->get('filetype'), $f1->get('filetype'));
     }
 
 
@@ -67,7 +67,7 @@ class FileTest extends TestCase {
      */
     public function testSaveStringToFile() {
         $f = new File(self::$app->db);
-        $this->assertTrue($f->saveStringToFile('JLADHDDFEJD'));
+        self::assertTrue($f->saveStringToFile('JLADHDDFEJD'));
     }
 
 
@@ -78,7 +78,7 @@ class FileTest extends TestCase {
         $f = new File(self::$app->db);
         $f->set('path', 'somepath/');
         $f->set('value', 'Logo.jpg');
-        $this->assertEquals(URL_BASE_PATH.'somepath/Logo.jpg', $f->getLink());
+        self::assertEquals(URL_BASE_PATH.'somepath/Logo.jpg', $f->getLink());
     }
 
 
@@ -88,7 +88,7 @@ class FileTest extends TestCase {
     public function testuploadFile() {
         $f = new File(self::$app->db);
         //false because move_uploaded_file knows it not an uploaded file
-        $this->assertFalse($f->uploadFile(['name' => 'LALA', 'tmp_name' => 'sdfkjsdf.txt']));
+        self::assertFalse($f->uploadFile(['name' => 'LALA', 'tmp_name' => 'sdfkjsdf.txt']));
     }
 
 
@@ -101,11 +101,11 @@ class FileTest extends TestCase {
         $g->set('path', 'tests/');
         $g->save();
         $c = $g->get('crypt_id');
-        $this->assertEquals(21, strlen($g->get('crypt_id')));
+        self::assertEquals(21, strlen($g->get('crypt_id')));
 
         //see if it stays the same after another save
         $g->save();
-        $this->assertEquals($c, $g->get('crypt_id'));
+        self::assertEquals($c, $g->get('crypt_id'));
     }
 
 
@@ -118,7 +118,7 @@ class FileTest extends TestCase {
         $g->load(1);
 
         //now a crypt_id should have been created and saved
-        $this->assertEquals(21, strlen($g->get('crypt_id')));
+        self::assertEquals(21, strlen($g->get('crypt_id')));
     }
 
 

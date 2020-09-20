@@ -82,12 +82,15 @@ abstract class TestCase extends \atk4\core\AtkPhpunit\TestCase
         $audit = $m->getAuditViewModel();
         $audit->addCondition('value', $type);
         $audit->tryLoadAny();
-        $this->assertTrue($audit->loaded());
+        self::assertTrue($audit->loaded());
         return clone $audit;
     }
 
     public function createTestFile(string $filename, string $path = '', BaseModel $parent = null)
     {
+        if(!$path) {
+            $path = SAVE_FILES_IN;
+        }
         $file = new File(self::$app->db, ['parentObject' => $parent]);
         $file->set('path', $path);
         $file->createFileName($filename);
@@ -117,17 +120,17 @@ abstract class TestCase extends \atk4\core\AtkPhpunit\TestCase
             $otherModel->save();
         }
 
-        $this->assertFalse($model->$hasname($otherModel));
-        $this->assertTrue($model->$addname($otherModel));
-        $this->assertTrue($model->$hasname($otherModel));
+        self::assertFalse($model->$hasname($otherModel));
+        self::assertTrue($model->$addname($otherModel));
+        self::assertTrue($model->$hasname($otherModel));
         if (method_exists($model, $getRelationName)) {
             $m = $model->$getRelationName();
             if ($m instanceof Model) {
                 self::assertEquals(1, $model->$getRelationName()->action('count')->getOne());
             }
         }
-        $this->assertTrue($model->$removename($otherModel));
-        $this->assertFalse($model->$hasname($otherModel));
+        self::assertTrue($model->$removename($otherModel));
+        self::assertFalse($model->$hasname($otherModel));
     }
 
     public function countModelRecords(string $model_class)

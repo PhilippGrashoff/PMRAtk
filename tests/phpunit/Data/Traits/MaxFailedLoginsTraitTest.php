@@ -16,7 +16,9 @@ class MaxFailedLoginsTraitTest extends TestCase {
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
-        self::$userBefore = self::$app->auth->user;
+        if(isset(self::$app->auth->user)) {
+            self::$userBefore = self::$app->auth->user;
+        }
     }
 
 

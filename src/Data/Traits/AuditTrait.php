@@ -2,6 +2,7 @@
 
 namespace PMRAtk\Data\Traits;
 
+use atk4\data\Reference;
 use atk4\data\Reference\HasOne;
 use DateTime;
 use PMRAtk\Data\Audit;
@@ -17,9 +18,9 @@ trait AuditTrait
     /**
      * use in Model::init() to add the audit Ref
      */
-    protected function _addAuditRef()
+    protected function addAuditRefAndAuditHooks(): Reference
     {
-        $this->hasMany(
+        $ref = $this->hasMany(
             'Audit',
             [
                 function () {
@@ -47,8 +48,9 @@ trait AuditTrait
                 $model->createDeleteAudit();
             }
         );
-    }
 
+        return $ref;
+    }
 
     /**
      * usually returns $this->ref('Audit'). May be overwritten by descendants
@@ -58,7 +60,6 @@ trait AuditTrait
     {
         return $this->ref('Audit');
     }
-
 
     /**
      * Save any change to Audit
@@ -70,6 +71,7 @@ trait AuditTrait
         }
 
         $data = [];
+        //TODO: This will fail with atk 2.3 where dirty_after_save behaviour changed
         foreach ($this->dirty as $field_name => $dirty_field) {
             //only audit non system fields and fields that go to persistence
             if (!$this->hasField($field_name)
@@ -126,7 +128,6 @@ trait AuditTrait
         }
     }
 
-
     /**
      * save delete to Audit
      */
@@ -141,7 +142,6 @@ trait AuditTrait
         $audit->save();
     }
 
-
     /**
      * creates an Audit for secondary models like emails, if it was added, changed or removed
      */
@@ -150,7 +150,7 @@ trait AuditTrait
         SecondaryModel $model,
         string $field = 'value',
         string $modelClass = null,
-        int $modelId = null
+        $modelId = null
     ) {
         if (!$this->app->createAudit) {
             return;
@@ -178,7 +178,6 @@ trait AuditTrait
         }
     }
 
-
     /**
      * creates an Audit for adding/removing MToM Relations
      */
@@ -198,7 +197,6 @@ trait AuditTrait
         $audit->save();
     }
 
-
     /**
      * Adds an additional audit entry which is not related to one of the model's fields
      */
@@ -213,7 +211,6 @@ trait AuditTrait
         $audit->set('data', $data);
         $audit->save();
     }
-
 
     /**
      *  used to create a array containing the audit data for a normal field

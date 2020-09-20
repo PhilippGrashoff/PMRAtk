@@ -14,7 +14,7 @@ class SettingTest extends TestCase {
      */
     public function testInit() {
         $s = new Setting(self::$app->db);
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
 

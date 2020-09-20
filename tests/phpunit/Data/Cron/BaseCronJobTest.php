@@ -18,8 +18,8 @@ class BaseCronJobTest extends TestCase {
         $this->_addStandardEmailAccount();
         $c = new SampleCronWithEmailMessage(self::$app, ['addAdminToSuccessEmail' => true]);
         $c->execute();
-        $this->assertTrue($c->successful);
-        $this->assertEquals(1, count($c->app->userMessages));
+        self::assertTrue($c->successful);
+        self::assertEquals(1, count($c->app->userMessages));
     }
 
     public function testExceptionCronJob() {
@@ -27,7 +27,7 @@ class BaseCronJobTest extends TestCase {
         $c = new SampleCronWithException(self::$app, ['addAdminToSuccessEmail' => true]);
         $c->execute();
         //an email was sent
-        $this->assertFalse($c->successful);
+        self::assertFalse($c->successful);
     }
 
     public function testExceptionNoExecuteImplemented() {
@@ -42,8 +42,8 @@ class BaseCronJobTest extends TestCase {
         self::$app->userMessages = [];
         $c = new SampleCron(self::$app);
         $c->execute();
-        $this->assertTrue($c->successful);
-        $this->assertTrue(empty($c->phpMailer->getLastMessageID()));
+        self::assertTrue($c->successful);
+        self::assertTrue(empty($c->phpMailer->getLastMessageID()));
     }
 
     public function testNoRecipientNoSuccessMessage() {
@@ -51,15 +51,15 @@ class BaseCronJobTest extends TestCase {
         self::$app->userMessages[] = ['message' => 'Duggu', 'class' => 'error'];
         $c = new SampleCron(self::$app);
         $c->execute();
-        $this->assertTrue($c->successful);
-        $this->assertTrue(empty($c->phpMailer->getLastMessageID()));
+        self::assertTrue($c->successful);
+        self::assertTrue(empty($c->phpMailer->getLastMessageID()));
     }
 
     public function testGetName() {
         $this->_addStandardEmailAccount();
         $c = new SampleCronWithEmailMessage(self::$app);
-        $this->assertEquals('TestName', $c->getName());
+        self::assertEquals('TestName', $c->getName());
         $c = new SampleCron(self::$app);
-        $this->assertEquals('SomeTestCron', $c->getName());
+        self::assertEquals('SomeTestCron', $c->getName());
     }
 }

@@ -37,7 +37,7 @@ class OutputExceptionTraitTest extends TestCase {
         }
         catch(\Exception $e) {
             $res = $v->outputException($e);
-            $this->assertTrue(strpos($res[0], 'Ein technischer Fehler ist aufgetreten') !== false);
+            self::assertTrue(strpos($res[0], 'Ein technischer Fehler ist aufgetreten') !== false);
         }
     }
 
@@ -53,7 +53,7 @@ class OutputExceptionTraitTest extends TestCase {
         }
         catch(\Exception $e) {
             $res = $v->outputException($e);
-            $this->assertTrue(strpos($res[0], 'Some Error Duggu') !== false);
+            self::assertTrue(strpos($res[0], 'Some Error Duggu') !== false);
         }
     }
 
@@ -69,7 +69,7 @@ class OutputExceptionTraitTest extends TestCase {
         }
         catch(\Exception $e) {
             $res = $v->outputException($e);
-            $this->assertTrue(strpos($res[0], 'Some Error') !== false);
+            self::assertTrue(strpos($res[0], 'Some Error') !== false);
         }
     }
 
@@ -85,8 +85,8 @@ class OutputExceptionTraitTest extends TestCase {
         }
         catch(\Exception $e) {
             $res = $v->outputException($e);
-            $this->assertTrue(strpos($res[0], 'Some Error1') !== false);
-            $this->assertTrue(strpos($res[1], 'Some Error2') !== false);
+            self::assertTrue(strpos($res[0], 'Some Error1') !== false);
+            self::assertTrue(strpos($res[1], 'Some Error2') !== false);
         }
     }
 
@@ -102,7 +102,7 @@ class OutputExceptionTraitTest extends TestCase {
         }
         catch(\Exception $e) {
             $res = $v->outputExceptionAsJsNotify($e);
-            $this->assertEquals(2, count($res));
+            self::assertEquals(2, count($res));
         }
     }
 }

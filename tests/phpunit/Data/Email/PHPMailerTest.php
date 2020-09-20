@@ -21,7 +21,7 @@ class PHPMailerTest extends TestCase {
         $tt = new PHPMailer(self::$app);
         self::$app->isTestMode = true;
         $_ENV['TEST_EMAIL_UUID'] = 'DUDUDU';
-        $this->assertFalse($tt->send());
+        self::assertFalse($tt->send());
     }
 
 

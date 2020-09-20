@@ -19,7 +19,7 @@ class AppTest extends TestCase {
      */
     public function testAppConstruct() {
         $app = new App(['nologin'], ['always_run' => false]);
-        $this->assertTrue($app->auth->user instanceOf \PMRAtk\Data\User);
+        self::assertTrue($app->auth->user instanceOf \PMRAtk\Data\User);
     }
 
 
@@ -52,7 +52,7 @@ class AppTest extends TestCase {
         $app->db = self::$app->db;
         $app->loadUserByToken($token);
         //some assertion so PHPUnit does not complain
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
 
@@ -85,7 +85,7 @@ class AppTest extends TestCase {
     public function testaddSummerNote() {
         $app = new App(['nologin'], ['always_run' => false]);
         $app->addSummernote();
-        $this->assertTrue($app->auth->user instanceOf \PMRAtk\Data\User);
+        self::assertTrue($app->auth->user instanceOf \PMRAtk\Data\User);
 
     }
 
@@ -97,10 +97,10 @@ class AppTest extends TestCase {
         $app = new App(['nologin'], ['always_run' => false]);
         $_SESSION['device_width'] = 500;
         $app->getDeviceWidth();
-        $this->assertEquals(500, $app->deviceWidth);
+        self::assertEquals(500, $app->deviceWidth);
         $_POST['device_width'] = 800;
         $app->getDeviceWidth();
-        $this->assertEquals(800, $app->deviceWidth);
+        self::assertEquals(800, $app->deviceWidth);
     }
 
 
@@ -150,19 +150,19 @@ class AppTest extends TestCase {
         $b2->save();
 
         $a = $app->getCachedModel('\\PMRAtk\\tests\\phpunit\\Data\\BaseModelA');
-        $this->assertEquals(2, count($a));
+        self::assertEquals(2, count($a));
         reset($a);
-        $this->assertEquals($b1->id, key($a));
+        self::assertEquals($b1->id, key($a));
         end($a);
-        $this->assertEquals($b2->id, key($a));
-        $this->assertTrue($a[$b1->id] instanceOf BaseModelA);
-        $this->assertTrue($a[$b2->id] instanceOf BaseModelA);
+        self::assertEquals($b2->id, key($a));
+        self::assertTrue($a[$b1->id] instanceOf BaseModelA);
+        self::assertTrue($a[$b2->id] instanceOf BaseModelA);
 
         //see if its not reloaded from db
         $b1->set('name', 'lala');
         $b1->save();
         $a = $app->getCachedModel('\\PMRAtk\\tests\\phpunit\\Data\\BaseModelA');
-        $this->assertTrue($a[$b1->id]->get('name') == 'Duggu');
+        self::assertTrue($a[$b1->id]->get('name') == 'Duggu');
     }
 
 
@@ -185,10 +185,10 @@ class AppTest extends TestCase {
         $initial_count = $this->countModelRecords('\\PMRAtk\\Data\\Email\\EmailTemplate');
         //should create a new one
         $app->saveEmailTemplate('SOME', 'AndSomeValie');
-        $this->assertEquals($initial_count + 1, $this->countModelRecords('\\PMRAtk\\Data\\Email\\EmailTemplate'));
+        self::assertEquals($initial_count + 1, $this->countModelRecords('\\PMRAtk\\Data\\Email\\EmailTemplate'));
         //shouldnt create a new one
         $app->saveEmailTemplate('SOME', 'AndSomeOtherValue');
-        $this->assertEquals($initial_count + 1, $this->countModelRecords('\\PMRAtk\\Data\\Email\\EmailTemplate'));
+        self::assertEquals($initial_count + 1, $this->countModelRecords('\\PMRAtk\\Data\\Email\\EmailTemplate'));
         //see if value is stored
         $et = new EmailTemplate(self::$app->db);
         $et->loadBy('ident', 'SOME');
@@ -196,7 +196,7 @@ class AppTest extends TestCase {
 
         //should create a new one
         $app->saveEmailTemplate('SOMEOTHERIDENT', 'AndSomeOtherValue');
-        $this->assertEquals($initial_count +2, $this->countModelRecords('\\PMRAtk\\Data\\Email\\EmailTemplate'));
+        self::assertEquals($initial_count +2, $this->countModelRecords('\\PMRAtk\\Data\\Email\\EmailTemplate'));
     }
 
 

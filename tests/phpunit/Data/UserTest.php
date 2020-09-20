@@ -31,7 +31,7 @@ class UserTest extends TestCase {
         catch(Exception $e) {
             $exception_found = true;
         }
-        $this->assertTrue($exception_found);
+        self::assertTrue($exception_found);
     }
 
 
@@ -54,7 +54,7 @@ class UserTest extends TestCase {
         catch(Exception $e) {
             $exception_found = true;
         }
-        $this->assertTrue($exception_found);
+        self::assertTrue($exception_found);
     }
 
 
@@ -124,7 +124,7 @@ class UserTest extends TestCase {
      */
     public function testSetNewPassword() {
         self::$app->auth->user->setNewPassword('gggg', 'gggg');
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
 
@@ -143,12 +143,12 @@ class UserTest extends TestCase {
         catch(Exception $e) {
             $exception_found = true;
         }
-        $this->assertTrue($exception_found);
+        self::assertTrue($exception_found);
 
         //with correct username it should work
         $initial_token_count = (new Token(self::$app->db))->action('count')->getOne();
         $c->sendResetPasswordEmail('test');
-        $this->assertEquals($initial_token_count + 1, (new Token(self::$app->db))->action('count')->getOne());
+        self::assertEquals($initial_token_count + 1, (new Token(self::$app->db))->action('count')->getOne());
     }
 
 
@@ -170,7 +170,7 @@ class UserTest extends TestCase {
         catch(Exception $e) {
             $exception_found = true;
         }
-        $this->assertTrue($exception_found);
+        self::assertTrue($exception_found);
 
         //non matching passwords should cause exception
         $exception_found = false;
@@ -180,7 +180,7 @@ class UserTest extends TestCase {
         catch(Exception $e) {
             $exception_found = true;
         }
-        $this->assertTrue($exception_found);
+        self::assertTrue($exception_found);
 
         //that should work
         $c->resetPassword($token, 'nuggu', 'nuggu');
@@ -188,7 +188,7 @@ class UserTest extends TestCase {
         //token should be deleted
         $t = new Token(self::$app->db);
         $t->tryLoadBy('value', $token);
-        $this->assertFalse($t->loaded());
+        self::assertFalse($t->loaded());
     }
 
 
@@ -218,18 +218,18 @@ class UserTest extends TestCase {
      */
     public function testUserRights() {
         //first test logged in user, should be true
-        $this->assertTrue($this->callProtected(self::$app->auth->user, '_standardUserRights'));
+        self::assertTrue($this->callProtected(self::$app->auth->user, '_standardUserRights'));
 
         //different user than the logged in one, should be false
         $u = new User(self::$app->db);
-        $this->assertFalse($this->callProtected($u, '_standardUserRights'));
+        self::assertFalse($this->callProtected($u, '_standardUserRights'));
 
         //no logged in user? false
         $initial = self::$app->auth->user;
         self::$app->auth->user = null;
         $res = $this->callProtected($u, '_standardUserRights');
         self::$app->auth->user = $initial;
-        $this->assertFalse($res);
+        self::assertFalse($res);
 
 
     }

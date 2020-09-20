@@ -4,6 +4,7 @@ namespace PMRAtk\Data;
 
 use atk4\data\Model;
 use secondarymodelforatk\SecondaryModel;
+use traitsforatkdata\CreatedDateAndLastUpdatedTrait;
 
 
 /**
@@ -12,14 +13,16 @@ use secondarymodelforatk\SecondaryModel;
  */
 class Audit extends SecondaryModel {
 
+    use CreatedDateAndLastUpdatedTrait;
+
     public $table = 'audit';
 
 
-    /**
-     *
-     */
     public function init(): void {
         parent::init();
+
+        $this->addCreatedDateAndLastUpdateFields();
+        $this->addCreatedDateAndLastUpdatedHook();
 
         $this->addFields(
             [

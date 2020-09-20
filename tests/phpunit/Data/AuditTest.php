@@ -13,6 +13,6 @@ class AuditTest extends TestCase {
     public function testUserInfoOnSave() {
         $audit = new Audit(self::$app->db);
         $audit->save();
-        $this->assertEquals($audit->get('created_by_name'), self::$app->auth->user->get('name'));
+        self::assertEquals($audit->get('created_by_name'), self::$app->auth->user->get('name'));
     }
 }

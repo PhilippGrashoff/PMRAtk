@@ -23,7 +23,7 @@ class TemplateTest extends TestCase {
         self::$app->addSetting($s);
         $t->loadTemplateFromString('Hallo {$STD_DADAPRA} Test');
         $t->setSTDValues();
-        $this->assertTrue(strpos($t->render(), 'LALA') !== false);
+        self::assertTrue(strpos($t->render(), 'LALA') !== false);
     }
 
 
@@ -36,7 +36,7 @@ class TemplateTest extends TestCase {
         $t->app = self::$app;
         $t->loadTemplateFromString('Hallo {$DADA} Test');
         $t->setGermanList('DADA', ['Hansi', '', 'Peter', 'Klaus']);
-        $this->assertTrue(strpos($t->render(), 'Hansi, Peter und Klaus') !== false);
+        self::assertTrue(strpos($t->render(), 'Hansi, Peter und Klaus') !== false);
     }
 
 
@@ -77,7 +77,7 @@ class TemplateTest extends TestCase {
         $t->app = self::$app;
         $t->loadTemplateFromString('Hallo {$name} Test {$value} Miau {$text}!');
         $t->setTagsFromModel($model, ['name', 'value', 'text'], '');
-        $this->assertEquals('Hallo BlaDU Test 3 Miau LALALALA!', $t->render());
+        self::assertEquals('Hallo BlaDU Test 3 Miau LALALALA!', $t->render());
     }
 
     /*
@@ -93,7 +93,7 @@ class TemplateTest extends TestCase {
         $t->app = self::$app;
         $t->loadTemplateFromString('Hallo {$name} Test {$value} Miau {$nottext}!');
         $t->setTagsFromModel($model, ['name', 'value', 'text', 'nilla'], '');
-        $this->assertEquals('Hallo BlaDU Test 3 Miau !', $t->render());
+        self::assertEquals('Hallo BlaDU Test 3 Miau !', $t->render());
     }
 
 
@@ -111,7 +111,7 @@ class TemplateTest extends TestCase {
         $t->app = self::$app;
         $t->loadTemplateFromString('Hallo {$datetime} Test {$date} Miau {$time}!');
         $t->setTagsFromModel($model, ['datetime', 'date', 'time'], '');
-        $this->assertEquals('Hallo 05.05.2019 10:30 Test 05.05.2019 Miau 10:30!', $t->render());
+        self::assertEquals('Hallo 05.05.2019 10:30 Test 05.05.2019 Miau 10:30!', $t->render());
     }
 
 
@@ -128,7 +128,7 @@ class TemplateTest extends TestCase {
         $t->app = self::$app;
         $t->loadTemplateFromString('Hallo {$name} Test {$value} Miau {$text}!');
         $t->setTagsFromModel($model, ['name', 'value'], '');
-        $this->assertEquals('Hallo BlaDU Test 3 Miau !', $t->render());
+        self::assertEquals('Hallo BlaDU Test 3 Miau !', $t->render());
     }
 
 
@@ -145,7 +145,7 @@ class TemplateTest extends TestCase {
         $t->app = self::$app;
         $t->loadTemplateFromString('Hallo {$name} Test {$value} Miau {$text}!');
         $t->setTagsFromModel($model, [], '');
-        $this->assertEquals('Hallo BlaDU Test 3 Miau LALALALA!', $t->render());
+        self::assertEquals('Hallo BlaDU Test 3 Miau LALALALA!', $t->render());
     }
 
 
@@ -162,7 +162,7 @@ class TemplateTest extends TestCase {
         $t->app = self::$app;
         $t->loadTemplateFromString('Hallo {$group_name} Test {$group_value} Miau {$group_text}!');
         $t->setTagsFromModel($model, [], 'group_');
-        $this->assertEquals('Hallo BlaDU Test 3 Miau LALALALA!', $t->render());
+        self::assertEquals('Hallo BlaDU Test 3 Miau LALALALA!', $t->render());
     }
 
 
@@ -179,7 +179,7 @@ class TemplateTest extends TestCase {
         $t->app = self::$app;
         $t->loadTemplateFromString('Hallo {$basemodela_name} Test {$basemodela_firstname} Miau {$basemodela_lastname}!');
         $t->setTagsFromModel($model);
-        $this->assertEquals('Hallo BlaDU Test GuGuGu Miau LALALALA!', $t->render());
+        self::assertEquals('Hallo BlaDU Test GuGuGu Miau LALALALA!', $t->render());
     }
 
 
@@ -202,7 +202,7 @@ class TemplateTest extends TestCase {
         $t->loadTemplateFromString('Hallo {$group_name} Test {$group_value} Miau {$group_text}, du {$tour_name} Hans {$tour_value} bist toll {$tour_text}!');
         $t->setTagsFromModel($model, [], 'group_');
         $t->setTagsFromModel($model2, [], 'tour_');
-        $this->assertEquals('Hallo BlaDU Test 3 Miau LALALALA, du ABC Hans 9 bist toll DEF!', $t->render());
+        self::assertEquals('Hallo BlaDU Test 3 Miau LALALALA, du ABC Hans 9 bist toll DEF!', $t->render());
     }
 
 

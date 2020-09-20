@@ -13,6 +13,6 @@ class SettingGroupTest extends TestCase {
     public function testInit() {
         $s = new SettingGroup(self::$app->db);
         $s->save();
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 }

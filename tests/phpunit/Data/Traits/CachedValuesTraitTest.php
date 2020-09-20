@@ -14,7 +14,7 @@ class CachedValuesTraitTest extends TestCase
     {
         $app = new CachedValuesApp(['nologin'], ['always_run' => false]);
         $app->setCachedValue('LALA', 'hamma');
-        $this->assertEquals(
+        self::assertEquals(
             'hamma',
             $app->getCachedValue(
                 'LALA',
@@ -29,18 +29,18 @@ class CachedValuesTraitTest extends TestCase
     {
         $app = new CachedValuesApp(['nologin'], ['always_run' => false]);
         $app->setCachedValue('DADA', 'hamma');
-        $this->assertEquals(
+        self::assertEquals(
             'hamma',
             $app->getCachedValue(
                 'DADA',
                 function () {
                     return 'Duggu';
                 },
-                1
+                120
             )
         );
         usleep(1500000);
-        $this->assertEquals(
+        self::assertEquals(
             'Duggu',
             $app->getCachedValue(
                 'DADA',
@@ -55,7 +55,7 @@ class CachedValuesTraitTest extends TestCase
     public function testgetNonExistantCachedValue()
     {
         $app = new CachedValuesApp(['nologin'], ['always_run' => false]);
-        $this->assertEquals(
+        self::assertEquals(
             'hamma',
             $app->getCachedValue(
                 'HAKIRILI',
@@ -69,7 +69,7 @@ class CachedValuesTraitTest extends TestCase
     public function testSetCachedValueTwiceDoesNotCauseException()
     {
         $app = new CachedValuesApp(['nologin'], ['always_run' => false]);
-        $this->assertEquals(
+        self::assertEquals(
             'hamma',
             $app->getCachedValue(
                 'HAKIRILI',

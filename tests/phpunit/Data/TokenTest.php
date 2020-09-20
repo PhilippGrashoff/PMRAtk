@@ -16,12 +16,12 @@ class TokenTest extends TestCase {
         //standard: 64 long
         $t = new Token(self::$app->db);
         $t->save();
-        $this->assertEquals(64, strlen($t->get('value')));
+        self::assertEquals(64, strlen($t->get('value')));
 
         //try to set differently
         $t = new Token(self::$app->db, ['tokenLength' => 128]);
         $t->save();
-        $this->assertEquals(128, strlen($t->get('value')));
+        self::assertEquals(128, strlen($t->get('value')));
     }
 
 
@@ -32,7 +32,7 @@ class TokenTest extends TestCase {
         //try to set to 180 minutes
         $t = new Token(self::$app->db, ['expiresAfterInMinutes' => 180]);
         $t->save();
-        $this->assertEquals(
+        self::assertEquals(
             (new DateTime())->modify('+180 Minutes')->format('Ymd Hi'),
             $t->get('expires')->format('Ymd Hi')
         );

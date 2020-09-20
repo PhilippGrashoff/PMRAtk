@@ -17,8 +17,8 @@ class SubTemplateCloneDeleteTraitTest extends TestCase {
         $view->template = new Template();
         $view->template->loadTemplateFromString('Hans{Lala}test1{/Lala}{Dada}test2{/Dada}');
         $view->templateCloneAndDelete(['Lala', 'Dada']);
-        $this->assertEquals('test1', $view->_tLala->render());
-        $this->assertEquals('test2', $view->_tDada->render());
+        self::assertEquals('test1', $view->_tLala->render());
+        self::assertEquals('test2', $view->_tDada->render());
     }
 
 
@@ -30,8 +30,8 @@ class SubTemplateCloneDeleteTraitTest extends TestCase {
         $view->template = new Template();
         $view->template->loadTemplateFromString('Hans{Lala}test1{/Lala}{Dada}test2{/Dada}');
         $view->templateCloneAndDelete();
-        $this->assertEquals('test1', $view->_tLala->render());
-        $this->assertEquals('test2', $view->_tDada->render());
+        self::assertEquals('test1', $view->_tLala->render());
+        self::assertEquals('test2', $view->_tDada->render());
     }
 
 
@@ -43,8 +43,8 @@ class SubTemplateCloneDeleteTraitTest extends TestCase {
         $view->template = new Template();
         $view->template->loadTemplateFromString('Hans{Lala}test1{/Lala}{Dada}test2{/Dada}');
         $view->templateCloneAndDelete(['Lala', 'Dada', 'NonExistantRegion']);
-        $this->assertEquals('test1', $view->_tLala->render());
-        $this->assertEquals('test2', $view->_tDada->render());
+        self::assertEquals('test1', $view->_tLala->render());
+        self::assertEquals('test2', $view->_tDada->render());
     }
 
 

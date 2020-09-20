@@ -6,18 +6,17 @@ namespace PMRAtk\Data\Traits;
 
 use PMRAtk\Data\Setting;
 
+
+/**
+ * Use this trait to load all Settings records into an array. You can define how long a setting is valid before
+ * it is recalculated. Typically this trait is added to App.
+ */
 trait SettingsTrait {
 
-    //most settings are now stored in database. The Settings are loaded once and stored in _settings array
     protected $_settings = [];
     protected $_settingsLoaded = false;
 
-
-    /**
-     * Function to load all saved settings into the app as they are needed often
-     * during a single request
-     */
-    public function getSetting(string $ident)
+    public function getSetting(string $ident): ?Setting
     {
         //load settings once
         $this->_loadSettings();
@@ -29,10 +28,6 @@ trait SettingsTrait {
         return null;
     }
 
-
-    /**
-     *
-     */
     protected function _loadSettings()
     {
         if ($this->_settingsLoaded) {
@@ -44,16 +39,11 @@ trait SettingsTrait {
         $this->_settingsLoaded = true;
     }
 
-
-    /**
-     * Force reload of settings
-     */
     public function unloadSettings()
     {
         $this->_settings = [];
         $this->_settingsLoaded = false;
     }
-
 
     /**
      * returns all STD_ settings, which are typically used in templates
@@ -71,18 +61,13 @@ trait SettingsTrait {
         return $return;
     }
 
-
-    /**
-     *
-     */
     public function settingExists(string $ident): bool
     {
         $this->_loadSettings();
         return array_key_exists($ident, $this->_settings);
     }
 
-
-    /*
+    /**
      * For "installers": Add a setting if it does not exist yet
      */
     public function addSetting(Setting $s)
@@ -94,8 +79,7 @@ trait SettingsTrait {
         }
     }
 
-
-    /*
+    /**
      * Can be used to overwrite a setting, mostly for tests
      */
     public function setSetting(Setting $s)
@@ -104,5 +88,4 @@ trait SettingsTrait {
         $this->_settingsLoaded = false;
         $this->_loadSettings();
     }
-
 }

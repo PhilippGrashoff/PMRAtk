@@ -84,8 +84,8 @@ class App extends \atk4\ui\App
      */
     protected function _addAuth()
     {
-        /*TODO DISABLED FOR NOW UNTIL ATK LOGIN IS 2.2$this->auth = new Auth(['check' => false]);
-        $this->auth->setModel(new User($this->db), 'username', 'password');*/
+        //$this->auth = new Auth(['check' => false]);
+        //$this->auth->setModel(new User($this->db), 'username', 'password');
     }
 
 

@@ -29,7 +29,7 @@ class NotifyTraitTest extends TestCase {
         $app = new App(['nologin'], ['always_run' => false]);
         $v   = $app->add(new TestViewForNotify());
         $res = $v->successNotify('Juhu');
-        $this->assertTrue($res instanceOf jsToast);
+        self::assertTrue($res instanceOf jsToast);
     }
 
     /*
@@ -39,7 +39,7 @@ class NotifyTraitTest extends TestCase {
         $app = new App(['nologin'], ['always_run' => false]);
         $v   = $app->add(new TestViewForNotify());
         $res = $v->failNotify('Juhu');
-        $this->assertTrue($res instanceOf jsToast);
+        self::assertTrue($res instanceOf jsToast);
     }
 
     /*
@@ -49,6 +49,6 @@ class NotifyTraitTest extends TestCase {
         $app = new App(['nologin'], ['always_run' => false]);
         $v   = $app->add(new TestViewForNotify());
         $res = $v->warningNotify('Juhu');
-        $this->assertTrue($res instanceOf jsToast);
+        self::assertTrue($res instanceOf jsToast);
     }
 }
