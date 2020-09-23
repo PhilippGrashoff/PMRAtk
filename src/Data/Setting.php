@@ -1,13 +1,13 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace PMRAtk\Data;
 
 use traitsforatkdata\EncryptedFieldTrait;
 use atk4\data\Model;
 
-/**
- *
- */
+
 class Setting extends BaseModel
 {
 
@@ -16,9 +16,6 @@ class Setting extends BaseModel
     public $table = 'setting';
 
 
-    /**
-     *
-     */
     public function init(): void
     {
         parent::init();

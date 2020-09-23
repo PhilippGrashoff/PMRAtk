@@ -2,14 +2,6 @@
 
 namespace PMRAtk\Data\Cron;
 
-
-/*
- * This class is meant as a Base to extend from for all Cronjobs.
- * Implement execute() in child cronjobs with all the Logic inside.
- * Automatically sends a Success Email if any Message was set to APP by Data layer.
- * Sends an Email if any exception was thrown.
- */
-
 use atk4\core\AppScopeTrait;
 use atk4\core\DIContainerTrait;
 use atk4\data\Exception;
@@ -18,6 +10,14 @@ use PMRAtk\Data\Email\EmailThrowableToAdminTrait;
 use PMRAtk\Data\Email\PHPMailer;
 use ReflectionClass;
 use Throwable;
+
+
+/**
+ * This class is meant as a Base to extend from for all Cronjobs.
+ * Implement execute() in child cronjobs with all the Logic inside.
+ * Automatically sends a Success Email if any Message was set to APP by Data layer.
+ * Sends an Email if any exception was thrown.
+ */
 
 abstract class BaseCronJob {
 
@@ -44,9 +44,6 @@ abstract class BaseCronJob {
     public $successful = false;
 
 
-    /**
-     *
-     */
     public function __construct(App $app, array $defaults = []) {
         $this->app = $app;
         $this->setDefaults($defaults);
@@ -73,15 +70,11 @@ abstract class BaseCronJob {
         }
     }
 
-
-    /**
-     *
-     */
-    public function getName() {
+    public function getName(): string {
         if (empty($this->name)) {
             return (new ReflectionClass($this))->getShortName();
         }
-        return $this->name;
+        return (string) $this->name;
     }
 
 
