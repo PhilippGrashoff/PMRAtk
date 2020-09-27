@@ -11,15 +11,15 @@ use PMRAtk\Data\User;
 use PMRAtk\View\Traits\UserMessageTrait;
 use ReflectionClass;
 use PMRAtk\View\Template;
-use PMRAtk\Data\Traits\SettingsTrait;
 use atk4\data\Exception;
+use settingsforatk\SettingsTrait;
 
 
 class App extends \atk4\ui\App
 {
 
-    use SettingsTrait;
     use UserMessageTrait;
+    use SettingsTrait;
 
     //should audits be created? Disabled e.g. for speeding up tests
     public bool $createAudit = true;
@@ -36,6 +36,7 @@ class App extends \atk4\ui\App
 
     //atk login Auth
     public $auth;
+
     //array of user roles which may see the requested page. Checked in __construct
     public $userRolesMaySeeThisPage = [];
 
@@ -48,9 +49,6 @@ class App extends \atk4\ui\App
     public $templateClass = Template::class;
 
 
-    /**
-     *
-     */
     public function __construct(array $user_roles_may_see = [], array $defaults = [])
     {
         parent::__construct($defaults);
@@ -65,45 +63,26 @@ class App extends \atk4\ui\App
         $this->db = PersistenceWithApp::connect(DB_STRING, DB_USER, DB_PASSWORD);
         $this->db->app = $this;
 
-        //try to know device width; used in some views
         $this->getDeviceWidth();
-
-        //set date format etc
         $this->setPersistenceFormat();
-
-        //load custom Js and CSS
         $this->requireCustomJSAndCSS();
-
-        //Add auth class
         $this->_addAuth();
     }
 
-
-    /**
-     * This function needs to be implemented in Child class
-     */
     protected function _addAuth()
     {
         //$this->auth = new Auth(['check' => false]);
         //$this->auth->setModel(new User($this->db), 'username', 'password');
     }
 
-
-    /**
-     * add js and css that exceeds standard atk js&css here
-     */
     public function requireCustomJSAndCSS()
     {
     }
 
-
-    /**
-     * tries to log in user by ApiToken
-     */
-    public function loadUserByToken(string $token_string)
+    public function loadUserByToken(string $tokenString)
     {
         $token = new Token($this->db);
-        $token->tryLoadBy('value', $token_string);
+        $token->tryLoadBy('value', $tokenString);
         if (!$token->loaded()) {
             throw new Exception('Token could not be found', 401);
         }
@@ -115,10 +94,6 @@ class App extends \atk4\ui\App
         $this->auth->user = $user;
     }
 
-
-    /**
-     * set Date format to german
-     */
     public function setPersistenceFormat()
     {
         $this->ui_persistence->date_format = 'Y-m-d';
@@ -126,8 +101,6 @@ class App extends \atk4\ui\App
         $this->ui_persistence->datetime_format = 'Y-m-d\TH:i:s';
         $this->ui_persistence->currency = '';
     }
-
-
 
     /**
      * email templates get an extra function to load to distinguish from HTML element templates
@@ -196,7 +169,6 @@ class App extends \atk4\ui\App
         $this->requireCSS(URL_BASE_PATH . 'css/summernote-lite-bs3-libre.css');
     }
 
-
     /**
      * Sets $this->deviceWidth to a value found in $_POST. Typically, my forms
      * contain a hidden field 'device_width' which is used to send device width
@@ -214,9 +186,6 @@ class App extends \atk4\ui\App
             $this->deviceWidth = $_SESSION['device_width'];
         }
     }
-
-
-
 
     /**
      * sends an email to EOO owner. The template is not editable in this case. Meant for short Emails like notifications

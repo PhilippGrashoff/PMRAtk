@@ -19,9 +19,6 @@ class File extends SecondaryModel
     public $table = 'file';
 
 
-    /**
-     * @throws Exception
-     */
     public function init(): void
     {
         parent::init();
@@ -34,7 +31,8 @@ class File extends SecondaryModel
                     'path',
                     'type' => 'string'
                 ],
-                //currently BC, INVOICE or TOURLIST for auto-generated pdfs, MAP for meeting point maps, TEMPORARY for files which get deleted by cronjob later
+                //currently BC, INVOICE or TOURLIST for auto-generated pdfs, MAP for meeting point maps,
+                //TEMPORARY for files which get deleted by cronjob later
                 [
                     'type',
                     'type' => 'string'

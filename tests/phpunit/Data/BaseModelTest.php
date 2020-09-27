@@ -3,9 +3,11 @@
 namespace PMRAtk\tests\phpunit\Data;
 
 
+use auditforatk\Audit;
 use PMRAtk\tests\TestClasses\BaseModelClasses\BaseModelA;
 use PMRAtk\tests\TestClasses\BaseModelClasses\BaseModelB;
-use PMRAtk\tests\phpunit\TestCase;
+use traitsforatkdata\TestCase;
+use atk4\data\Exception;
 
 
 /**
@@ -13,15 +15,26 @@ use PMRAtk\tests\phpunit\TestCase;
  */
 class BaseModelTest extends TestCase {
 
-    /**
-     *
-     */
+    protected $sqlitePersistenceModels = [
+        BaseModelA::class,
+        BaseModelB::class,
+        Audit::class
+    ];
+
+    public function testAtLeastOneFieldDirty() {
+        $model = new BaseModelA($this->getSqliteTestPersistence());
+        $model->save();
+        self::assertFalse($model->isAtLeastOneFieldDirty(['name', 'firstname', 'lastname']));
+        $model->set('lastname', 'SOMENAME');
+        self::assertTrue($model->isAtLeastOneFieldDirty(['name', 'firstname', 'lastname']));
+    }
+
     public function testExceptionIfThisNotLoaded() {
-        $u = new BaseModelA(self::$app->db);
+        $u = new BaseModelA($this->getSqliteTestPersistence());
         $u->save();
         $this->callProtected($u, '_exceptionIfThisNotLoaded', []);
         $u->unload();
-        $this->expectException(\atk4\data\Exception::class);
+        $this->expectException(Exception::class);
         $this->callProtected($u, '_exceptionIfThisNotLoaded', []);
     }
 

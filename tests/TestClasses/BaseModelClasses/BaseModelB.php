@@ -2,9 +2,9 @@
 
 namespace PMRAtk\tests\TestClasses\BaseModelClasses;
 
+use auditforatk\ModelWithAuditTrait;
 use mtomforatk\ModelWithMToMTrait;
 use PMRAtk\Data\BaseModel;
-use PMRAtk\Data\Traits\AuditTrait;
 use PMRAtk\Data\Traits\FileRelationTrait;
 use PMRAtk\tests\TestClasses\AToB;
 use PMRAtk\tests\TestClasses\SecondaryModelClasses\Email;
@@ -12,7 +12,7 @@ use secondarymodelforatk\SecondaryModelRelationTrait;
 
 class BaseModelB extends BaseModel {
 
-    use AuditTrait;
+    use ModelWithAuditTrait;
     use FileRelationTrait;
     use ModelWithMToMTrait;
     use SecondaryModelRelationTrait;

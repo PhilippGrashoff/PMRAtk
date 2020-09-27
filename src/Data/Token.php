@@ -5,12 +5,9 @@ namespace PMRAtk\Data;
 use traitsforatkdata\CryptIdTrait;
 use atk4\data\Model;
 use secondarymodelforatk\SecondaryModel;
+use traitsforatkdata\UserException;
 
 
-/**
- * Class Token
- * @package PMRAtk\Data
- */
 class Token extends SecondaryModel
 {
 
@@ -25,9 +22,6 @@ class Token extends SecondaryModel
     public $tokenLength = 64;
 
 
-    /**
-     *
-     */
     public function init(): void
     {
         parent::init();
@@ -42,7 +36,7 @@ class Token extends SecondaryModel
         //before insert, create token string
         $this->onHook(
             Model::HOOK_BEFORE_SAVE,
-            function ($model, $isUpdate) {
+            function (Model $model, $isUpdate) {
                 if (!$model->get('value')) {
                     $model->setCryptId('value');
                 }
@@ -59,11 +53,10 @@ class Token extends SecondaryModel
             }
         );
 
-
         //if token is expired do not load but throw exception
         $this->onHook(
             Model::HOOK_AFTER_LOAD,
-            function ($model) {
+            function (Model $model) {
                 if (
                     $model->get('expires') instanceof \DateTimeInterFace
                     && $model->get('expires') < new \DateTime()
@@ -74,8 +67,7 @@ class Token extends SecondaryModel
         );
     }
 
-
-    /*
+    /**
      * returns a long random token, $this->tokenLength long
      */
     protected function _generateCryptId(): string

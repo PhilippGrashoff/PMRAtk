@@ -18,7 +18,6 @@ use Throwable;
  * Automatically sends a Success Email if any Message was set to APP by Data layer.
  * Sends an Email if any exception was thrown.
  */
-
 abstract class BaseCronJob {
 
     use DIContainerTrait;

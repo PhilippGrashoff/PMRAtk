@@ -20,9 +20,7 @@ class MessageForUser extends BaseModel
 
     public $caption = 'Benachrichtigung';
 
-    /**
-     *
-     */
+
     public function init(): void
     {
         parent::init();
@@ -80,7 +78,6 @@ class MessageForUser extends BaseModel
         $this->addMToMReferenceAndDeleteHook(MessageForUserToUser::class);
     }
 
-
     /**
      * Load all unread messages for the current logged in user
      */
@@ -108,7 +105,6 @@ class MessageForUser extends BaseModel
             $messages->addCondition(
                 [
                     ['created_date', '>=', $maxInPast->format('Y-m-d')],
-                    //convert to string until https://github.com/atk4/data/issues/474 is fixed
                     ['never_invalid', 1]
                 ]
             );
@@ -138,21 +134,24 @@ class MessageForUser extends BaseModel
         }
     }
 
-
-    /*
-     * mark all unread messages as read. Either pass an array with objects/ids of Messages, or null to use
-     * getUnreadMessagesForLoggedInUser
+    /**
+     * mark  message as read for the logged in user.
      */
-    public function markAsRead()
+    public function markAsRead(): MessageForUserToUser
     {
         $this->_exceptionIfThisNotLoaded();
-        $this->addUser($this->app->auth->user, ['is_read' => 1]);
+        if(!$this->app->auth->user->loaded()) {
+            throw new Exception("A user must be logged in for " . __FUNCTION__);
+        }
+
+        $mfutu = new MessageForUserToUser($this->persistence);
+        $mfutu->set('user_id', $this->app->auth->user->get('id'));
+        $mfutu->set('message_for_user_id', $this->get('id'));
+        $mfutu->save();
+
+        return $mfutu;
     }
 
-
-    /*
-     *
-     */
     public function isReadByLoggedInUser(): bool
     {
         $this->_exceptionIfThisNotLoaded();

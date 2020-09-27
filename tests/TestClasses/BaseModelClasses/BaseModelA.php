@@ -2,8 +2,8 @@
 
 namespace PMRAtk\tests\TestClasses\BaseModelClasses;
 
+use auditforatk\ModelWithAuditTrait;
 use PMRAtk\Data\BaseModel;
-use PMRAtk\Data\Traits\AuditTrait;
 use mtomforatk\ModelWithMToMTrait;
 use PMRAtk\tests\TestClasses\AToB;
 use PMRAtk\Data\Email;
@@ -17,7 +17,7 @@ class BaseModelA extends BaseModel {
 
     use ModelWithMToMTrait;
     use SecondaryModelRelationTrait;
-    use AuditTrait;
+    use ModelWithAuditTrait;
 
     public $table = 'BaseModelA';
 

@@ -5,7 +5,6 @@ namespace PMRAtk\Data;
 use secondarymodelforatk\SecondaryModel;
 
 
-
 class Email extends SecondaryModel
 {
     public $table = 'email';

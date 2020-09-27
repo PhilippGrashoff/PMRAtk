@@ -27,9 +27,6 @@ class MessageForUserModal extends Modal
     public $showMultiple = false;
 
 
-    /**
-     *
-     */
     public function renderView(): void
     {
         if (!$this->app->auth->user->loaded()) {
