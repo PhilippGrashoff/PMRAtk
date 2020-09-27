@@ -21,7 +21,6 @@ abstract class TestCase extends \atk4\core\AtkPhpunit\TestCase
     public static function setUpBeforeClass(): void
     {
         self::$app = new TestApp(['admin']);
-        self::$app->isTestMode = true;
     }
 
     public function setUp(): void

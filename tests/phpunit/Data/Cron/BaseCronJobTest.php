@@ -9,9 +9,6 @@ use PMRAtk\tests\TestClasses\CronTestClasses\SampleCronWithEmailMessage;
 use PMRAtk\tests\TestClasses\CronTestClasses\SampleCronWithException;
 use PMRAtk\tests\TestClasses\CronTestClasses\SampleCronWithoutExecuteImplemented;
 
-
-
-
 class BaseCronJobTest extends TestCase {
 
     public function testSuccessfulCronJob() {
@@ -32,7 +29,7 @@ class BaseCronJobTest extends TestCase {
 
     public function testExceptionNoExecuteImplemented() {
         $this->_addStandardEmailAccount();
-        $this->expectException(\atk4\data\Exception::class);
+        self::expectException(\atk4\data\Exception::class);
         $c = new SampleCronWithoutExecuteImplemented(self::$app, ['addAdminToSuccessEmail' => true]);
         $c->execute();
     }

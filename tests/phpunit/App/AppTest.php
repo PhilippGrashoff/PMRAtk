@@ -12,23 +12,26 @@ use PMRAtk\App\App;
 use PMRAtk\View\Template;
 
 
-class AppTest extends TestCase {
+class AppTest extends TestCase
+{
 
     /*
      *
      */
-    public function testAppConstruct() {
+    public function testAppConstruct()
+    {
         $app = new App(['nologin'], ['always_run' => false]);
-        self::assertTrue($app->auth->user instanceOf \PMRAtk\Data\User);
+        self::assertTrue($app->auth->user instanceof \PMRAtk\Data\User);
     }
 
 
     /**
      * @throws \atk4\data\Exception
      */
-    public function testPMRAtkTemplateClassIsReturnedInLoadTemplate() {
+    public function testPMRAtkTemplateClassIsReturnedInLoadTemplate()
+    {
         $app = new App(['nologin'], ['always_run' => false]);
-        $t = $app->loadTemplate(FILE_BASE_PATH.'/template/email/default_footer.html');
+        $t = $app->loadTemplate(FILE_BASE_PATH . '/template/email/default_footer.html');
         self::assertInstanceOf(Template::class, $t);
     }
 
@@ -37,8 +40,9 @@ class AppTest extends TestCase {
      * test if exception is thrown if no array with user roles which may
      * see this page is passed
      */
-    public function testExceptionEmptyRoleArray() {
-        $this->expectException(\atk4\data\Exception::class);
+    public function testExceptionEmptyRoleArray()
+    {
+        self::expectException(\atk4\data\Exception::class);
         $app = new App([], ['always_run' => false]);
     }
 
@@ -46,7 +50,8 @@ class AppTest extends TestCase {
     /*
      * tests TokenLogin
      */
-    public function testTokenLogin() {
+    public function testTokenLogin()
+    {
         $token = self::$app->auth->user->setNewToken();
         $app = new App(['nologin'], ['always_run' => false]);
         $app->db = self::$app->db;
@@ -59,9 +64,10 @@ class AppTest extends TestCase {
     /*
      *
      */
-    public function testTokenLoginTokenNotFoundException() {
+    public function testTokenLoginTokenNotFoundException()
+    {
         $app = new App(['nologin'], ['always_run' => false]);
-        $this->expectException(\atk4\data\Exception::class);
+        self::expectException(\atk4\data\Exception::class);
         $app->loadUserByToken('sfsdfssdfeg');
     }
 
@@ -69,12 +75,13 @@ class AppTest extends TestCase {
     /*
      *
      */
-    public function testTokenLoginUserForTokenNotFoundException() {
+    public function testTokenLoginUserForTokenNotFoundException()
+    {
         $app = new App(['nologin'], ['always_run' => false]);
         $app->db = self::$app->db;
         $token = new Token(self::$app->db);
         $token->save();
-        $this->expectException(\atk4\data\Exception::class);
+        self::expectException(\atk4\data\Exception::class);
         $app->loadUserByToken($token->get('value'));
     }
 
@@ -82,18 +89,19 @@ class AppTest extends TestCase {
     /*
      *
      */
-    public function testaddSummerNote() {
+    public function testaddSummerNote()
+    {
         $app = new App(['nologin'], ['always_run' => false]);
         $app->addSummernote();
-        self::assertTrue($app->auth->user instanceOf \PMRAtk\Data\User);
-
+        self::assertTrue($app->auth->user instanceof \PMRAtk\Data\User);
     }
 
 
     /*
      *
      */
-    public function testDeviceWidth() {
+    public function testDeviceWidth()
+    {
         $app = new App(['nologin'], ['always_run' => false]);
         $_SESSION['device_width'] = 500;
         $app->getDeviceWidth();
@@ -107,9 +115,10 @@ class AppTest extends TestCase {
     /*
      *
      */
-    public function testgetEmailTemplateExceptionIfTemplateNotFound() {
+    public function testgetEmailTemplateExceptionIfTemplateNotFound()
+    {
         $app = new App(['nologin'], ['always_run' => false]);
-        $this->expectException(\atk4\data\Exception::class);
+        self::expectException(\atk4\data\Exception::class);
         $app->loadEmailTemplate('DDFUSFsfdfse');
     }
 
@@ -117,7 +126,8 @@ class AppTest extends TestCase {
     /*
      *
      */
-    public function testgetEmailTemplateFromSavedEmailTemplate() {
+    public function testgetEmailTemplateFromSavedEmailTemplate()
+    {
         $app = new App(['nologin'], ['always_run' => false]);
         $app->db = self::$app->db;
         $app->saveEmailTemplate('DUDU', '<div>Miau</div>');
@@ -129,7 +139,8 @@ class AppTest extends TestCase {
     /*
      *
      */
-    public function testgetEmailTemplateRawString() {
+    public function testgetEmailTemplateRawString()
+    {
         $app = new App(['nologin'], ['always_run' => false]);
         $app->db = self::$app->db;
         $app->saveEmailTemplate('DUDU', '<div>Miau{$somevar}</div>');
@@ -141,7 +152,8 @@ class AppTest extends TestCase {
     /*
      *
      */
-    public function testgetCachedModel() {
+    public function testgetCachedModel()
+    {
         $app = new App(['nologin'], ['always_run' => false]);
         $b1 = new BaseModelA($app->db);
         $b1->set('name', 'Duggu');
@@ -155,8 +167,8 @@ class AppTest extends TestCase {
         self::assertEquals($b1->id, key($a));
         end($a);
         self::assertEquals($b2->id, key($a));
-        self::assertTrue($a[$b1->id] instanceOf BaseModelA);
-        self::assertTrue($a[$b2->id] instanceOf BaseModelA);
+        self::assertTrue($a[$b1->id] instanceof BaseModelA);
+        self::assertTrue($a[$b2->id] instanceof BaseModelA);
 
         //see if its not reloaded from db
         $b1->set('name', 'lala');
@@ -169,9 +181,10 @@ class AppTest extends TestCase {
     /*
      *
      */
-    public function testgetCachedModelExceptionOnNonExistantModel() {
+    public function testgetCachedModelExceptionOnNonExistantModel()
+    {
         $app = new App(['nologin'], ['always_run' => false]);
-        $this->expectException(\atk4\data\Exception::class);
+        self::expectException(\atk4\data\Exception::class);
         $a = $app->getCachedModel('SomeNonExistantModel');
     }
 
@@ -179,7 +192,8 @@ class AppTest extends TestCase {
     /*
      *
      */
-    public function testSaveEmailTemplate() {
+    public function testSaveEmailTemplate()
+    {
         $app = new App(['nologin'], ['always_run' => false]);
         $app->db = self::$app->db;
         $initial_count = $this->countModelRecords('\\PMRAtk\\Data\\Email\\EmailTemplate');
@@ -196,16 +210,17 @@ class AppTest extends TestCase {
 
         //should create a new one
         $app->saveEmailTemplate('SOMEOTHERIDENT', 'AndSomeOtherValue');
-        self::assertEquals($initial_count +2, $this->countModelRecords('\\PMRAtk\\Data\\Email\\EmailTemplate'));
+        self::assertEquals($initial_count + 2, $this->countModelRecords('\\PMRAtk\\Data\\Email\\EmailTemplate'));
     }
 
 
     /*
      *
      */
-    public function testLoadTemplateException() {
+    public function testLoadTemplateException()
+    {
         $app = new App(['nologin'], ['always_run' => false]);
-        $this->expectException(\atk4\ui\Exception::class);
+        self::expectException(\atk4\ui\Exception::class);
         $app->loadTemplate('SomeNonExistantModel');
     }
 
@@ -213,7 +228,8 @@ class AppTest extends TestCase {
     /*
      *
      */
-    public function testloadEmailTemplateRawFromFile() {
+    public function testloadEmailTemplateRawFromFile()
+    {
         $app = new App(['nologin'], ['always_run' => false]);
         $app->db = self::$app->db;
         $t = $app->loadEmailTemplate('testemailtemplate.html', true);
@@ -224,22 +240,27 @@ class AppTest extends TestCase {
     /*
      *
      */
-    public function testloadTemplateWithFilePath() {
+    public function testloadTemplateWithFilePath()
+    {
         $app = new App(['nologin'], ['always_run' => false]);
-        $t = $app->loadTemplate(FILE_BASE_PATH.'/template/email/default_footer.html');
-        self::assertEquals('</div>'.PHP_EOL.'</body>'.PHP_EOL.'</html>', $t->render());
+        $t = $app->loadTemplate(FILE_BASE_PATH . '/template/email/default_footer.html');
+        self::assertEquals('</div>' . PHP_EOL . '</body>' . PHP_EOL . '</html>', $t->render());
     }
 
 
     /*
      *
      */
-    public function testsaveAndLoadEmailTemplateFromModel() {
+    public function testsaveAndLoadEmailTemplateFromModel()
+    {
         $app = new App(['nologin'], ['always_run' => false]);
         $app->db = self::$app->db;
 
         //initial state should be same as file, as file should be loaded
-        self::assertEquals(file_get_contents(FILE_BASE_PATH.'/template/email/testemailtemplate.html'), $app->loadEmailTemplate('testemailtemplate.html', true));
+        self::assertEquals(
+            file_get_contents(FILE_BASE_PATH . '/template/email/testemailtemplate.html'),
+            $app->loadEmailTemplate('testemailtemplate.html', true)
+        );
 
         //now save a custom template
         $app->saveEmailTemplate('testemailtemplate.html', 'DugguWuggu');
@@ -264,7 +285,8 @@ class AppTest extends TestCase {
     /*
      *
      */
-    public function testLoadEmailTemplateExceptionModelNotLoaded() {
+    public function testLoadEmailTemplateExceptionModelNotLoaded()
+    {
         $app = new App(['nologin'], ['always_run' => false]);
         $app->db = self::$app->db;
         $bb = new BaseModelB(self::$app->db);
@@ -277,7 +299,8 @@ class AppTest extends TestCase {
      * If only a custom template is set for a specific model_class and model_id, see if this is not accidently loaded
      * for another model_id
      */
-    public function testLoadEmailTemplateLoadFromFileIfInDBOnlyPerModel() {
+    public function testLoadEmailTemplateLoadFromFileIfInDBOnlyPerModel()
+    {
         $app = new App(['nologin'], ['always_run' => false]);
         $app->db = self::$app->db;
         $ba1 = new BaseModelA(self::$app->db);
@@ -285,14 +308,23 @@ class AppTest extends TestCase {
         $ba2 = new BaseModelA(self::$app->db);
         $ba2->save();
         //initial state should be same as file, as file should be loaded
-        self::assertEquals(file_get_contents(FILE_BASE_PATH.'/template/email/testemailtemplate.html'), $app->loadEmailTemplate('testemailtemplate.html', true));
+        self::assertEquals(
+            file_get_contents(FILE_BASE_PATH . '/template/email/testemailtemplate.html'),
+            $app->loadEmailTemplate('testemailtemplate.html', true)
+        );
 
         //now save a custom template for a model. When loaded without these params,  it should still return the general one
         $app->saveEmailTemplate('testemailtemplate.html', 'Migasalasa', get_class($ba1), $ba1->get('id'));
-        self::assertEquals(file_get_contents(FILE_BASE_PATH.'/template/email/testemailtemplate.html'), $app->loadEmailTemplate('testemailtemplate.html', true));
+        self::assertEquals(
+            file_get_contents(FILE_BASE_PATH . '/template/email/testemailtemplate.html'),
+            $app->loadEmailTemplate('testemailtemplate.html', true)
+        );
 
         //also for any other model id
-        self::assertEquals(file_get_contents(FILE_BASE_PATH.'/template/email/testemailtemplate.html'), $app->loadEmailTemplate('testemailtemplate.html', true, [$ba2]));
+        self::assertEquals(
+            file_get_contents(FILE_BASE_PATH . '/template/email/testemailtemplate.html'),
+            $app->loadEmailTemplate('testemailtemplate.html', true, [$ba2])
+        );
 
         //but for that special ID return that custom one
         self::assertEquals('Migasalasa', $app->loadEmailTemplate('testemailtemplate.html', true, [$ba1]));
@@ -302,7 +334,8 @@ class AppTest extends TestCase {
     /*
      *
      */
-    public function testSendEmailToAdmin() {
+    public function testSendEmailToAdmin()
+    {
         $this->_addStandardEmailAccount();
         $s = new Setting(self::$app->db);
         $s->set('ident', 'STD_EMAIL');
@@ -314,7 +347,12 @@ class AppTest extends TestCase {
         self::$app->addSetting($s);
         $b = new BaseModelA(self::$app->db);
         $b->set('name', 'Laduggu');
-        $e = self::$app->sendEmailToAdmin('Test:LALA', 'Hans {$he} ist Super {$te} {$basemodela_name}', ['he' => '22', 'te' => '33'], [$b]);
+        $e = self::$app->sendEmailToAdmin(
+            'Test:LALA',
+            'Hans {$he} ist Super {$te} {$basemodela_name}',
+            ['he' => '22', 'te' => '33'],
+            [$b]
+        );
         self::assertTrue(strpos($e->phpMailer->getSentMIMEMessage(), 'Hans 22 ist Super 33 Laduggu') !== false);
     }
 }

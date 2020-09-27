@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace PMRAtk\Data\Traits;
 
 use PMRAtk\Data\File;
-use PMRAtk\Data\UserException;
+use traitsforatkdata\UserException;
 
 trait FileRelationTrait
 {

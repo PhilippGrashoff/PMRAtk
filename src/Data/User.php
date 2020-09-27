@@ -6,6 +6,7 @@ use atk4\data\Exception;
 use atk4\login\Field\Password;
 use PMRAtk\Data\Email\PHPMailer;
 use PMRAtk\Data\Traits\MaxFailedLoginsTrait;
+use traitsforatkdata\UserException;
 
 class User extends BaseModel
 {
@@ -29,9 +30,6 @@ class User extends BaseModel
             ]
         );
         $this->_addFailedLoginsField();
-
-        $this->addCreatedDateAndLastUpdateFields();
-        $this->addCreatedDateAndLastUpdatedHook();
 
         //password field from atk login
         $p = new Password();

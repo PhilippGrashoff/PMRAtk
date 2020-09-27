@@ -89,15 +89,11 @@ class BaseEmail extends BaseModel
     public $customTemplateModels = [];
 
 
-    /**
-     * define fields and references
-     */
     public function init(): void
     {
         parent::init();
         $this->addFields(
             [
-                ['created_date', 'type' => 'datetime'],
                 ['subject', 'type' => 'string'],
                 ['message', 'type' => 'text'],
                 ['attachments', 'type' => 'array', 'serialize' => 'json'],
@@ -114,15 +110,6 @@ class BaseEmail extends BaseModel
         );
 
         $this->containsMany('email_recipient', [EmailRecipient::class]);
-
-        $this->onHook(
-            'beforeSave',
-            function ($m, $is_update) {
-                if (!$is_update) {
-                    $m->set('created_date', new DateTime());
-                }
-            }
-        );
 
         //try load default header and footer
         if (empty($this->header)) {
@@ -528,7 +515,10 @@ class BaseEmail extends BaseModel
         }
 
         foreach ($m->getFields() as $field_name => $field) {
-            if (in_array($field->type, ['string', 'text', 'integer', 'float', 'date', 'time'])) {
+            if (
+                !$field->system
+                && in_array($field->type, ['string', 'text', 'integer', 'float', 'date', 'time'])
+            ) {
                 $fields[$prefix . $field_name] = $field->getCaption();
             }
         }

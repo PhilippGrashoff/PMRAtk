@@ -4,7 +4,7 @@ namespace PMRAtk\tests\phpunit\Data\Traits;
 
 
 use PMRAtk\Data\File;
-use PMRAtk\Data\UserException;
+use traitsforatkdata\UserException;
 use PMRAtk\tests\TestClasses\BaseModelClasses\BaseModelB;
 use PMRAtk\tests\phpunit\TestCase;
 use PMRAtk\tests\TestClasses\BaseModelClasses\FileMock;
@@ -33,7 +33,7 @@ class FileRelationTraitTest extends TestCase {
     public function testExceptionNonExistingFile() {
         $m = new BaseModelB(self::$app->db);
         $m->save();
-        $this->expectException(UserException::class);
+        self::expectException(UserException::class);
         $m->removeFile(23432543635);
     }
 

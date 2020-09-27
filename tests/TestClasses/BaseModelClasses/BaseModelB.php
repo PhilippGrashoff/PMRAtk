@@ -10,7 +10,8 @@ use PMRAtk\tests\TestClasses\AToB;
 use PMRAtk\tests\TestClasses\SecondaryModelClasses\Email;
 use secondarymodelforatk\SecondaryModelRelationTrait;
 
-class BaseModelB extends BaseModel {
+class BaseModelB extends BaseModel
+{
 
     use ModelWithAuditTrait;
     use FileRelationTrait;
@@ -19,17 +20,19 @@ class BaseModelB extends BaseModel {
 
     public $table = 'BaseModelB';
 
-    public function init(): void {
+    public function init(): void
+    {
         parent::init();
 
-        $this->addFields([
-            ['name',      'type' => 'string', 'caption' => 'AName'],
-            ['time_test', 'type' => 'time',   'caption' => 'Startzeit'],
-            ['date_test', 'type' => 'date',   'caption' => 'Startdatum'],
-        ]);
+        $this->addFields(
+            [
+                ['name', 'type' => 'string', 'caption' => 'AName'],
+                ['time_test', 'type' => 'time', 'caption' => 'Startzeit'],
+                ['date_test', 'type' => 'date', 'caption' => 'Startdatum'],
+            ]
+        );
 
         $this->addSecondaryModelHasMany(Email::class);
-        $this->addAuditRefAndAuditHooks();
         $this->_addFileRef();
 
         $this->addMToMReferenceAndDeleteHook(AToB::class);

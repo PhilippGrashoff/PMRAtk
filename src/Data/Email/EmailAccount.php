@@ -105,9 +105,6 @@ class EmailAccount extends BaseModel
             ]
         );
 
-        $this->addCreatedDateAndLastUpdateFields();
-        $this->addCreatedDateAndLastUpdatedHook();
-
         $this->encryptField($this->getField('credentials'), ENCRYPTFIELD_KEY);
 
         //after load, unserialize value field

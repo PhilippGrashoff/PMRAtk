@@ -4,7 +4,7 @@ namespace PMRAtk\tests\phpunit\Data;
 
 use DateTime;
 use PMRAtk\Data\Token;
-use PMRAtk\Data\UserException;
+use traitsforatkdata\UserException;
 use PMRAtk\tests\phpunit\TestCase;
 
 class TokenTest extends TestCase {
@@ -48,7 +48,7 @@ class TokenTest extends TestCase {
         $t->set('expires', (new DateTime())->modify('-1 Minutes'));
         $t->save();
 
-        $this->expectException(UserException::class);
+        self::expectException(UserException::class);
         $t->reload();
     }
 }

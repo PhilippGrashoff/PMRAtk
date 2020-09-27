@@ -175,9 +175,6 @@ class CronManager extends BaseModel
             ]
         );
 
-        $this->addCreatedDateAndLastUpdateFields();
-        $this->addCreatedDateAndLastUpdatedHook();
-
         $this->onHook(
             Model::HOOK_BEFORE_SAVE,
             function (Model $model, $isUpdate) {

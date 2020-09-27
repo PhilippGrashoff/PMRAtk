@@ -38,7 +38,6 @@ class BaseModelA extends BaseModel {
 
         ]);
 
-        $this->addAuditRefAndAuditHooks();
         $this->addSecondaryModelHasMany(Email::class);
 
         $this->addMToMReferenceAndDeleteHook(AToB::class);

@@ -5,16 +5,34 @@ namespace PMRAtk\Data;
 use atk4\core\AppScopeTrait;
 use atk4\data\Exception;
 use atk4\data\Model;
+use auditforatk\ModelWithAuditTrait;
+use notificationforatk\ModelWithNotificationTrait;
 use traitsforatkdata\CreatedDateAndLastUpdatedTrait;
 use traitsforatkdata\ModelWithAppTrait;
+use traitsforatkdata\CreatedByTrait;
 
 
 abstract class BaseModel extends Model
 {
 
     use CreatedDateAndLastUpdatedTrait;
-    use AppScopeTrait;
+    use CreatedByTrait;
+    use ModelWithNotificationTrait;
+    use ModelWithAuditTrait;
     use ModelWithAppTrait;
+
+
+    public function init(): void
+    {
+        parent::init();
+
+        $this->addCreatedDateAndLastUpdateFields();
+        $this->addCreatedDateAndLastUpdatedHook();
+        $this->addCreatedByFields();
+        $this->addCreatedByHook();
+        $this->addNotificationReferenceAndHooks();
+        $this->addAuditRefAndAuditHooks();
+    }
 
     protected function _exceptionIfThisNotLoaded(): void
     {
@@ -44,9 +62,10 @@ abstract class BaseModel extends Model
     /**
      * pass multiple field names. If any is dirty it returns true
      */
-    public function isAtLeastOneFieldDirty(array $fieldNames): bool {
+    public function isAtLeastOneFieldDirty(array $fieldNames): bool
+    {
         foreach ($fieldNames as $fieldName) {
-            if($this->isDirty($fieldName)) {
+            if ($this->isDirty($fieldName)) {
                 return true;
             }
         }

@@ -2,12 +2,10 @@
 
 namespace PMRAtk\tests\phpunit;
 
-use PMRAtk\tests\Traits\TestLoggerTrait;
 use PMRAtk\App\App;
 
-class TestApp extends App {
 
-    use TestLoggerTrait;
+class TestApp extends App {
 
     public $always_run = false;
     public $catch_exceptions = false;

@@ -6,7 +6,7 @@ use atk4\data\ValidationException;
 use Exception;
 use PMRAtk\Data\Token;
 use PMRAtk\Data\User;
-use PMRAtk\Data\UserException;
+use traitsforatkdata\UserException;
 use PMRAtk\tests\phpunit\TestCase;
 
 class UserTest extends TestCase {
@@ -64,7 +64,7 @@ class UserTest extends TestCase {
     public function testValidateEmptyName() {
         $c = new User(self::$app->db);
         $c->set('username', 'ABC');
-        $this->expectException(ValidationException::class);
+        self::expectException(ValidationException::class);
         $c->save();
     }
 
@@ -75,7 +75,7 @@ class UserTest extends TestCase {
     public function testValidateEmptyUserName() {
         $c = new User(self::$app->db);
         $c->set('name', 'ABC');
-        $this->expectException(ValidationException::class);
+        self::expectException(ValidationException::class);
         $c->save();
     }
 
@@ -91,7 +91,7 @@ class UserTest extends TestCase {
         $c->set('password', 'ABC');
         $c->save();
 
-        $this->expectException(\atk4\data\Exception::class);
+        self::expectException(\atk4\data\Exception::class);
         $c->setNewPassword('ggg', 'ggg');
     }
 
@@ -104,7 +104,7 @@ class UserTest extends TestCase {
         self::$app->auth->user->set('password', 'EW');
         self::$app->auth->user->save();
 
-        $this->expectException(UserException::class);
+        self::expectException(UserException::class);
         self::$app->auth->user->setNewPassword('ggg', 'ggg', true, 'falseoldpw');
     }
 
@@ -114,7 +114,7 @@ class UserTest extends TestCase {
      * do not match
      */
     public function testExceptionSetNewPasswordsDoNotMatch() {
-        $this->expectException(UserException::class);
+        self::expectException(UserException::class);
         self::$app->auth->user->setNewPassword('gggfgfg', 'ggg');
     }
 
@@ -208,7 +208,7 @@ class UserTest extends TestCase {
         $t->set('model_id', 99999);
         $t->save();
 
-        $this->expectException(UserException::class);
+        self::expectException(UserException::class);
         $c->resetPassword($token, 'DEDE', 'DEDE');
     }
 

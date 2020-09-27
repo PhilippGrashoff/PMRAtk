@@ -6,12 +6,8 @@ use atk4\data\Exception;
 use traitsforatkdata\CryptIdTrait;
 use PMRAtk\Data\SafeFileName;
 use atk4\data\Model;
-use secondarymodelforatk\SecondaryModel;
 
 
-/**
- *
- */
 class File extends SecondaryModel
 {
     use CryptIdTrait;
@@ -64,7 +60,7 @@ class File extends SecondaryModel
 
         $this->onHook(
             Model::HOOK_BEFORE_SAVE,
-            function ($model, $isUpdate) {
+            function (self $model, $isUpdate) {
                 //add / to path
                 if (
                     $model->get('path')
@@ -79,7 +75,7 @@ class File extends SecondaryModel
                 }
 
                 //add filetype if not there
-                if(
+                if (
                     !$model->get('filetype')
                     && $model->get('value')
                 ) {
@@ -91,11 +87,30 @@ class File extends SecondaryModel
             }
         );
 
+        //if physical file does not exist any more, delete DB record, too
+        $this->onHook(
+            Model::HOOK_AFTER_LOAD,
+            function (self $model) {
+                if ($model->checkFileExists()) {
+                    return;
+                }
+                $clone = clone $model;
+                $model->delete();
+
+                $model->app->addUserMessage(
+                    'Die Datei ' . $clone->get(
+                        'value'
+                    ) . ' ist nicht mehr auf dem Dateisystem vorhanden. Der Eintrag wurde gelöscht.'
+                );
+                $model->breakHook(false);
+            }
+        );
+
         //after successful delete, delete file as well
         $this->onHook(
             Model::HOOK_AFTER_DELETE,
-            function ($m) {
-                $m->deleteFile();
+            function (self $model) {
+                $model->deleteFile();
             }
         );
 
@@ -108,10 +123,6 @@ class File extends SecondaryModel
         }
     }
 
-
-    /**
-     * For File, use a 21 char long cryptic ID
-     */
     protected function generateCryptId(): string
     {
         $return = '';
@@ -122,11 +133,6 @@ class File extends SecondaryModel
         return $return;
     }
 
-
-    /**
-     * tries to delete the file set in path
-     * returns bool
-     */
     public function deleteFile(): bool
     {
         if (file_exists($this->getFullFilePath())) {
@@ -135,11 +141,7 @@ class File extends SecondaryModel
         return false;
     }
 
-
-    /**
-     *
-     */
-    public function createFileName(string $name, bool $uniqueName = true)
+    public function createFileName(string $name, bool $uniqueName = true): void
     {
         $this->set('value', SafeFileName::createSafeFileName($name));
         $this->set('filetype', pathinfo($name, PATHINFO_EXTENSION));
@@ -151,13 +153,14 @@ class File extends SecondaryModel
             while (file_exists($this->getFullFilePath())) {
                 $this->set(
                     'value',
-                    pathinfo($old_name, PATHINFO_FILENAME) . '_' . $i . ($this->get('filetype') ? '.' . $this->get('filetype') : '')
+                    pathinfo($old_name, PATHINFO_FILENAME) . '_' . $i . ($this->get('filetype') ? '.' . $this->get(
+                            'filetype'
+                        ) : '')
                 );
                 $i++;
             }
         }
     }
-
 
     /**
      * Uses $_FILES array content to call move_uploaded_file
@@ -165,24 +168,15 @@ class File extends SecondaryModel
     public function uploadFile($f)
     {
         $this->createFileName($f['name']);
-
         //try move the uploaded file, quit on error
         return move_uploaded_file($f['tmp_name'], $this->getFullFilePath());
     }
 
-
-    /**
-     * Returns the full path to the file from the file system base dir
-     */
     public function getFullFilePath(): string
     {
         return FILE_BASE_PATH . $this->get('path') . $this->get('value');
     }
 
-
-    /**
-     * checks if the file really exists
-     */
     public function checkFileExists(): bool
     {
         return (
@@ -191,16 +185,12 @@ class File extends SecondaryModel
         );
     }
 
-
-    /**
-     * saves the content passed as string to filename
-     */
     public function saveStringToFile(string $string): bool
     {
         $res = null;
         if (!$this->get('value')) {
             $this->createFileName('UnnamedFile');
         }
-        return (bool) file_put_contents($this->getFullFilePath(), $string);
+        return (bool)file_put_contents($this->getFullFilePath(), $string);
     }
 }

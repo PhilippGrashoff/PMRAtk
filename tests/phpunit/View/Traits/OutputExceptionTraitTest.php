@@ -5,9 +5,9 @@ namespace PMRAtk\tests\phpunit\View\Traits;
 
 use atk4\data\ValidationException;
 use atk4\ui\View;
-use PMRAtk\Data\UserException;
+use traitsforatkdata\UserException;
 use PMRAtk\tests\phpunit\TestCase;
-use PMRAtk\View\App;
+use PMRAtk\App\App;
 use PMRAtk\View\Traits\NotifyTrait;
 use PMRAtk\View\Traits\OutputExceptionTrait;
 

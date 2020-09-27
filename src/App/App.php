@@ -24,9 +24,7 @@ class App extends \atk4\ui\App
     //should audits be created? Disabled e.g. for speeding up tests
     public bool $createAudit = true;
     //should notifications be created? Disabled e.g. for speeding up tests
-    public bool $createNotification = true;
-    //indicates if phpunit tests are running.
-    public bool $isTestMode = false;
+    public bool $createNotifications = true;
 
     //used to determine which layout to use
     public $deviceWidth;
