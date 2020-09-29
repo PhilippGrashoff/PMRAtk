@@ -2,20 +2,32 @@
 
 namespace PMRAtk\tests\phpunit\Data;
 
+use notificationforatk\Notification;
 use PMRAtk\Data\Email;
-use PMRAtk\tests\phpunit\TestCase;
+use traitsforatkdata\TestCase;
 
-
-/**
- * Pureliy for generating Covde Coverage
- */
 class EmailTest extends TestCase {
 
-    /**
-     * see if created_by and created_by_name are set on save
-     */
-    public function testInit() {
-        $audit = new Email(self::$app->db);
-        self::assertTrue(true);
+    protected $sqlitePersistenceModels= [
+        Email::class,
+        Notification::class
+    ];
+
+    public function testNofiticationForValidFormat() {
+        $email = new Email($this->getSqliteTestPersistence());
+        $email->set('value', 'invalid');
+        $email->save();
+        self::assertEquals(
+            1,
+            $email->ref(Notification::class)->action('count')->getOne()
+        );
+
+        $email->set('value', 'somevalid@email.com');
+        $email->save();
+
+        self::assertEquals(
+            0,
+            $email->ref(Notification::class)->action('count')->getOne()
+        );
     }
 }

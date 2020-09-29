@@ -2,10 +2,33 @@
 
 namespace PMRAtk\Data;
 
-use secondarymodelforatk\SecondaryModel;
+use notificationforatk\ModelWithNotificationTrait;
+use PMRAtk\Data\SecondaryModel;
 
 
 class Email extends SecondaryModel
 {
+    use ModelWithNotificationTrait;
+
     public $table = 'email';
+
+    public function init(): void
+    {
+        parent::init();
+
+        $this->addNotificationReferenceAndHooks();
+    }
+
+    protected function _checkNotifications(): void
+    {
+        if(
+            $this->get('value')
+            && !filter_var($this->get('value'), FILTER_VALIDATE_EMAIL)
+        ) {
+            $this->createNotification('INCORRECT_EMAIL_FORMAT', 'Die Email ' . $this->get('value') . ' hat ein ungültiges Format!');
+        }
+        else {
+            $this->deleteNotification('INCORRECT_EMAIL_FORMAT');
+        }
+    }
 }

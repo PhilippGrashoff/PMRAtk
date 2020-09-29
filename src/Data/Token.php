@@ -36,7 +36,7 @@ class Token extends SecondaryModel
         //before insert, create token string
         $this->onHook(
             Model::HOOK_BEFORE_SAVE,
-            function (Model $model, $isUpdate) {
+            function (self $model, $isUpdate) {
                 if (!$model->get('value')) {
                     $model->setCryptId('value');
                 }
@@ -70,7 +70,7 @@ class Token extends SecondaryModel
     /**
      * returns a long random token, $this->tokenLength long
      */
-    protected function _generateCryptId(): string
+    protected function generateCryptId(): string
     {
         $return = '';
         for ($i = 0; $i < $this->tokenLength; $i++) {
