@@ -2,32 +2,34 @@
 
 namespace PMRAtk\tests\phpunit\App;
 
+use auditforatk\Audit;
 use PMRAtk\Data\Email\EmailTemplate;
-use PMRAtk\Data\Setting;
+use settingsforatk\Setting;
 use PMRAtk\Data\Token;
 use PMRAtk\tests\TestClasses\BaseModelClasses\BaseModelA;
 use PMRAtk\tests\TestClasses\BaseModelClasses\BaseModelB;
-use PMRAtk\tests\phpunit\TestCase;
 use PMRAtk\App\App;
 use PMRAtk\View\Template;
+use PMRAtk\Data\User;
+use atk4\data\Exception;
+use traitsforatkdata\TestCase;
 
 
 class AppTest extends TestCase
 {
 
-    /*
-     *
-     */
+    protected $sqlitePersistenceModels = [
+        User::class,
+        Token::class,
+        Audit::class
+    ];
+
     public function testAppConstruct()
     {
         $app = new App(['nologin'], ['always_run' => false]);
-        self::assertTrue($app->auth->user instanceof \PMRAtk\Data\User);
+        self::assertTrue($app->auth->user instanceof User);
     }
 
-
-    /**
-     * @throws \atk4\data\Exception
-     */
     public function testPMRAtkTemplateClassIsReturnedInLoadTemplate()
     {
         $app = new App(['nologin'], ['always_run' => false]);
@@ -35,64 +37,49 @@ class AppTest extends TestCase
         self::assertInstanceOf(Template::class, $t);
     }
 
-
-    /*
-     * test if exception is thrown if no array with user roles which may
-     * see this page is passed
-     */
     public function testExceptionEmptyRoleArray()
     {
-        self::expectException(\atk4\data\Exception::class);
+        self::expectException(Exception::class);
         $app = new App([], ['always_run' => false]);
     }
 
-
-    /*
-     * tests TokenLogin
-     */
     public function testTokenLogin()
     {
-        $token = self::$app->auth->user->setNewToken();
+        $persistence = $this->getSqliteTestPersistence();
         $app = new App(['nologin'], ['always_run' => false]);
-        $app->db = self::$app->db;
-        $app->loadUserByToken($token);
-        //some assertion so PHPUnit does not complain
-        self::assertTrue(true);
+        $app->db = $persistence;
+        $user = new User($persistence);
+        $user->save();
+        $token = new Token($persistence, ['parentObject' => $user]);
+        $token->save();
+        $app->loadUserByToken($token->get('value'));
+
+        self::assertTrue($app->auth->user->loaded());
     }
 
-
-    /*
-     *
-     */
     public function testTokenLoginTokenNotFoundException()
     {
         $app = new App(['nologin'], ['always_run' => false]);
-        self::expectException(\atk4\data\Exception::class);
+        self::expectException(Exception::class);
         $app->loadUserByToken('sfsdfssdfeg');
     }
 
-
-    /*
-     *
-     */
     public function testTokenLoginUserForTokenNotFoundException()
     {
+        $persistence = $this->getSqliteTestPersistence();
         $app = new App(['nologin'], ['always_run' => false]);
-        $app->db = self::$app->db;
-        $token = new Token(self::$app->db);
+        $app->db = $persistence;
+        $token = new Token($persistence);
         $token->save();
-        self::expectException(\atk4\data\Exception::class);
+        self::expectException(Exception::class);
         $app->loadUserByToken($token->get('value'));
     }
 
-
-    /*
-     *
-     */
     public function testaddSummerNote()
     {
         $app = new App(['nologin'], ['always_run' => false]);
         $app->addSummernote();
+        //TODO: ADD Sensible check here!
         self::assertTrue($app->auth->user instanceof \PMRAtk\Data\User);
     }
 
@@ -118,7 +105,7 @@ class AppTest extends TestCase
     public function testgetEmailTemplateExceptionIfTemplateNotFound()
     {
         $app = new App(['nologin'], ['always_run' => false]);
-        self::expectException(\atk4\data\Exception::class);
+        self::expectException(Exception::class);
         $app->loadEmailTemplate('DDFUSFsfdfse');
     }
 
@@ -129,7 +116,7 @@ class AppTest extends TestCase
     public function testgetEmailTemplateFromSavedEmailTemplate()
     {
         $app = new App(['nologin'], ['always_run' => false]);
-        $app->db = self::$app->db;
+        $app->db = $this->getSqliteTestPersistence();
         $app->saveEmailTemplate('DUDU', '<div>Miau</div>');
         $t = $app->loadEmailTemplate('DUDU');
         self::assertEquals('<div>Miau</div>', $t->render());
@@ -148,45 +135,6 @@ class AppTest extends TestCase
         self::assertEquals('<div>Miau{$somevar}</div>', $t);
     }
 
-
-    /*
-     *
-     */
-    public function testgetCachedModel()
-    {
-        $app = new App(['nologin'], ['always_run' => false]);
-        $b1 = new BaseModelA($app->db);
-        $b1->set('name', 'Duggu');
-        $b1->save();
-        $b2 = new BaseModelA($app->db);
-        $b2->save();
-
-        $a = $app->getCachedModel('\\PMRAtk\\tests\\phpunit\\Data\\BaseModelA');
-        self::assertEquals(2, count($a));
-        reset($a);
-        self::assertEquals($b1->id, key($a));
-        end($a);
-        self::assertEquals($b2->id, key($a));
-        self::assertTrue($a[$b1->id] instanceof BaseModelA);
-        self::assertTrue($a[$b2->id] instanceof BaseModelA);
-
-        //see if its not reloaded from db
-        $b1->set('name', 'lala');
-        $b1->save();
-        $a = $app->getCachedModel('\\PMRAtk\\tests\\phpunit\\Data\\BaseModelA');
-        self::assertTrue($a[$b1->id]->get('name') == 'Duggu');
-    }
-
-
-    /*
-     *
-     */
-    public function testgetCachedModelExceptionOnNonExistantModel()
-    {
-        $app = new App(['nologin'], ['always_run' => false]);
-        self::expectException(\atk4\data\Exception::class);
-        $a = $app->getCachedModel('SomeNonExistantModel');
-    }
 
 
     /*
@@ -290,7 +238,7 @@ class AppTest extends TestCase
         $app = new App(['nologin'], ['always_run' => false]);
         $app->db = self::$app->db;
         $bb = new BaseModelB(self::$app->db);
-        self::expectException(\atk4\data\Exception::class);
+        self::expectException(Exception::class);
         self::assertEquals('DugguWuggu', $app->loadEmailTemplate('testemailtemplate.html', true, [$bb]));
     }
 

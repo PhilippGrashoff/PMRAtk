@@ -21,7 +21,7 @@ class MessageForUser extends BaseModel
     public $caption = 'Benachrichtigung';
 
 
-    public function init(): void
+    protected function init(): void
     {
         parent::init();
         $this->addFields(

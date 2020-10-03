@@ -14,7 +14,7 @@ class SecondaryModel extends \secondarymodelforatk\SecondaryModel {
     use CreatedByTrait;
     use ModelWithAppTrait;
 
-    public function init(): void {
+    protected function init(): void {
         parent::init();
         $this->addCreatedByFields();
         $this->addCreatedByHook();

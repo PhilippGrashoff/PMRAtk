@@ -16,7 +16,7 @@ class ModelWithEPA extends BaseModelWithEPA
 
     public $table = 'model_with_epa';
 
-    public function init(): void
+    protected function init(): void
     {
         parent::init();
         $this->addField('name');

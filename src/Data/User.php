@@ -15,40 +15,35 @@ class User extends BaseModel
 
     public $table = 'User';
 
-    public function init(): void
+    protected function init(): void
     {
         parent::init();
         $this->addfields(
             [
-                ['name', 'type' => 'string', 'caption' => 'Name'],
+                [
+                    'name',
+                    'type' => 'string',
+                    'caption' => 'Name'
+                ],
                 [
                     'username',
                     'type' => 'string',
                     'caption' => 'Benutzername',
                     'ui' => ['form' => ['inputAttr' => ['autocomplete' => 'new-password']]]
                 ],
+                [
+                    'password',
+                    Password::class,
+                    'caption' => 'Passwort',
+                    'system' => true,
+                    'ui' => ['form' => ['inputAttr' => ['autocomplete' => 'new-password']]]
+                ]
             ]
         );
-        $this->_addFailedLoginsField();
 
-        //password field from atk login
-        $p = new Password();
-        $this->addField(
-            'password',
-            [
-                $p,
-                'caption' => 'Passwort',
-                'system' => true,
-                'ui' => ['form' => ['inputAttr' => ['autocomplete' => 'new-password']]]
-            ]
-        );
-        //$this->_addEPARefs();
+        $this->_addFailedLoginsField();
     }
 
-
-    /*
-     *  saves the new password
-     */
     public function setNewPassword(
         string $new_password_1,
         string $new_password_2,
@@ -75,12 +70,7 @@ class User extends BaseModel
         $this->set('password', $new_password_1);
     }
 
-
-    /*
-     *
-     */
-    public function sendResetPasswordEmail(string $username): bool
-    {
+    public function sendResetPasswordEmail(string $username): bool {
         //loaded record may not use this function
         $c = $this->newInstance();
         //try load by username
@@ -101,12 +91,11 @@ class User extends BaseModel
         return $phpmailer->send();
     }
 
-
-    /*
-     * reset password on token base
-     */
-    public function resetPassword(string $token, string $new_password_1, string $new_password_2)
-    {
+    public function resetPassword(
+        string $token,
+        string $new_password_1,
+        string $new_password_2
+    ) {
         //new passwords need to match
         if ($new_password_1 !== $new_password_2) {
             throw new UserException('Die neuen Passwörter stimmen nicht überein');
@@ -127,55 +116,14 @@ class User extends BaseModel
         $t->delete();
     }
 
-
-    /*
-     * sets a new token and timeout for it
-     */
+    //TODO: NEEDED?
     public function setNewToken(): string
     {
-        $t = new Token($this->persistence, ['parentObject' => $this, 'expiresInMinutes' => 180]);
+        $t = new Token($this->persistence, ['parentObject' => $this, 'expiresAfterInMinutes' => 180]);
         $t->save();
         return $t->get('value');
     }
 
-
-    /*
-     * check if required params are set
-     */
-    public function validate($intent = null): array
-    {
-        $errors = [];
-        if (empty($this->get('name'))) {
-            $errors['name'] = 'Ein (Firmen)Name muss angegeben werden';
-        } //make name is unique
-        elseif ($this->isDirty('name')) {
-            $c = $this->newInstance();
-            $c->addCondition($this->id_field, 'not', $this->get($this->id_field));
-            $c->tryLoadBy('name', $this->get('name'));
-            if ($c->loaded()) {
-                $errors['name'] = 'Dieser (Firmen)Name wird bereits verwendet, bitte wähle einen anderen';
-            }
-        }
-
-        if (empty($this->get('username'))) {
-            $errors['username'] = 'Ein Benutzername muss angegeben werden';
-        } //make name is unique
-        elseif ($this->isDirty('username')) {
-            $c = $this->newInstance();
-            $c->addCondition($this->id_field, 'not', $this->get($this->id_field));
-            $c->tryLoadBy('username', $this->get('username'));
-            if ($c->loaded()) {
-                $errors['username'] = 'Dieser Benutzername wird bereits verwendet, bitte wähle einen anderen';
-            }
-        }
-
-        return array_merge(parent::validate($intent), $errors);
-    }
-
-
-    /*
-     *
-     */
     protected function _standardUserRights()
     {
         //no logged in user?
@@ -191,14 +139,6 @@ class User extends BaseModel
         return false;
     }
 
-
-    /*
-     * Overwrite in actual User Model implementation. Returns a signature like
-     * Best Regards
-     * Philipp
-     *
-     * which can be used to customize Emails etc.
-     */
     public function getSignature()
     {
         return '';

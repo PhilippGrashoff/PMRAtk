@@ -10,7 +10,7 @@ abstract class BaseModelWithEPA extends BaseModel
 
     use SecondaryModelRelationTrait;
 
-    public function init(): void
+    protected function init(): void
     {
         parent::init();
 
@@ -56,5 +56,4 @@ abstract class BaseModelWithEPA extends BaseModel
 
         return $record;
     }
-
 }

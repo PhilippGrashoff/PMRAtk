@@ -98,7 +98,7 @@ class ApiTest extends TestCase {
         $noDateTimeClass = new class extends Model {
             public $table = 'SecondaryBaseModel';
 
-            public function init(): void {
+            protected function init(): void {
                 parent::init();
                 $this->addField('value', ['type' => 'string']);
             }

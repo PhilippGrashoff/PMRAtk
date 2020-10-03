@@ -25,7 +25,7 @@ class AToB extends MToMModel {
     /**
      *
      */
-    public function init(): void {
+    protected function init(): void {
         parent::init();
 
         $this->addField('test1');

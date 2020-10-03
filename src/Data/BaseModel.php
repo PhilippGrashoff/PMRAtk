@@ -22,7 +22,7 @@ abstract class BaseModel extends Model
     use ModelWithAppTrait;
 
 
-    public function init(): void
+    protected function init(): void
     {
         parent::init();
 

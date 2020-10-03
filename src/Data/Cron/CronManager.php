@@ -54,7 +54,7 @@ class CronManager extends BaseModel
     public $currentMinute;
 
 
-    public function init(): void
+    protected function init(): void
     {
         parent::init();
         $this->addFields(

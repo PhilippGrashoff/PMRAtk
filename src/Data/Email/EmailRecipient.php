@@ -10,7 +10,7 @@ class EmailRecipient extends SecondaryModel
     public $table = 'email_recipient';
 
 
-    public function init(): void
+    protected function init(): void
     {
         parent::init();
         $this->addFields(

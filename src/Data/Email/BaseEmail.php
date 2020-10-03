@@ -89,7 +89,7 @@ class BaseEmail extends BaseModel
     public $customTemplateModels = [];
 
 
-    public function init(): void
+    protected function init(): void
     {
         parent::init();
         $this->addFields(

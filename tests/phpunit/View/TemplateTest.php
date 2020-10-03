@@ -47,7 +47,7 @@ class TemplateTest extends TestCase {
         $class = new class extends Model {
             public $table = 'blalba';
 
-            public function init(): void {
+            protected function init(): void {
                 parent::init();
                 $this->addFields([
                                      ['name',     'type' => 'string'],

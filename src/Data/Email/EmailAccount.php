@@ -14,7 +14,7 @@ class EmailAccount extends BaseModel
     public $table = 'email_account';
 
 
-    public function init(): void
+    protected function init(): void
     {
         parent::init();
         $this->addFields(

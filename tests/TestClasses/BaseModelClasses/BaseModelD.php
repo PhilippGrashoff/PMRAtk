@@ -12,7 +12,7 @@ class BaseModelD extends BaseModel {
 
     public $table = 'BaseModelD';
 
-    public function init(): void {
+    protected function init(): void {
         parent::init();
 
         $this->addFields([

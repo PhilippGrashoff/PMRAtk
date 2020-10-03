@@ -1,12 +1,17 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace PMRAtk\Data\Traits;
 
-trait MaxFailedLoginsTrait {
+
+trait MaxFailedLoginsTrait
+{
 
     public $maxFailedLogins = 10;
 
-    protected function _addFailedLoginsField() {
+    protected function _addFailedLoginsField()
+    {
         $this->addField(
             'failed_logins',
             [
@@ -18,29 +23,33 @@ trait MaxFailedLoginsTrait {
         );
     }
 
-    public function addFailedLogin(bool $save = true) {
+    public function addFailedLogin(bool $save = true)
+    {
         $this->set('failed_logins', $this->get('failed_logins') + 1);
-        if($save) {
+        if ($save) {
             $this->save();
         }
     }
 
-    public function setFailedLoginsToZero(bool $save = true) {
+    public function setFailedLoginsToZero(bool $save = true)
+    {
         $this->set('failed_logins', 0);
-        if($save) {
+        if ($save) {
             $this->save();
         }
     }
 
-    public function hasTooManyFailedLogins():bool {
-        if($this->get('failed_logins') > $this->maxFailedLogins) {
+    public function hasTooManyFailedLogins(): bool
+    {
+        if ($this->get('failed_logins') > $this->maxFailedLogins) {
             return true;
         }
 
         return false;
     }
 
-    public function getRemainingLogins():int {
-        return (int) $this->maxFailedLogins - $this->get('failed_logins');
+    public function getRemainingLogins(): int
+    {
+        return (int)$this->maxFailedLogins - $this->get('failed_logins');
     }
 }

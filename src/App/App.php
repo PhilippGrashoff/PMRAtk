@@ -3,6 +3,7 @@
 namespace PMRAtk\App;
 
 use atk4\login\Auth;
+use cachedvalueforatk\CachedValuesTrait;
 use PMRAtk\Data\Email\BaseEmail;
 use PMRAtk\Data\Email\EmailTemplate;
 use PMRAtk\Data\PersistenceWithApp;
@@ -13,6 +14,7 @@ use ReflectionClass;
 use PMRAtk\View\Template;
 use atk4\data\Exception;
 use settingsforatk\SettingsTrait;
+use traitsforatkdata\CachedModelTrait;
 
 
 class App extends \atk4\ui\App
@@ -20,6 +22,8 @@ class App extends \atk4\ui\App
 
     use UserMessageTrait;
     use SettingsTrait;
+    use CachedModelTrait;
+    use CachedValuesTrait;
 
     //should audits be created? Disabled e.g. for speeding up tests
     public bool $createAudit = true;
@@ -69,8 +73,8 @@ class App extends \atk4\ui\App
 
     protected function _addAuth()
     {
-        //$this->auth = new Auth(['check' => false]);
-        //$this->auth->setModel(new User($this->db), 'username', 'password');
+        $this->auth = new Auth(['check' => false]);
+        $this->auth->setModel(new User($this->db), 'username', 'password');
     }
 
     public function requireCustomJSAndCSS()
@@ -171,6 +175,7 @@ class App extends \atk4\ui\App
      * Sets $this->deviceWidth to a value found in $_POST. Typically, my forms
      * contain a hidden field 'device_width' which is used to send device width
      * to the server.
+     * //TODO: RENAME, silly name as it sets but does not get
      */
     public function getDeviceWidth()
     {

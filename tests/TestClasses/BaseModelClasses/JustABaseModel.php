@@ -15,7 +15,7 @@ class JustABaseModel extends BaseModel
 
     public $table = 'just_a_basemodel';
 
-    public function init(): void
+    protected function init(): void
     {
         parent::init();
         $this->addField('name');

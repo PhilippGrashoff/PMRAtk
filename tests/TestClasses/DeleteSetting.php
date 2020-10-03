@@ -8,7 +8,7 @@ class DeleteSetting extends Model {
 
     public $table = 'setting';
 
-    public function init(): void {
+    protected function init(): void {
         parent::init();
         $this->addFields([
             ['ident', 'type' => 'string'],

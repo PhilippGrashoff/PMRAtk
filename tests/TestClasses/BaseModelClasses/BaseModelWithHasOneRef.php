@@ -15,7 +15,7 @@ class BaseModelWithHasOneRef extends BaseModel
 
     public $table = 'basemodel_with_has_one_ref';
 
-    public function init(): void
+    protected function init(): void
     {
         parent::init();
         $this->addField('name');

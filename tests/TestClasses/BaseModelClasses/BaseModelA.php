@@ -24,7 +24,7 @@ class BaseModelA extends BaseModel {
     public $caption = 'BMACAPTION';
 
 
-    public function init(): void {
+    protected function init(): void {
         parent::init();
 
         $this->addFields([

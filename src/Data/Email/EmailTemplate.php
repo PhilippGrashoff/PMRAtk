@@ -12,7 +12,7 @@ class EmailTemplate extends SecondaryModel {
     /**
      *
      */
-    public function init(): void {
+    protected function init(): void {
         parent::init();
 
         $this->addFields([

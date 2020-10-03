@@ -18,7 +18,7 @@ class MessageForUserToUser extends MToMModel {
         'user_id' => User::class
     ];
 
-    public function init(): void {
+    protected function init(): void {
         parent::init();
         $this->addFields(
             [

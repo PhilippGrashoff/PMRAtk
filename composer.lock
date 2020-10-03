@@ -4,29 +4,31 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "51873753b8a7b38400d1acdbe24cccdd",
+    "content-hash": "f0958d2e495225f1981f0ea7af172376",
     "packages": [
         {
             "name": "atk4/api",
-            "version": "0.3",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
                 "url": "https://github.com/atk4/api.git",
-                "reference": "acd9776076873e054ced87facbb2494a48eb546b"
+                "reference": "0a50ffa4c520a9e49d998d841e8fef4514f31771"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/atk4/api/zipball/acd9776076873e054ced87facbb2494a48eb546b",
-                "reference": "acd9776076873e054ced87facbb2494a48eb546b",
+                "url": "https://api.github.com/repos/atk4/api/zipball/0a50ffa4c520a9e49d998d841e8fef4514f31771",
+                "reference": "0a50ffa4c520a9e49d998d841e8fef4514f31771",
                 "shasum": ""
             },
             "require": {
-                "atk4/data": "^2.0",
-                "php": ">=7.2.0",
-                "zendframework/zend-diactoros": "^1.6"
+                "atk4/data": "dev-develop",
+                "ext-json": "*",
+                "laminas/laminas-diactoros": "^2.0",
+                "laminas/laminas-httphandlerrunner": "^1.1",
+                "php": ">=7.3.0"
             },
             "require-dev": {
-                "atk4/schema": "^2.0",
+                "atk4/schema": "dev-develop",
                 "codeclimate/php-test-reporter": "*",
                 "phpunit/phpunit": "<6"
             },
@@ -61,20 +63,20 @@
                 "restapi",
                 "toolkit"
             ],
-            "time": "2020-02-11T22:09:03+00:00"
+            "time": "2020-08-27T13:03:59+00:00"
         },
         {
             "name": "atk4/core",
-            "version": "2.2.0",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
                 "url": "https://github.com/atk4/core.git",
-                "reference": "b2d32824066fd312d9f0c6edde239d70fb79d782"
+                "reference": "196e8a382a58c7bc075ae6cd082dc0a511812100"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/atk4/core/zipball/b2d32824066fd312d9f0c6edde239d70fb79d782",
-                "reference": "b2d32824066fd312d9f0c6edde239d70fb79d782",
+                "url": "https://api.github.com/repos/atk4/core/zipball/196e8a382a58c7bc075ae6cd082dc0a511812100",
+                "reference": "196e8a382a58c7bc075ae6cd082dc0a511812100",
                 "shasum": ""
             },
             "require": {
@@ -86,8 +88,9 @@
                 "symfony/yaml": ">=3.4"
             },
             "require-dev": {
-                "atk4/data": "^2.2.0",
+                "atk4/data": "dev-develop",
                 "friendsofphp/php-cs-fixer": "^2.16",
+                "johnkary/phpunit-speedtrap": "^3.2",
                 "phpunit/phpunit": ">=9.0",
                 "symfony/contracts": ">=1.1"
             },
@@ -128,31 +131,35 @@
                 "php",
                 "traits"
             ],
-            "time": "2020-07-15T21:17:52+00:00"
+            "time": "2020-09-21T23:00:35+00:00"
         },
         {
             "name": "atk4/data",
-            "version": "2.2.0",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
                 "url": "https://github.com/atk4/data.git",
-                "reference": "36b9507375f202178c9fc09331ba9f7d0d1c903b"
+                "reference": "a8b6ea4795926c825d744463906392aaf548d5bd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/atk4/data/zipball/36b9507375f202178c9fc09331ba9f7d0d1c903b",
-                "reference": "36b9507375f202178c9fc09331ba9f7d0d1c903b",
+                "url": "https://api.github.com/repos/atk4/data/zipball/a8b6ea4795926c825d744463906392aaf548d5bd",
+                "reference": "a8b6ea4795926c825d744463906392aaf548d5bd",
                 "shasum": ""
             },
             "require": {
-                "atk4/core": "^2.2.0",
-                "atk4/dsql": "^2.2.0",
+                "atk4/core": "dev-develop",
+                "atk4/dsql": "dev-develop",
                 "ext-intl": "*",
                 "php": ">=7.3.0"
             },
+            "replace": {
+                "atk4/data": "self.version"
+            },
             "require-dev": {
-                "atk4/schema": "^2.2.0",
+                "atk4/schema": "dev-develop",
                 "friendsofphp/php-cs-fixer": "^2.16",
+                "johnkary/phpunit-speedtrap": "^3.2",
                 "phpunit/phpcov": "*",
                 "phpunit/phpunit": ">=9.0"
             },
@@ -196,28 +203,29 @@
                 "query",
                 "sql"
             ],
-            "time": "2020-07-15T21:59:13+00:00"
+            "time": "2020-09-29T13:39:23+00:00"
         },
         {
             "name": "atk4/dsql",
-            "version": "2.2.0",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
                 "url": "https://github.com/atk4/dsql.git",
-                "reference": "cadfdaa60dd8eef318a86ace30d8ea461cfe801d"
+                "reference": "d89b6189e93ac72e678e13fdb0d8510866dd672e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/atk4/dsql/zipball/cadfdaa60dd8eef318a86ace30d8ea461cfe801d",
-                "reference": "cadfdaa60dd8eef318a86ace30d8ea461cfe801d",
+                "url": "https://api.github.com/repos/atk4/dsql/zipball/d89b6189e93ac72e678e13fdb0d8510866dd672e",
+                "reference": "d89b6189e93ac72e678e13fdb0d8510866dd672e",
                 "shasum": ""
             },
             "require": {
-                "atk4/core": "^2.2.0",
+                "atk4/core": "dev-develop",
                 "php": ">=7.3.0"
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^2.16",
+                "johnkary/phpunit-speedtrap": "^3.2",
                 "phpunit/phpcov": "*",
                 "phpunit/phpunit": ">=9.0"
             },
@@ -257,31 +265,32 @@
                 "orm",
                 "sql"
             ],
-            "time": "2020-07-15T21:51:54+00:00"
+            "time": "2020-09-21T19:30:41+00:00"
         },
         {
             "name": "atk4/login",
-            "version": "2.0.2",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
                 "url": "https://github.com/atk4/login.git",
-                "reference": "afc14d8a31bde73ef4791abacb93a742165f5fb8"
+                "reference": "86a3a01553dbafa50a4cc82db16a056d6de11328"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/atk4/login/zipball/afc14d8a31bde73ef4791abacb93a742165f5fb8",
-                "reference": "afc14d8a31bde73ef4791abacb93a742165f5fb8",
+                "url": "https://api.github.com/repos/atk4/login/zipball/86a3a01553dbafa50a4cc82db16a056d6de11328",
+                "reference": "86a3a01553dbafa50a4cc82db16a056d6de11328",
                 "shasum": ""
             },
             "require": {
-                "atk4/data": "^2.0",
-                "atk4/schema": "^2.0",
-                "atk4/ui": "^2.0",
-                "php": ">=7.2.0"
+                "atk4/data": "dev-develop",
+                "atk4/ui": "dev-develop",
+                "php": ">=7.3.0"
             },
             "require-dev": {
-                "phpunit/phpcov": "^3.0",
-                "phpunit/phpunit": "<6"
+                "atk4/schema": "dev-develop",
+                "friendsofphp/php-cs-fixer": "^2.16",
+                "phpunit/phpunit": "*",
+                "symfony/contracts": ">=1.1"
             },
             "type": "library",
             "autoload": {
@@ -313,34 +322,34 @@
                 "login",
                 "user"
             ],
-            "time": "2020-02-11T14:42:01+00:00"
+            "time": "2020-09-16T10:33:20+00:00"
         },
         {
             "name": "atk4/schema",
-            "version": "2.2.0",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
                 "url": "https://github.com/atk4/schema.git",
-                "reference": "c041bb871c53ad5aad07cebea61fec62f73ee417"
+                "reference": "75fe8ef4f526458dde70b24fe17500d304dc8728"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/atk4/schema/zipball/c041bb871c53ad5aad07cebea61fec62f73ee417",
-                "reference": "c041bb871c53ad5aad07cebea61fec62f73ee417",
+                "url": "https://api.github.com/repos/atk4/schema/zipball/75fe8ef4f526458dde70b24fe17500d304dc8728",
+                "reference": "75fe8ef4f526458dde70b24fe17500d304dc8728",
                 "shasum": ""
             },
             "require": {
-                "atk4/data": "^2.2.0",
+                "atk4/data": "dev-develop",
                 "php": ">=7.3.0"
             },
             "require-dev": {
-                "atk4/ui": "^2.2.0",
+                "atk4/ui": "dev-develop",
                 "friendsofphp/php-cs-fixer": "^2.16",
                 "phpunit/phpcov": "*",
                 "phpunit/phpunit": ">=9.0"
             },
             "suggest": {
-                "atk4/ui": "^2.2.0"
+                "atk4/ui": "dev-develop"
             },
             "type": "library",
             "autoload": {
@@ -386,25 +395,25 @@
                 "schema",
                 "sql"
             ],
-            "time": "2020-07-15T22:13:03+00:00"
+            "time": "2020-09-14T14:51:35+00:00"
         },
         {
             "name": "atk4/ui",
-            "version": "2.2.0",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
                 "url": "https://github.com/atk4/ui.git",
-                "reference": "de001edbddf01786b9a7b3972d6c7c602b09d216"
+                "reference": "f69158c7ec07ff9a7cf3fb19e6aa5e955dbd86c2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/atk4/ui/zipball/de001edbddf01786b9a7b3972d6c7c602b09d216",
-                "reference": "de001edbddf01786b9a7b3972d6c7c602b09d216",
+                "url": "https://api.github.com/repos/atk4/ui/zipball/f69158c7ec07ff9a7cf3fb19e6aa5e955dbd86c2",
+                "reference": "f69158c7ec07ff9a7cf3fb19e6aa5e955dbd86c2",
                 "shasum": ""
             },
             "require": {
-                "atk4/core": "^2.2.0",
-                "atk4/data": "^2.2.0",
+                "atk4/core": "dev-develop",
+                "atk4/data": "dev-develop",
                 "ext-json": "*",
                 "php": ">=7.3.0"
             },
@@ -415,8 +424,9 @@
                 "friendsofphp/php-cs-fixer": "^2.16",
                 "fzaninotto/faker": "*",
                 "guzzlehttp/guzzle": "^6.3",
+                "johnkary/phpunit-speedtrap": "^3.2",
                 "phpunit/phpcov": "*",
-                "phpunit/phpunit": ">=9.0",
+                "phpunit/phpunit": ">=9.3",
                 "symfony/process": "^4.3 || ^5.0"
             },
             "type": "library",
@@ -478,7 +488,7 @@
                 "web",
                 "widget"
             ],
-            "time": "2020-07-15T22:16:50+00:00"
+            "time": "2020-10-02T12:57:13+00:00"
         },
         {
             "name": "container-interop/container-interop",
@@ -511,6 +521,198 @@
             "homepage": "https://github.com/container-interop/container-interop",
             "abandoned": "psr/container",
             "time": "2017-02-14T19:40:03+00:00"
+        },
+        {
+            "name": "laminas/laminas-diactoros",
+            "version": "2.4.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laminas/laminas-diactoros.git",
+                "reference": "36ef09b73e884135d2059cc498c938e90821bb57"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laminas/laminas-diactoros/zipball/36ef09b73e884135d2059cc498c938e90821bb57",
+                "reference": "36ef09b73e884135d2059cc498c938e90821bb57",
+                "shasum": ""
+            },
+            "require": {
+                "laminas/laminas-zendframework-bridge": "^1.0",
+                "php": "^7.1",
+                "psr/http-factory": "^1.0",
+                "psr/http-message": "^1.0"
+            },
+            "conflict": {
+                "phpspec/prophecy": "<1.9.0"
+            },
+            "provide": {
+                "psr/http-factory-implementation": "1.0",
+                "psr/http-message-implementation": "1.0"
+            },
+            "replace": {
+                "zendframework/zend-diactoros": "^2.2.1"
+            },
+            "require-dev": {
+                "ext-curl": "*",
+                "ext-dom": "*",
+                "ext-gd": "*",
+                "ext-libxml": "*",
+                "http-interop/http-factory-tests": "^0.5.0",
+                "laminas/laminas-coding-standard": "~1.0.0",
+                "php-http/psr7-integration-tests": "^1.0",
+                "phpunit/phpunit": "^7.5.18"
+            },
+            "type": "library",
+            "extra": {
+                "laminas": {
+                    "config-provider": "Laminas\\Diactoros\\ConfigProvider",
+                    "module": "Laminas\\Diactoros"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/functions/create_uploaded_file.php",
+                    "src/functions/marshal_headers_from_sapi.php",
+                    "src/functions/marshal_method_from_sapi.php",
+                    "src/functions/marshal_protocol_version_from_sapi.php",
+                    "src/functions/marshal_uri_from_sapi.php",
+                    "src/functions/normalize_server.php",
+                    "src/functions/normalize_uploaded_files.php",
+                    "src/functions/parse_cookie_header.php",
+                    "src/functions/create_uploaded_file.legacy.php",
+                    "src/functions/marshal_headers_from_sapi.legacy.php",
+                    "src/functions/marshal_method_from_sapi.legacy.php",
+                    "src/functions/marshal_protocol_version_from_sapi.legacy.php",
+                    "src/functions/marshal_uri_from_sapi.legacy.php",
+                    "src/functions/normalize_server.legacy.php",
+                    "src/functions/normalize_uploaded_files.legacy.php",
+                    "src/functions/parse_cookie_header.legacy.php"
+                ],
+                "psr-4": {
+                    "Laminas\\Diactoros\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "PSR HTTP Message implementations",
+            "homepage": "https://laminas.dev",
+            "keywords": [
+                "http",
+                "laminas",
+                "psr",
+                "psr-17",
+                "psr-7"
+            ],
+            "time": "2020-09-03T14:29:41+00:00"
+        },
+        {
+            "name": "laminas/laminas-httphandlerrunner",
+            "version": "1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laminas/laminas-httphandlerrunner.git",
+                "reference": "e1a5dad040e0043135e8095ee27d1fbf6fb640e1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laminas/laminas-httphandlerrunner/zipball/e1a5dad040e0043135e8095ee27d1fbf6fb640e1",
+                "reference": "e1a5dad040e0043135e8095ee27d1fbf6fb640e1",
+                "shasum": ""
+            },
+            "require": {
+                "laminas/laminas-zendframework-bridge": "^1.0",
+                "php": "^7.1",
+                "psr/http-message": "^1.0",
+                "psr/http-message-implementation": "^1.0",
+                "psr/http-server-handler": "^1.0"
+            },
+            "replace": {
+                "zendframework/zend-httphandlerrunner": "^1.1.0"
+            },
+            "require-dev": {
+                "laminas/laminas-coding-standard": "~1.0.0",
+                "laminas/laminas-diactoros": "^1.7 || ^2.1.1",
+                "phpunit/phpunit": "^7.0.2"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.2.x-dev",
+                    "dev-develop": "1.3.x-dev"
+                },
+                "laminas": {
+                    "config-provider": "Laminas\\HttpHandlerRunner\\ConfigProvider"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Laminas\\HttpHandlerRunner\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "Execute PSR-15 RequestHandlerInterface instances and emit responses they generate.",
+            "homepage": "https://laminas.dev",
+            "keywords": [
+                "components",
+                "laminas",
+                "mezzio",
+                "psr-15",
+                "psr-7"
+            ],
+            "time": "2020-06-03T15:52:17+00:00"
+        },
+        {
+            "name": "laminas/laminas-zendframework-bridge",
+            "version": "1.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laminas/laminas-zendframework-bridge.git",
+                "reference": "6ede70583e101030bcace4dcddd648f760ddf642"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laminas/laminas-zendframework-bridge/zipball/6ede70583e101030bcace4dcddd648f760ddf642",
+                "reference": "6ede70583e101030bcace4dcddd648f760ddf642",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.6 || ^7.0 || ^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^5.7 || ^6.5 || ^7.5 || ^8.1 || ^9.3",
+                "squizlabs/php_codesniffer": "^3.5"
+            },
+            "type": "library",
+            "extra": {
+                "laminas": {
+                    "module": "Laminas\\ZendFrameworkBridge"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/autoload.php"
+                ],
+                "psr-4": {
+                    "Laminas\\ZendFrameworkBridge\\": "src//"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "Alias legacy ZF class names to Laminas Project equivalents.",
+            "keywords": [
+                "ZendFramework",
+                "autoloading",
+                "laminas",
+                "zf"
+            ],
+            "time": "2020-09-14T14:23:00+00:00"
         },
         {
             "name": "league/period",
@@ -593,22 +795,22 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/PhilippGrashoff/auditforatk.git",
-                "reference": "53fdebefee8cddb71b74a9d841be403c9e9626b9"
+                "reference": "94372082c3964c0d4d0341c71a275773853bfdef"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PhilippGrashoff/auditforatk/zipball/53fdebefee8cddb71b74a9d841be403c9e9626b9",
-                "reference": "53fdebefee8cddb71b74a9d841be403c9e9626b9",
+                "url": "https://api.github.com/repos/PhilippGrashoff/auditforatk/zipball/94372082c3964c0d4d0341c71a275773853bfdef",
+                "reference": "94372082c3964c0d4d0341c71a275773853bfdef",
                 "shasum": ""
             },
             "require": {
-                "atk4/core": "2.2.0",
-                "atk4/data": "2.2.0",
+                "atk4/core": "dev-develop",
+                "atk4/data": "dev-develop",
                 "philippgrashoff/secondarymodelforatk": "master",
                 "philippgrashoff/traitsforatkdata": "master"
             },
             "require-dev": {
-                "atk4/ui": "2.2.0",
+                "atk4/ui": "dev-develop",
                 "phpunit/phpunit": ">8"
             },
             "type": "library",
@@ -618,7 +820,7 @@
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
-            "time": "2020-09-26T15:42:49+00:00"
+            "time": "2020-10-01T18:03:20+00:00"
         },
         {
             "name": "philippgrashoff/cachedvalueforatk",
@@ -626,17 +828,17 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/PhilippGrashoff/cachedvalueforatk.git",
-                "reference": "f1de20115cb4e0f0f4d7eb7d23b0235a6795954c"
+                "reference": "03e7385b1c52ed4f3acc0c0e681e903b2c4c4a4a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PhilippGrashoff/cachedvalueforatk/zipball/f1de20115cb4e0f0f4d7eb7d23b0235a6795954c",
-                "reference": "f1de20115cb4e0f0f4d7eb7d23b0235a6795954c",
+                "url": "https://api.github.com/repos/PhilippGrashoff/cachedvalueforatk/zipball/03e7385b1c52ed4f3acc0c0e681e903b2c4c4a4a",
+                "reference": "03e7385b1c52ed4f3acc0c0e681e903b2c4c4a4a",
                 "shasum": ""
             },
             "require": {
-                "atk4/core": "2.2.0",
-                "atk4/data": "2.2.0",
+                "atk4/core": "dev-develop",
+                "atk4/data": "dev-develop",
                 "philippgrashoff/traitsforatkdata": "master"
             },
             "require-dev": {
@@ -649,7 +851,7 @@
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
-            "time": "2020-09-22T18:10:36+00:00"
+            "time": "2020-10-01T18:31:39+00:00"
         },
         {
             "name": "philippgrashoff/mtomforatk",
@@ -657,17 +859,18 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/PhilippGrashoff/mtomforatk.git",
-                "reference": "8647c48bf68463cd2ea5116243ca4d06b4e7a01c"
+                "reference": "fbababd36c985dba357c8cb64b600359467e0bda"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PhilippGrashoff/mtomforatk/zipball/8647c48bf68463cd2ea5116243ca4d06b4e7a01c",
-                "reference": "8647c48bf68463cd2ea5116243ca4d06b4e7a01c",
+                "url": "https://api.github.com/repos/PhilippGrashoff/mtomforatk/zipball/fbababd36c985dba357c8cb64b600359467e0bda",
+                "reference": "fbababd36c985dba357c8cb64b600359467e0bda",
                 "shasum": ""
             },
             "require": {
-                "atk4/core": "2.2.0",
-                "atk4/data": "2.2.0"
+                "atk4/core": "dev-develop",
+                "atk4/data": "dev-develop",
+                "philippgrashoff/traitsforatkdata": "dev-master"
             },
             "require-dev": {
                 "phpunit/phpunit": ">8"
@@ -678,16 +881,8 @@
                     "mtomforatk\\": "src"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "mtomforatk\\tests\\": "tests"
-                }
-            },
-            "support": {
-                "source": "https://github.com/PhilippGrashoff/mtomforatk/tree/master",
-                "issues": "https://github.com/PhilippGrashoff/mtomforatk/issues"
-            },
-            "time": "2020-08-29T11:16:05+00:00"
+            "notification-url": "https://packagist.org/downloads/",
+            "time": "2020-10-01T18:54:29+00:00"
         },
         {
             "name": "philippgrashoff/notificationforatk",
@@ -695,21 +890,21 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/PhilippGrashoff/notificationforatk.git",
-                "reference": "6ad2d6f6f6aa19a130b8173acf3ccd8efdbf184f"
+                "reference": "45805bd449da4dbcc8b7f2f46587180f611884a7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PhilippGrashoff/notificationforatk/zipball/6ad2d6f6f6aa19a130b8173acf3ccd8efdbf184f",
-                "reference": "6ad2d6f6f6aa19a130b8173acf3ccd8efdbf184f",
+                "url": "https://api.github.com/repos/PhilippGrashoff/notificationforatk/zipball/45805bd449da4dbcc8b7f2f46587180f611884a7",
+                "reference": "45805bd449da4dbcc8b7f2f46587180f611884a7",
                 "shasum": ""
             },
             "require": {
-                "atk4/data": "2.2.0",
-                "atk4/schema": "2.2.0",
+                "atk4/data": "dev-develop",
+                "atk4/schema": "dev-develop",
                 "philippgrashoff/secondarymodelforatk": "dev-master"
             },
             "require-dev": {
-                "atk4/ui": "2.2.0",
+                "atk4/ui": "dev-develop",
                 "philippgrashoff/traitsforatkdata": "dev-master",
                 "phpunit/phpunit": ">8"
             },
@@ -720,7 +915,7 @@
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
-            "time": "2020-09-27T17:24:41+00:00"
+            "time": "2020-10-01T17:42:28+00:00"
         },
         {
             "name": "philippgrashoff/secondarymodelforatk",
@@ -728,17 +923,17 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/PhilippGrashoff/secondarymodelforatk.git",
-                "reference": "63b8d40a2812b6e633a0a3cfe0bedefa15831059"
+                "reference": "051e55f50cc52962f4cefd16acfa4c89fcee598f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PhilippGrashoff/secondarymodelforatk/zipball/63b8d40a2812b6e633a0a3cfe0bedefa15831059",
-                "reference": "63b8d40a2812b6e633a0a3cfe0bedefa15831059",
+                "url": "https://api.github.com/repos/PhilippGrashoff/secondarymodelforatk/zipball/051e55f50cc52962f4cefd16acfa4c89fcee598f",
+                "reference": "051e55f50cc52962f4cefd16acfa4c89fcee598f",
                 "shasum": ""
             },
             "require": {
-                "atk4/data": "2.2.0",
-                "atk4/schema": "2.2.0",
+                "atk4/data": "dev-develop",
+                "atk4/schema": "dev-develop",
                 "philippgrashoff/traitsforatkdata": "dev-master"
             },
             "require-dev": {
@@ -751,7 +946,7 @@
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
-            "time": "2020-09-29T18:07:34+00:00"
+            "time": "2020-10-01T16:56:50+00:00"
         },
         {
             "name": "philippgrashoff/settingsforatk",
@@ -759,17 +954,17 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/PhilippGrashoff/settingsforatk.git",
-                "reference": "cf13a28009682139411939700769828bafde3d5e"
+                "reference": "4997ba205faefaa8f3f65bc57d9cbb5a4d5e9f3c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PhilippGrashoff/settingsforatk/zipball/cf13a28009682139411939700769828bafde3d5e",
-                "reference": "cf13a28009682139411939700769828bafde3d5e",
+                "url": "https://api.github.com/repos/PhilippGrashoff/settingsforatk/zipball/4997ba205faefaa8f3f65bc57d9cbb5a4d5e9f3c",
+                "reference": "4997ba205faefaa8f3f65bc57d9cbb5a4d5e9f3c",
                 "shasum": ""
             },
             "require": {
-                "atk4/core": "2.2.0",
-                "atk4/data": "2.2.0",
+                "atk4/core": "dev-develop",
+                "atk4/data": "dev-develop",
                 "philippgrashoff/traitsforatkdata": "master"
             },
             "require-dev": {
@@ -782,7 +977,7 @@
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
-            "time": "2020-09-27T07:39:44+00:00"
+            "time": "2020-10-01T17:49:06+00:00"
         },
         {
             "name": "philippgrashoff/traitsforatkdata",
@@ -790,19 +985,19 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/PhilippGrashoff/traitsforatkdata.git",
-                "reference": "0ef6a9ef3fe0559599c7d40f20aef44e03e2fad5"
+                "reference": "ea73915270039973276a047e6536542da5535caa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PhilippGrashoff/traitsforatkdata/zipball/0ef6a9ef3fe0559599c7d40f20aef44e03e2fad5",
-                "reference": "0ef6a9ef3fe0559599c7d40f20aef44e03e2fad5",
+                "url": "https://api.github.com/repos/PhilippGrashoff/traitsforatkdata/zipball/ea73915270039973276a047e6536542da5535caa",
+                "reference": "ea73915270039973276a047e6536542da5535caa",
                 "shasum": ""
             },
             "require": {
-                "atk4/core": "2.2.0",
-                "atk4/data": "2.2.0",
-                "atk4/schema": "2.2.0",
-                "atk4/ui": "2.2.0",
+                "atk4/core": "dev-develop",
+                "atk4/data": "dev-develop",
+                "atk4/schema": "dev-develop",
+                "atk4/ui": "dev-develop",
                 "ext-mbstring": "*",
                 "ext-sodium": "*"
             },
@@ -816,7 +1011,7 @@
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
-            "time": "2020-09-27T12:03:48+00:00"
+            "time": "2020-10-01T16:43:47+00:00"
         },
         {
             "name": "php-curl-class/php-curl-class",
@@ -997,6 +1192,58 @@
             "time": "2017-02-14T16:28:37+00:00"
         },
         {
+            "name": "psr/http-factory",
+            "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/http-factory.git",
+                "reference": "12ac7fcd07e5b077433f5f2bee95b3a771bf61be"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/http-factory/zipball/12ac7fcd07e5b077433f5f2bee95b3a771bf61be",
+                "reference": "12ac7fcd07e5b077433f5f2bee95b3a771bf61be",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0.0",
+                "psr/http-message": "^1.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Http\\Message\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interfaces for PSR-7 HTTP message factories",
+            "keywords": [
+                "factory",
+                "http",
+                "message",
+                "psr",
+                "psr-17",
+                "psr-7",
+                "request",
+                "response"
+            ],
+            "time": "2019-04-30T12:38:16+00:00"
+        },
+        {
             "name": "psr/http-message",
             "version": "1.0.1",
             "source": {
@@ -1045,6 +1292,59 @@
                 "response"
             ],
             "time": "2016-08-06T14:39:51+00:00"
+        },
+        {
+            "name": "psr/http-server-handler",
+            "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/http-server-handler.git",
+                "reference": "aff2f80e33b7f026ec96bb42f63242dc50ffcae7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/http-server-handler/zipball/aff2f80e33b7f026ec96bb42f63242dc50ffcae7",
+                "reference": "aff2f80e33b7f026ec96bb42f63242dc50ffcae7",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0",
+                "psr/http-message": "^1.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Http\\Server\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interface for HTTP server-side request handler",
+            "keywords": [
+                "handler",
+                "http",
+                "http-interop",
+                "psr",
+                "psr-15",
+                "psr-7",
+                "request",
+                "response",
+                "server"
+            ],
+            "time": "2018-10-30T16:46:14+00:00"
         },
         {
             "name": "psr/log",
@@ -1505,69 +1805,6 @@
                 "punycode"
             ],
             "time": "2016-11-16T10:37:54+00:00"
-        },
-        {
-            "name": "zendframework/zend-diactoros",
-            "version": "1.8.7",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/zendframework/zend-diactoros.git",
-                "reference": "a85e67b86e9b8520d07e6415fcbcb8391b44a75b"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-diactoros/zipball/a85e67b86e9b8520d07e6415fcbcb8391b44a75b",
-                "reference": "a85e67b86e9b8520d07e6415fcbcb8391b44a75b",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^5.6 || ^7.0",
-                "psr/http-message": "^1.0"
-            },
-            "provide": {
-                "psr/http-message-implementation": "1.0"
-            },
-            "require-dev": {
-                "ext-dom": "*",
-                "ext-libxml": "*",
-                "php-http/psr7-integration-tests": "dev-master",
-                "phpunit/phpunit": "^5.7.16 || ^6.0.8 || ^7.2.7",
-                "zendframework/zend-coding-standard": "~1.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-release-1.8": "1.8.x-dev"
-                }
-            },
-            "autoload": {
-                "files": [
-                    "src/functions/create_uploaded_file.php",
-                    "src/functions/marshal_headers_from_sapi.php",
-                    "src/functions/marshal_method_from_sapi.php",
-                    "src/functions/marshal_protocol_version_from_sapi.php",
-                    "src/functions/marshal_uri_from_sapi.php",
-                    "src/functions/normalize_server.php",
-                    "src/functions/normalize_uploaded_files.php",
-                    "src/functions/parse_cookie_header.php"
-                ],
-                "psr-4": {
-                    "Zend\\Diactoros\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-2-Clause"
-            ],
-            "description": "PSR HTTP Message implementations",
-            "homepage": "https://github.com/zendframework/zend-diactoros",
-            "keywords": [
-                "http",
-                "psr",
-                "psr-7"
-            ],
-            "abandoned": "laminas/laminas-diactoros",
-            "time": "2019-08-06T17:53:53+00:00"
         },
         {
             "name": "zendframework/zend-loader",
@@ -2389,16 +2626,16 @@
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "9.1.11",
+            "version": "9.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "c9394cb9d07ecfa9351b96f2e296bad473195f4d"
+                "reference": "53a4b737e83be724efd2bc4e7b929b9a30c48972"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/c9394cb9d07ecfa9351b96f2e296bad473195f4d",
-                "reference": "c9394cb9d07ecfa9351b96f2e296bad473195f4d",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/53a4b737e83be724efd2bc4e7b929b9a30c48972",
+                "reference": "53a4b737e83be724efd2bc4e7b929b9a30c48972",
                 "shasum": ""
             },
             "require": {
@@ -2426,7 +2663,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "9.1-dev"
+                    "dev-master": "9.2-dev"
                 }
             },
             "autoload": {
@@ -2452,7 +2689,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2020-09-19T05:29:17+00:00"
+            "time": "2020-10-02T03:37:32+00:00"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -2657,16 +2894,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "9.3.11",
+            "version": "9.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "f7316ea106df7c9507f4fdaa88c47bc10a3b27a1"
+                "reference": "ef533467a7974c4b6c354f3eff42a115910bd4e5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/f7316ea106df7c9507f4fdaa88c47bc10a3b27a1",
-                "reference": "f7316ea106df7c9507f4fdaa88c47bc10a3b27a1",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/ef533467a7974c4b6c354f3eff42a115910bd4e5",
+                "reference": "ef533467a7974c4b6c354f3eff42a115910bd4e5",
                 "shasum": ""
             },
             "require": {
@@ -2682,7 +2919,7 @@
                 "phar-io/version": "^3.0.2",
                 "php": ">=7.3",
                 "phpspec/prophecy": "^1.11.1",
-                "phpunit/php-code-coverage": "^9.1.11",
+                "phpunit/php-code-coverage": "^9.2",
                 "phpunit/php-file-iterator": "^3.0.4",
                 "phpunit/php-invoker": "^3.1",
                 "phpunit/php-text-template": "^2.0.2",
@@ -2713,7 +2950,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "9.3-dev"
+                    "dev-master": "9.4-dev"
                 }
             },
             "autoload": {
@@ -2742,7 +2979,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2020-09-24T08:08:49+00:00"
+            "time": "2020-10-02T03:54:37+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -2792,16 +3029,16 @@
         },
         {
             "name": "sebastian/code-unit",
-            "version": "1.0.6",
+            "version": "1.0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/code-unit.git",
-                "reference": "d3a241b6028ff9d8e97d2b6ebd4090d01f92fad8"
+                "reference": "59236be62b1bb9919e6d7f60b0b832dc05cef9ab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/code-unit/zipball/d3a241b6028ff9d8e97d2b6ebd4090d01f92fad8",
-                "reference": "d3a241b6028ff9d8e97d2b6ebd4090d01f92fad8",
+                "url": "https://api.github.com/repos/sebastianbergmann/code-unit/zipball/59236be62b1bb9919e6d7f60b0b832dc05cef9ab",
+                "reference": "59236be62b1bb9919e6d7f60b0b832dc05cef9ab",
                 "shasum": ""
             },
             "require": {
@@ -2834,7 +3071,7 @@
             ],
             "description": "Collection of value objects that represent the PHP code units",
             "homepage": "https://github.com/sebastianbergmann/code-unit",
-            "time": "2020-09-28T05:28:46+00:00"
+            "time": "2020-10-02T14:47:54+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
@@ -2883,16 +3120,16 @@
         },
         {
             "name": "sebastian/comparator",
-            "version": "4.0.4",
+            "version": "4.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/comparator.git",
-                "reference": "e717aabeafe4eac045d3e947dad3207118664c72"
+                "reference": "7a8ff306445707539c1a6397372a982a1ec55120"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/comparator/zipball/e717aabeafe4eac045d3e947dad3207118664c72",
-                "reference": "e717aabeafe4eac045d3e947dad3207118664c72",
+                "url": "https://api.github.com/repos/sebastianbergmann/comparator/zipball/7a8ff306445707539c1a6397372a982a1ec55120",
+                "reference": "7a8ff306445707539c1a6397372a982a1ec55120",
                 "shasum": ""
             },
             "require": {
@@ -2943,7 +3180,7 @@
                 "compare",
                 "equality"
             ],
-            "time": "2020-09-28T05:31:46+00:00"
+            "time": "2020-09-30T06:47:25+00:00"
         },
         {
             "name": "sebastian/complexity",
@@ -3690,7 +3927,15 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "atk4/ui": 20,
+        "atk4/data": 20,
+        "atk4/dsql": 20,
+        "atk4/core": 20,
+        "atk4/login": 20,
+        "atk4/schema": 20,
+        "atk4/api": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

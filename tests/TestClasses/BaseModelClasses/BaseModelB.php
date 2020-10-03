@@ -20,7 +20,7 @@ class BaseModelB extends BaseModel
 
     public $table = 'BaseModelB';
 
-    public function init(): void
+    protected function init(): void
     {
         parent::init();
 

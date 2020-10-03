@@ -15,7 +15,7 @@ class File extends SecondaryModel
     public $table = 'file';
 
 
-    public function init(): void
+    protected function init(): void
     {
         parent::init();
 
