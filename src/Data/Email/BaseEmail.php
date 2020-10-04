@@ -112,10 +112,16 @@ class BaseEmail extends BaseModel
         $this->containsMany('email_recipient', [EmailRecipient::class]);
 
         //try load default header and footer
-        if (empty($this->header)) {
+        if (
+            empty($this->header)
+            && $this->app
+        ) {
             $this->header = $this->app->loadEmailTemplate('default_header.html', true);
         }
-        if (empty($this->footer)) {
+        if (
+            empty($this->footer)
+            && $this->app
+        ) {
             $this->footer = $this->app->loadEmailTemplate('default_footer.html', true);
         }
     }

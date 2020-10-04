@@ -2,22 +2,23 @@
 
 namespace PMRAtk\Data\Email;
 
-use secondarymodelforatk\SecondaryModel;
+use PMRAtk\Data\SecondaryModel;
 
-class EmailTemplate extends SecondaryModel {
+class EmailTemplate extends SecondaryModel
+{
 
     public $table = 'email_template';
 
 
-    /**
-     *
-     */
-    protected function init(): void {
+    protected function init(): void
+    {
         parent::init();
 
-        $this->addFields([
-            ['ident',        'type' => 'string', 'system' => true],
-        ]);
+        $this->addFields(
+            [
+                ['ident', 'type' => 'string', 'system' => true],
+            ]
+        );
 
         $this->setOrder('ident');
     }

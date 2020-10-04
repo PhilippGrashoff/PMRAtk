@@ -65,7 +65,7 @@ class App extends \atk4\ui\App
         $this->db = PersistenceWithApp::connect(DB_STRING, DB_USER, DB_PASSWORD);
         $this->db->app = $this;
 
-        $this->getDeviceWidth();
+        $this->setDeviceWithFromRequest();
         $this->setPersistenceFormat();
         $this->requireCustomJSAndCSS();
         $this->_addAuth();
@@ -161,6 +161,31 @@ class App extends \atk4\ui\App
         return null;
     }
 
+    public function saveEmailTemplate(
+        string $ident,
+        string $value,
+        string $model_class = '',
+        $model_id = null
+    ): EmailTemplate {
+        $emailTemplate = new EmailTemplate($this->db);
+        if ($model_class && $model_id) {
+            $emailTemplate->addCondition('model_class', $model_class);
+            $emailTemplate->addCondition('model_id', $model_id);
+        }
+        $emailTemplate->tryLoadBy('ident', $ident);
+        if (!$emailTemplate->loaded()) {
+            $emailTemplate->set('ident', $ident);
+        }
+        $emailTemplate->set('value', $value);
+        if ($model_class && $model_id) {
+            $emailTemplate->set('model_class', $model_class);
+            $emailTemplate->set('model_id', $model_id);
+        }
+        $emailTemplate->save();
+
+        return $emailTemplate;
+    }
+
     /**
      * Adds Js and CSS needed for summernote Textareas
      */
@@ -175,9 +200,8 @@ class App extends \atk4\ui\App
      * Sets $this->deviceWidth to a value found in $_POST. Typically, my forms
      * contain a hidden field 'device_width' which is used to send device width
      * to the server.
-     * //TODO: RENAME, silly name as it sets but does not get
      */
-    public function getDeviceWidth()
+    public function setDeviceWithFromRequest()
     {
         if (
             isset($_POST['device_width'])

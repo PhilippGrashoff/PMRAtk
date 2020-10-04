@@ -2,44 +2,18 @@
 
 namespace PMRAtk\tests\phpunit;
 
+use atk4\data\Field;
 use atk4\data\Model;
+use atk4\data\Persistence;
 use DirectoryIterator;
-use mtomforatk\MToMModel;
-use PMRAtk\App\App;
 use PMRAtk\Data\BaseModel;
 use PMRAtk\Data\Email\EmailAccount;
 use PMRAtk\Data\File;
-use PMRAtk\Data\Setting;
 use ReflectionClass;
 use PMRAtk\tests\TestClasses\DeleteSetting;
 
-abstract class TestCase extends \atk4\core\AtkPhpunit\TestCase
+abstract class TestCase extends \traitsforatkdata\TestCase
 {
-
-    public static App $app;
-
-    public static function setUpBeforeClass(): void
-    {
-        self::$app = new TestApp(['admin']);
-    }
-
-    public function setUp(): void
-    {
-        self::$app->queryCount = 0;
-        self::$app->db->connection->beginTransaction();
-    }
-
-    public function commit()
-    {
-        self::$app->db->connection->commit();
-    }
-
-    public function tearDown(): void
-    {
-        if (self::$app->db->connection->inTransaction()) {
-            self::$app->db->connection->rollback();
-        }
-    }
 
     protected function copyFile(string $filename, string $path = ''): bool {
         if(!$path) {
@@ -85,12 +59,16 @@ abstract class TestCase extends \atk4\core\AtkPhpunit\TestCase
         return clone $audit;
     }
 
-    public function createTestFile(string $filename, string $path = '', BaseModel $parent = null)
-    {
+    public function createTestFile(
+        string $filename,
+        BaseModel $parent,
+        Persistence $persistence,
+        string $path = ''
+    ): File {
         if(!$path) {
             $path = SAVE_FILES_IN;
         }
-        $file = new File(self::$app->db, ['parentObject' => $parent]);
+        $file = new File($persistence, ['parentObject' => $parent]);
         $file->set('path', $path);
         $file->createFileName($filename);
         $this->copyFile($file->get('value'), $file->get('path'));
@@ -132,20 +110,9 @@ abstract class TestCase extends \atk4\core\AtkPhpunit\TestCase
         self::assertFalse($model->$hasname($otherModel));
     }
 
-    public function countModelRecords(string $model_class)
+    protected function _addStandardEmailAccount(Persistence $persistence): EmailAccount
     {
-        return intval((new $model_class(self::$app->db))->action('count')->getOne());
-    }
-
-    public function getEmailUUID(): string
-    {
-        $_ENV['TEST_EMAIL_UUID'] = uniqid();
-        return $_ENV['TEST_EMAIL_UUID'];
-    }
-
-    protected function _addStandardEmailAccount(): EmailAccount
-    {
-        $ea = new EmailAccount(self::$app->db);
+        $ea = new EmailAccount($persistence);
         $ea->set('name', STD_EMAIL);
         $ea->set('sender_name', STD_EMAIL_NAME);
         $ea->set('user', EMAIL_USERNAME);
@@ -158,26 +125,5 @@ abstract class TestCase extends \atk4\core\AtkPhpunit\TestCase
         $ea->save();
 
         return $ea;
-    }
-
-    protected function _removeSettings(array $names)
-    {
-        foreach ($names as $name) {
-            $setting = new DeleteSetting(self::$app->db);
-            $setting->tryLoadBy('ident', $name);
-            if ($setting->loaded()) {
-                $setting->delete();
-            }
-        }
-    }
-
-    protected function _addSettingToApp(string $ident, $value)
-    {
-        $s = new Setting(self::$app->db);
-        $s->tryLoadBy('ident', $ident);
-        $s->set('ident', $ident);
-        $s->set('value', $value);
-        $s->save();
-        self::$app->unloadSettings();
     }
 }

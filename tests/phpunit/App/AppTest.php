@@ -2,17 +2,21 @@
 
 namespace PMRAtk\tests\phpunit\App;
 
+use atk4\ui\Layout\Admin;
 use auditforatk\Audit;
+use PMRAtk\Data\Email\BaseEmail;
+use PMRAtk\Data\Email\EmailAccount;
 use PMRAtk\Data\Email\EmailTemplate;
+use PMRAtk\tests\TestClasses\BaseModelClasses\JustABaseModel;
+use PMRAtk\tests\TestClasses\BaseModelClasses\ModelWithEPA;
 use settingsforatk\Setting;
 use PMRAtk\Data\Token;
-use PMRAtk\tests\TestClasses\BaseModelClasses\BaseModelA;
-use PMRAtk\tests\TestClasses\BaseModelClasses\BaseModelB;
 use PMRAtk\App\App;
 use PMRAtk\View\Template;
 use PMRAtk\Data\User;
 use atk4\data\Exception;
-use traitsforatkdata\TestCase;
+use PMRAtk\tests\phpunit\TestCase;
+use settingsforatk\SettingGroup;
 
 
 class AppTest extends TestCase
@@ -21,7 +25,8 @@ class AppTest extends TestCase
     protected $sqlitePersistenceModels = [
         User::class,
         Token::class,
-        Audit::class
+        Audit::class,
+        EmailTemplate::class,
     ];
 
     public function testAppConstruct()
@@ -60,6 +65,7 @@ class AppTest extends TestCase
     public function testTokenLoginTokenNotFoundException()
     {
         $app = new App(['nologin'], ['always_run' => false]);
+        $app->db = $this->getSqliteTestPersistence();
         self::expectException(Exception::class);
         $app->loadUserByToken('sfsdfssdfeg');
     }
@@ -78,41 +84,31 @@ class AppTest extends TestCase
     public function testaddSummerNote()
     {
         $app = new App(['nologin'], ['always_run' => false]);
+        $app->initLayout([Admin::class]);
         $app->addSummernote();
         //TODO: ADD Sensible check here!
         self::assertTrue($app->auth->user instanceof \PMRAtk\Data\User);
     }
 
-
-    /*
-     *
-     */
     public function testDeviceWidth()
     {
         $app = new App(['nologin'], ['always_run' => false]);
         $_SESSION['device_width'] = 500;
-        $app->getDeviceWidth();
+        $app->setDeviceWithFromRequest();
         self::assertEquals(500, $app->deviceWidth);
         $_POST['device_width'] = 800;
-        $app->getDeviceWidth();
+        $app->setDeviceWithFromRequest();
         self::assertEquals(800, $app->deviceWidth);
     }
 
-
-    /*
-     *
-     */
     public function testgetEmailTemplateExceptionIfTemplateNotFound()
     {
         $app = new App(['nologin'], ['always_run' => false]);
+        $app->db = $this->getSqliteTestPersistence();
         self::expectException(Exception::class);
         $app->loadEmailTemplate('DDFUSFsfdfse');
     }
 
-
-    /*
-     *
-     */
     public function testgetEmailTemplateFromSavedEmailTemplate()
     {
         $app = new App(['nologin'], ['always_run' => false]);
@@ -122,49 +118,50 @@ class AppTest extends TestCase
         self::assertEquals('<div>Miau</div>', $t->render());
     }
 
-
-    /*
-     *
-     */
     public function testgetEmailTemplateRawString()
     {
         $app = new App(['nologin'], ['always_run' => false]);
-        $app->db = self::$app->db;
+        $app->db = $this->getSqliteTestPersistence();
         $app->saveEmailTemplate('DUDU', '<div>Miau{$somevar}</div>');
         $t = $app->loadEmailTemplate('DUDU', true);
         self::assertEquals('<div>Miau{$somevar}</div>', $t);
     }
 
-
-
-    /*
-     *
-     */
     public function testSaveEmailTemplate()
     {
         $app = new App(['nologin'], ['always_run' => false]);
-        $app->db = self::$app->db;
-        $initial_count = $this->countModelRecords('\\PMRAtk\\Data\\Email\\EmailTemplate');
+        $app->db = $this->getSqliteTestPersistence();
+        $initial_count = (new EmailTemplate($app->db))->action('count')->getOne();
         //should create a new one
         $app->saveEmailTemplate('SOME', 'AndSomeValie');
-        self::assertEquals($initial_count + 1, $this->countModelRecords('\\PMRAtk\\Data\\Email\\EmailTemplate'));
+        self::assertEquals(
+            $initial_count + 1,
+            (new EmailTemplate($app->db))->action('count')->getOne()
+        );
+
         //shouldnt create a new one
         $app->saveEmailTemplate('SOME', 'AndSomeOtherValue');
-        self::assertEquals($initial_count + 1, $this->countModelRecords('\\PMRAtk\\Data\\Email\\EmailTemplate'));
+        self::assertEquals(
+            $initial_count + 1,
+            (new EmailTemplate($app->db))->action('count')->getOne()
+        );
         //see if value is stored
-        $et = new EmailTemplate(self::$app->db);
+        $et = new EmailTemplate($app->db);
         $et->loadBy('ident', 'SOME');
-        self::assertEquals('AndSomeOtherValue', $et->get('value'));
+
+        self::assertEquals(
+            'AndSomeOtherValue',
+            $et->get('value')
+        );
 
         //should create a new one
         $app->saveEmailTemplate('SOMEOTHERIDENT', 'AndSomeOtherValue');
-        self::assertEquals($initial_count + 2, $this->countModelRecords('\\PMRAtk\\Data\\Email\\EmailTemplate'));
+        self::assertEquals(
+            $initial_count + 2,
+            (new EmailTemplate($app->db))->action('count')->getOne()
+        );
     }
 
-
-    /*
-     *
-     */
     public function testLoadTemplateException()
     {
         $app = new App(['nologin'], ['always_run' => false]);
@@ -172,22 +169,14 @@ class AppTest extends TestCase
         $app->loadTemplate('SomeNonExistantModel');
     }
 
-
-    /*
-     *
-     */
     public function testloadEmailTemplateRawFromFile()
     {
         $app = new App(['nologin'], ['always_run' => false]);
-        $app->db = self::$app->db;
+        $app->db = $this->getSqliteTestPersistence();
         $t = $app->loadEmailTemplate('testemailtemplate.html', true);
         self::assertTrue(strpos($t, '{$testtag}') !== false);
     }
 
-
-    /*
-     *
-     */
     public function testloadTemplateWithFilePath()
     {
         $app = new App(['nologin'], ['always_run' => false]);
@@ -195,14 +184,10 @@ class AppTest extends TestCase
         self::assertEquals('</div>' . PHP_EOL . '</body>' . PHP_EOL . '</html>', $t->render());
     }
 
-
-    /*
-     *
-     */
     public function testsaveAndLoadEmailTemplateFromModel()
     {
         $app = new App(['nologin'], ['always_run' => false]);
-        $app->db = self::$app->db;
+        $app->db = $this->getSqliteTestPersistence([JustABaseModel::class, ModelWithEPA::class]);
 
         //initial state should be same as file, as file should be loaded
         self::assertEquals(
@@ -212,49 +197,53 @@ class AppTest extends TestCase
 
         //now save a custom template
         $app->saveEmailTemplate('testemailtemplate.html', 'DugguWuggu');
-        self::assertEquals('DugguWuggu', $app->loadEmailTemplate('testemailtemplate.html', true));
+        self::assertEquals(
+            'DugguWuggu',
+            $app->loadEmailTemplate('testemailtemplate.html', true)
+        );
 
         //now save a custom template for a model. When loaded without these params,  it should still return the general one
-        $ba = new BaseModelA(self::$app->db);
-        $ba->save();
-        $app->saveEmailTemplate('testemailtemplate.html', 'Migasalasa', get_class($ba), $ba->get('id'));
-        self::assertEquals('DugguWuggu', $app->loadEmailTemplate('testemailtemplate.html', true));
+        $model = new JustABaseModel($app->db);
+        $model->save();
+        $app->saveEmailTemplate('testemailtemplate.html', 'Migasalasa', get_class($model), $model->get('id'));
+        self::assertEquals(
+            'DugguWuggu',
+            $app->loadEmailTemplate('testemailtemplate.html', true)
+        );
 
         //when loading with the model_class and model_id params it should find the one saved for the record
-        self::assertEquals('Migasalasa', $app->loadEmailTemplate('testemailtemplate.html', true, [$ba]));
+        self::assertEquals(
+            'Migasalasa',
+            $app->loadEmailTemplate('testemailtemplate.html', true, [$model])
+        );
 
         //when loading an invalid class or id, fall back to general one
-        $bb = new BaseModelB(self::$app->db);
-        $bb->save();
-        self::assertEquals('DugguWuggu', $app->loadEmailTemplate('testemailtemplate.html', true, [$bb]));
+        $otherModel = new ModelWithEPA($app->db);
+        $otherModel->save();
+        self::assertEquals(
+            'DugguWuggu',
+            $app->loadEmailTemplate('testemailtemplate.html', true, [$otherModel])
+        );
     }
 
-
-    /*
-     *
-     */
     public function testLoadEmailTemplateExceptionModelNotLoaded()
     {
         $app = new App(['nologin'], ['always_run' => false]);
-        $app->db = self::$app->db;
-        $bb = new BaseModelB(self::$app->db);
+        $app->db = $this->getSqliteTestPersistence();
+        $bb = new JustABaseModel($app->db);
         self::expectException(Exception::class);
         self::assertEquals('DugguWuggu', $app->loadEmailTemplate('testemailtemplate.html', true, [$bb]));
     }
 
-
-    /*
-     * If only a custom template is set for a specific model_class and model_id, see if this is not accidently loaded
-     * for another model_id
-     */
     public function testLoadEmailTemplateLoadFromFileIfInDBOnlyPerModel()
     {
         $app = new App(['nologin'], ['always_run' => false]);
-        $app->db = self::$app->db;
-        $ba1 = new BaseModelA(self::$app->db);
-        $ba1->save();
-        $ba2 = new BaseModelA(self::$app->db);
-        $ba2->save();
+        $app->db = $this->getSqliteTestPersistence([JustABaseModel::class]);
+        $model = new JustABaseModel($app->db);
+        $model->save();
+        $otherModel = new JustABaseModel($app->db);
+        $otherModel->save();
+
         //initial state should be same as file, as file should be loaded
         self::assertEquals(
             file_get_contents(FILE_BASE_PATH . '/template/email/testemailtemplate.html'),
@@ -262,7 +251,7 @@ class AppTest extends TestCase
         );
 
         //now save a custom template for a model. When loaded without these params,  it should still return the general one
-        $app->saveEmailTemplate('testemailtemplate.html', 'Migasalasa', get_class($ba1), $ba1->get('id'));
+        $app->saveEmailTemplate('testemailtemplate.html', 'Migasalasa', get_class($model), $model->get('id'));
         self::assertEquals(
             file_get_contents(FILE_BASE_PATH . '/template/email/testemailtemplate.html'),
             $app->loadEmailTemplate('testemailtemplate.html', true)
@@ -271,33 +260,43 @@ class AppTest extends TestCase
         //also for any other model id
         self::assertEquals(
             file_get_contents(FILE_BASE_PATH . '/template/email/testemailtemplate.html'),
-            $app->loadEmailTemplate('testemailtemplate.html', true, [$ba2])
+            $app->loadEmailTemplate('testemailtemplate.html', true, [$otherModel])
         );
 
         //but for that special ID return that custom one
-        self::assertEquals('Migasalasa', $app->loadEmailTemplate('testemailtemplate.html', true, [$ba1]));
+        self::assertEquals(
+            'Migasalasa',
+            $app->loadEmailTemplate('testemailtemplate.html', true, [$model])
+        );
     }
 
-
-    /*
-     *
-     */
     public function testSendEmailToAdmin()
     {
-        $this->_addStandardEmailAccount();
-        $s = new Setting(self::$app->db);
+        $persistence = $this->getSqliteTestPersistence(
+            [
+                EmailAccount::class,
+                Setting::class,
+                SettingGroup::class,
+                BaseEmail::class
+            ]
+        );
+        $this->_addStandardEmailAccount($persistence);
+        $app = new App(['nologin'], ['always_run' => false]);
+        $app->db = $persistence;
+        $persistence->app = $app;
+        $s = new Setting($app->db);
         $s->set('ident', 'STD_EMAIL');
         $s->set('value', 'test2@easyoutdooroffice.com');
-        self::$app->addSetting($s);
-        $s = new Setting(self::$app->db);
+        $app->addSetting($s);
+        $s = new Setting($app->db);
         $s->set('ident', 'STD_EMAIL_NAME');
         $s->set('value', 'HANSI PETER');
-        self::$app->addSetting($s);
-        $b = new BaseModelA(self::$app->db);
+        $app->addSetting($s);
+        $b = new JustABaseModel($app->db);
         $b->set('name', 'Laduggu');
-        $e = self::$app->sendEmailToAdmin(
+        $e = $app->sendEmailToAdmin(
             'Test:LALA',
-            'Hans {$he} ist Super {$te} {$basemodela_name}',
+            'Hans {$he} ist Super {$te} {$justabasemodel_name}',
             ['he' => '22', 'te' => '33'],
             [$b]
         );

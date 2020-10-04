@@ -4,7 +4,6 @@ namespace PMRAtk\Data;
 
 use traitsforatkdata\CryptIdTrait;
 use atk4\data\Model;
-use secondarymodelforatk\SecondaryModel;
 use traitsforatkdata\UserException;
 
 

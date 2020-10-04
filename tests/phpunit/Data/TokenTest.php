@@ -5,32 +5,37 @@ namespace PMRAtk\tests\phpunit\Data;
 use DateTime;
 use PMRAtk\Data\Token;
 use traitsforatkdata\UserException;
-use PMRAtk\tests\phpunit\TestCase;
+use traitsforatkdata\TestCase;
 
-class TokenTest extends TestCase {
+class TokenTest extends TestCase
+{
 
-    /*
-     * test if token length can be set
-     */
-    public function testTokenLength() {
-        //standard: 64 long
-        $t = new Token(self::$app->db);
+    protected $sqlitePersistenceModels = [
+        Token::class
+    ];
+
+    public function testTokenLength()
+    {
+        $persistence = $this->getSqliteTestPersistence();
+        $t = new Token($persistence);
         $t->save();
-        self::assertEquals(64, strlen($t->get('value')));
+        self::assertEquals(
+            64,
+            strlen($t->get('value'))
+        );
 
-        //try to set differently
-        $t = new Token(self::$app->db, ['tokenLength' => 128]);
+        $t = new Token($persistence, ['tokenLength' => 128]);
         $t->save();
-        self::assertEquals(128, strlen($t->get('value')));
+        self::assertEquals(
+            128,
+            strlen($t->get('value'))
+        );
     }
 
-
-    /*
-     * see if expires can be set
-     */
-     public function testSetExpires() {
-        //try to set to 180 minutes
-        $t = new Token(self::$app->db, ['expiresAfterInMinutes' => 180]);
+    public function testSetExpires()
+    {
+        $persistence = $this->getSqliteTestPersistence();
+        $t = new Token($persistence, ['expiresAfterInMinutes' => 180]);
         $t->save();
         self::assertEquals(
             (new DateTime())->modify('+180 Minutes')->format('Ymd Hi'),
@@ -38,12 +43,10 @@ class TokenTest extends TestCase {
         );
     }
 
-
-    /*
-     * see if exception is thrown when trying to load expired token
-     */
-    public function testExceptionLoadExpired() {
-        $t = new Token(self::$app->db);
+    public function testExceptionLoadExpired()
+    {
+        $persistence = $this->getSqliteTestPersistence();
+        $t = new Token($persistence);
         $t->reload_after_save = false;
         $t->set('expires', (new DateTime())->modify('-1 Minutes'));
         $t->save();
