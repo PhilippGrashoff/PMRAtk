@@ -189,7 +189,6 @@ trait BaseFunctionsTrait {
             self::$webDriver->executeScript($script);
         }
         catch(Exception $e) {
-            var_dump($script);
             throw $e;
         }
     }

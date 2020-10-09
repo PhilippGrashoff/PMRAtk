@@ -6,6 +6,7 @@ use atk4\login\Auth;
 use cachedvalueforatk\CachedValuesTrait;
 use PMRAtk\Data\Email\BaseEmail;
 use PMRAtk\Data\Email\EmailTemplate;
+use PMRAtk\Data\Email\PHPMailer;
 use PMRAtk\Data\PersistenceWithApp;
 use PMRAtk\Data\Token;
 use PMRAtk\Data\User;
@@ -243,5 +244,23 @@ class App extends \atk4\ui\App
         $email->send();
 
         return $email;
+    }
+
+    public function sendErrorEmailToAdmin(\Throwable $e, string $subject, array $additional_recipients = []) {
+        if(
+            !isset($this->phpMailer)
+            || !$this->phpMailer instanceof PHPMailer
+        ) {
+            $this->phpMailer = new PHPMailer($this->app);
+        }
+        //always send to tech admin
+        $this->phpMailer->addAddress(TECH_ADMIN_EMAIL);
+        foreach ($additional_recipients as $email_address) {
+            $this->phpMailer->addAddress($email_address);
+        }
+        $this->phpMailer->Subject = $subject;
+        $this->phpMailer->setBody(
+            'Folgender Fehler ist aufgetreten: <br />' . ($e instanceOf \atk4\core\Exception ? $e->getHTML() : $e->getMessage() . '<br />Line: ' . $e->getLine() . '<br />' . nl2br($e->getTraceAsString())) . '<br />Der Technische Administrator ' . TECH_ADMIN_NAME . ' wurde informiert.');
+        $this->phpMailer->send();
     }
 }

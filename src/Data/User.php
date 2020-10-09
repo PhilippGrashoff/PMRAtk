@@ -8,12 +8,14 @@ use PMRAtk\Data\Email\PHPMailer;
 use PMRAtk\Data\Traits\MaxFailedLoginsTrait;
 use traitsforatkdata\UserException;
 
-class User extends BaseModel
+class User extends BaseModelWithEPA
 {
 
     use MaxFailedLoginsTrait;
 
     public $table = 'User';
+    public $caption = 'Benutzer';
+
 
     protected function init(): void
     {
@@ -24,6 +26,16 @@ class User extends BaseModel
                     'name',
                     'type' => 'string',
                     'caption' => 'Name'
+                ],
+                [
+                    'firstname',
+                    'type' => 'string',
+                    'caption' => 'Vorname'
+                ],
+                [
+                    'lastname',
+                    'type' => 'string',
+                    'caption' => 'Nachname'
                 ],
                 [
                     'username',
@@ -37,6 +49,11 @@ class User extends BaseModel
                     'caption' => 'Passwort',
                     'system' => true,
                     'ui' => ['form' => ['inputAttr' => ['autocomplete' => 'new-password']]]
+                ],
+                [
+                    'signature',
+                    'type' => 'text',
+                    'caption' => 'Signatur'
                 ]
             ]
         );
@@ -70,7 +87,8 @@ class User extends BaseModel
         $this->set('password', $new_password_1);
     }
 
-    public function sendResetPasswordEmail(string $username): bool {
+    public function sendResetPasswordEmail(string $username): bool
+    {
         //loaded record may not use this function
         $c = $this->newInstance();
         //try load by username
@@ -116,7 +134,6 @@ class User extends BaseModel
         $t->delete();
     }
 
-    //TODO: NEEDED?
     public function setNewToken(): string
     {
         $t = new Token($this->persistence, ['parentObject' => $this, 'expiresAfterInMinutes' => 180]);
@@ -124,23 +141,8 @@ class User extends BaseModel
         return $t->get('value');
     }
 
-    protected function _standardUserRights()
-    {
-        //no logged in user?
-        if (!$this->app->auth->user) {
-            return false;
-        }
-
-        //user is owner of current record?
-        if ($this->get('id') === $this->app->auth->user->get('id')) {
-            return true;
-        }
-
-        return false;
-    }
-
     public function getSignature()
     {
-        return '';
+        return $this->get('signature');
     }
 }

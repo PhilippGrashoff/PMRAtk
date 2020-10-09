@@ -2,6 +2,7 @@
 
 namespace PMRAtk\Data;
 
+use atk4\core\AppScopeTrait;
 use atk4\data\Model;
 use DateTimeInterFace;
 use Exception;
@@ -10,8 +11,7 @@ use PMRAtk\App\App;
 class Api extends \atk4\api\Api
 {
 
-    // to have normal data-level user rights, user has to be added to app
-    public $app;
+    use AppScopeTrait;
 
     public function __construct(App $app)
     {
@@ -72,7 +72,6 @@ class Api extends \atk4\api\Api
                 $time_fields[] = $elem->short_name;
             }
         }
-
 
         //no date and time fields? just export
         if (!$datetime_fields && !$date_fields && !$time_fields) {

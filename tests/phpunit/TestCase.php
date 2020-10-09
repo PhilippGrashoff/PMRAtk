@@ -61,8 +61,8 @@ abstract class TestCase extends \traitsforatkdata\TestCase
 
     public function createTestFile(
         string $filename,
-        BaseModel $parent,
         Persistence $persistence,
+        BaseModel $parent = null,
         string $path = ''
     ): File {
         if(!$path) {

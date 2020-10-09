@@ -220,7 +220,6 @@ class BaseEmail extends BaseModel
         if (!$template->hasTag('Signature')) {
             return;
         }
-
         //use EOOUser signature if available
         if (
             isset($this->app->auth->user)
@@ -292,7 +291,7 @@ class BaseEmail extends BaseModel
      * loads model_class, model_id, firstname and lastname from a passed object
      * returns an EmailRecipient object
      */
-    protected function _addRecipientObject(BaseModel $object, $email_id = null): ?EmailRecipient
+    protected function _addRecipientObject(Model $object, $email_id = null): ?EmailRecipient
     {
         $r = $this->ref('email_recipient');
         //set firstname and lastname if available
