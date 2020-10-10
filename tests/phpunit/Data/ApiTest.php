@@ -114,6 +114,7 @@ class ApiTest extends TestCase
 
     protected function setUserAndToken(Persistence $persistence): User {
         $user = new User($persistence);
+        $user->set('username', 'SOMENAME');
         $user->save();
         $token = new Token($persistence, ['parentObject' => $user]);
         $token->save();

@@ -4,15 +4,11 @@ namespace PMRAtk\tests\phpunit\Data\Email;
 
 
 use auditforatk\Audit;
-use notificationforatk\Notification;
 use PMRAtk\App\App;
-use PMRAtk\Data\Email;
 use PMRAtk\Data\Email\BaseEmail;
 use PMRAtk\Data\Email\EmailAccount;
 use PMRAtk\Data\Email\EmailTemplate;
 use PMRAtk\Data\Email\PHPMailer;
-use PMRAtk\Data\File;
-use PMRAtk\Data\User;
 use PMRAtk\tests\phpunit\TestCase;
 use settingsforatk\Setting;
 use settingsforatk\SettingGroup;

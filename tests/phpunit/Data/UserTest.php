@@ -5,6 +5,8 @@ namespace PMRAtk\tests\phpunit\Data;
 use atk4\data\ValidationException;
 use auditforatk\Audit;
 use Exception;
+use PMRAtk\App\App;
+use PMRAtk\Data\Email\EmailAccount;
 use PMRAtk\Data\Token;
 use PMRAtk\Data\User;
 use traitsforatkdata\UserException;
@@ -13,10 +15,23 @@ use PMRAtk\tests\phpunit\TestCase;
 class UserTest extends TestCase
 {
 
+    private $app;
+    private $persistence;
+
+
     protected $sqlitePersistenceModels = [
         User::class,
         Audit::class,
     ];
+
+    public function setUp(): void
+    {
+        parent::setUp();
+        $this->persistence = $this->getSqliteTestPersistence();
+        $this->app = new App(['nologin'], ['always_run' => false]);
+        $this->app->db = $this->persistence;
+        $this->persistence->app = $this->app;
+    }
 
     public function testUserNameUnique()
     {
@@ -33,84 +48,58 @@ class UserTest extends TestCase
         $c2->save();
     }
 
-    public function testNameUnique()
-    {
-        $persistence = $this->getSqliteTestPersistence();
-        $c = new User($persistence);
-        $c->set('name', 'Duggu');
-        $c->set('username', 'ABC');
-        $c->save();
-
-        $c2 = new User($persistence);
-        $c2->set('name', 'Duggu');
-        $c2->set('username', 'AdasdsadBC');
-        $exception_found = false;
-        try {
-            $c2->save();
-        } catch (Exception $e) {
-            $exception_found = true;
-        }
-        self::assertTrue($exception_found);
-    }
-
-    public function testValidateEmptyName()
-    {
-        $persistence = $this->getSqliteTestPersistence();
-        $c = new User($persistence);
-        $c->set('username', 'ABC');
-        self::expectException(ValidationException::class);
-        $c->save();
-    }
-
-    public function testValidateEmptyUserName()
-    {
-        $persistence = $this->getSqliteTestPersistence();
-        $c = new User($persistence);
-        $c->set('name', 'ABC');
-        self::expectException(ValidationException::class);
-        $c->save();
-    }
-
     public function testExceptionSetNewPasswordOtherUserLoggedIn()
     {
-        $persistence = $this->getSqliteTestPersistence();
-        $c = new User($persistence);
-        $c->set('name', 'Duggu');
-        $c->set('username', 'ABC');
-        $c->set('password', 'ABC');
-        $c->save();
+        $user = new User($this->persistence);
+        $user->set('name', 'Duggu');
+        $user->set('username', 'ABC');
+        $user->set('password', 'ABC');
+        $user->save();
+
+        $loggedInUser = new User($this->persistence);
+        $loggedInUser->set('name', 'Muggu');
+        $loggedInUser->set('username', 'FRE');
+        $loggedInUser->set('password', 'FRE');
+        $loggedInUser->save();
+        $this->app->auth->user = $loggedInUser;
 
         self::expectException(\atk4\data\Exception::class);
-        $c->setNewPassword('ggg', 'ggg');
+        $user->setNewPassword('ggg', 'ggg');
     }
 
     public function testExceptionSetNewPasswordOldPasswordWrong()
     {
-        $persistence = $this->getSqliteTestPersistence();
-        self::$app->auth->user->set('password', 'EW');
-        self::$app->auth->user->save();
-
+        $user = new User($this->persistence);
+        $user->set('name', 'Duggu');
+        $user->set('username', 'ABC');
+        $user->set('password', 'ABC');
+        $user->save();
         self::expectException(UserException::class);
-        self::$app->auth->user->setNewPassword('ggg', 'ggg', true, 'falseoldpw');
+        $user->setNewPassword('ggg', 'ggg', true, 'falseoldpw');
     }
 
     public function testExceptionSetNewPasswordsDoNotMatch()
     {
+        $user = new User($this->persistence);
         self::expectException(UserException::class);
-        self::$app->auth->user->setNewPassword('gggfgfg', 'ggg');
+        $user->setNewPassword('gggfgfg', 'ggg');
     }
 
     public function testSetNewPassword()
     {
-        self::$app->auth->user->setNewPassword('gggg', 'gggg');
+        $user = new User($this->persistence);
+        $user->setNewPassword('gggg', 'gggg');
         self::assertTrue(true);
     }
 
+    /*
     public function testsendResetPasswordEmail()
     {
-        $persistence = $this->getSqliteTestPersistence();
+        $persistence = $this->getSqliteTestPersistence([EmailAccount::class, Token::class]);
         $this->_addStandardEmailAccount($persistence);
         $c = new User($persistence);
+        $c->set('username', 'test');
+        $c->save();
 
         //unexisting username should throw exception
         $exception_found = false;
@@ -125,11 +114,11 @@ class UserTest extends TestCase
         $initial_token_count = (new Token($persistence))->action('count')->getOne();
         $c->sendResetPasswordEmail('test');
         self::assertEquals($initial_token_count + 1, (new Token($persistence))->action('count')->getOne());
-    }
+    }*/
 
     public function testResetPassword()
     {
-        $persistence = $this->getSqliteTestPersistence();
+        $persistence = $this->getSqliteTestPersistence([Token::class]);
         $c = new User($persistence);
         $c->set('name', 'Duggu');
         $c->set('username', 'Duggudd');
@@ -165,7 +154,7 @@ class UserTest extends TestCase
 
     public function testResetPasswordTokenNotConnectedToModel()
     {
-        $persistence = $this->getSqliteTestPersistence();
+        $persistence = $this->getSqliteTestPersistence([Token::class]);
         $c = new User($persistence);
         $c->set('name', 'Duggu');
         $c->set('username', 'Duggudd');
@@ -180,23 +169,5 @@ class UserTest extends TestCase
 
         self::expectException(UserException::class);
         $c->resetPassword($token, 'DEDE', 'DEDE');
-    }
-
-    public function testUserRights()
-    {
-        $persistence = $this->getSqliteTestPersistence();
-        //first test logged in user, should be true
-        self::assertTrue($this->callProtected(self::$app->auth->user, '_standardUserRights'));
-
-        //different user than the logged in one, should be false
-        $u = new User($persistence);
-        self::assertFalse($this->callProtected($u, '_standardUserRights'));
-
-        //no logged in user? false
-        $initial = self::$app->auth->user;
-        self::$app->auth->user = null;
-        $res = $this->callProtected($u, '_standardUserRights');
-        self::$app->auth->user = $initial;
-        self::assertFalse($res);
     }
 }

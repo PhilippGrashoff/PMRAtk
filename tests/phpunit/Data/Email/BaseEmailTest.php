@@ -53,31 +53,34 @@ class BaseEmailTest extends TestCase
         $base_email->save();
 
         //pass a Guide, should have an email set
-        $g = new User($this->persistence);
-        $g->set('firstname', 'Lala');
-        $g->set('lastname', 'Dusu');
-        $g->save();
-        $g->addSecondaryModelRecord(Email::class, 'test1@easyoutdooroffice.com');
-        self::assertTrue($base_email->addRecipient($g));
+        $user = new User($this->persistence);
+        $user->set('username', 'Lala');
+        $user->set('firstname', 'Lala');
+        $user->set('lastname', 'Dusu');
+        $user->save();
+        $user->addSecondaryModelRecord(Email::class, 'test1@easyoutdooroffice.com');
+        self::assertTrue($base_email->addRecipient($user));
         self::assertEquals(1, $base_email->ref('email_recipient')->action('count')->getOne());
 
         //adding the same guide again shouldnt change anything
-        self::assertFalse($base_email->addRecipient($g));
+        self::assertFalse($base_email->addRecipient($user));
         self::assertEquals(1, $base_email->ref('email_recipient')->action('count')->getOne());
 
         //pass a non-loaded Guide
-        $g = new User($this->persistence);
-        self::assertFalse($base_email->addRecipient($g));
+        $user = new User($this->persistence);
+        self::assertFalse($base_email->addRecipient($user));
 
         //pass a Guide without an existing Email
-        $g = new User($this->persistence);
-        $g->save();
-        self::assertFalse($base_email->addRecipient($g));
+        $user = new User($this->persistence);
+        $user->set('username', 'LALA');
+        $user->save();
+        self::assertFalse($base_email->addRecipient($user));
 
         //pass an email id
-        $g = new User($this->persistence);
-        $g->save();
-        $e = $g->addSecondaryModelRecord(Email::class, 'test3@easyoutdooroffice.com');
+        $user = new User($this->persistence);
+        $user->set('username', 'other');
+        $user->save();
+        $e = $user->addSecondaryModelRecord(Email::class, 'test3@easyoutdooroffice.com');
         self::assertTrue($base_email->addRecipient($e->get('id')));
         self::assertEquals(2, $base_email->ref('email_recipient')->action('count')->getOne());
 
@@ -108,11 +111,12 @@ class BaseEmailTest extends TestCase
         self::assertFalse($base_email->removeRecipient('11111'));
 
         //test adding not the first, but some other email
-        $g = new User($this->persistence);
-        $g->save();
-        $g->addSecondaryModelRecord(Email::class, 'test1@easyoutdooroffice.com');
-        $test2_id = $g->addSecondaryModelRecord(Email::class, 'test2@easyoutdooroffice.com');
-        self::assertTrue($base_email->addRecipient($g, $test2_id->get('id')));
+        $user = new User($this->persistence);
+        $user->set('username', 'evenanother');
+        $user->save();
+        $user->addSecondaryModelRecord(Email::class, 'test1@easyoutdooroffice.com');
+        $test2_id = $user->addSecondaryModelRecord(Email::class, 'test2@easyoutdooroffice.com');
+        self::assertTrue($base_email->addRecipient($user, $test2_id->get('id')));
         //now there should be a single recipient and its email should be test2...
         foreach ($base_email->ref('email_recipient') as $rec) {
             self::assertEquals($rec->get('email'), 'test2@easyoutdooroffice.com');
@@ -181,6 +185,7 @@ class BaseEmailTest extends TestCase
     public function testLoadSignatureByUserSignature()
     {
         $user = new User($this->persistence);
+        $user->set('username', 'LALA');
         $user->set('signature', 'TestSignature');
         $user->save();
         $this->app->auth->user = $user;
@@ -383,9 +388,10 @@ class BaseEmailTest extends TestCase
 
     public function testGetDefaultEmailAccountId()
     {
-        $be = new BaseEmail($this->persistence);
+        $persistence = $this->getSqliteTestPersistence();
+        $be = new BaseEmail($persistence);
         self::assertNull($be->getDefaultEmailAccountId());
-        $this->_addStandardEmailAccount($this->persistence);
+        $this->_addStandardEmailAccount($persistence);
         self::assertNotEmpty($be->getDefaultEmailAccountId());
     }
 

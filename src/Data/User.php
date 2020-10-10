@@ -6,12 +6,15 @@ use atk4\data\Exception;
 use atk4\login\Field\Password;
 use PMRAtk\Data\Email\PHPMailer;
 use PMRAtk\Data\Traits\MaxFailedLoginsTrait;
+use traitsforatkdata\UniqueFieldTrait;
 use traitsforatkdata\UserException;
+use atk4\data\Model;
 
 class User extends BaseModelWithEPA
 {
 
     use MaxFailedLoginsTrait;
+    use UniqueFieldTrait;
 
     public $table = 'User';
     public $caption = 'Benutzer';
@@ -59,6 +62,15 @@ class User extends BaseModelWithEPA
         );
 
         $this->_addFailedLoginsField();
+
+        $this->onHook(
+            Model::HOOK_BEFORE_SAVE,
+            function (self $model, $isUpdate) {
+                if(!$model->isFieldUnique('username')) {
+                    throw new UserException('Der Benutzername ist bereits vergeben! Bitte wähle einen anderen');
+                }
+            }
+        );
     }
 
     public function setNewPassword(
@@ -68,14 +80,18 @@ class User extends BaseModelWithEPA
         string $old_password = ''
     ) {
         //other user than logged in user tries saving?
-        if ($this->app->auth->user->loaded()
-            && $this->app->auth->user->get('id') !== $this->get('id')) {
+        if (
+            $this->app->auth->user->loaded()
+            && $this->app->auth->user->get('id') !== $this->get('id')
+        ) {
             throw new Exception('Password can only be changed by account owner');
         }
 
         //old password entered needs to fit saved one
-        if ($compare_old_password
-            && !$this->compare('password', $old_password)) {
+        if (
+            $compare_old_password
+            && !$this->compare('password', $old_password)
+        ) {
             throw new UserException('Das Alte Passwort ist nicht korrekt');
         }
 
@@ -87,6 +103,9 @@ class User extends BaseModelWithEPA
         $this->set('password', $new_password_1);
     }
 
+    /**
+     * TODO: THIS IS USER MANAGEMENT, SHOULD NOT BE IN USER MODEL
+     *//*
     public function sendResetPasswordEmail(string $username): bool
     {
         //loaded record may not use this function
@@ -94,7 +113,7 @@ class User extends BaseModelWithEPA
         //try load by username
         $c->tryLoadBy('username', $username);
         if (!$c->loaded()) {
-            throw new Exception('Record not found in' . __FUNCTION__);
+            throw new Exception('Record not found in ' . __FUNCTION__);
         }
         //send email
         $t = $this->app->loadEmailTemplate('reset_password.html');
@@ -107,7 +126,7 @@ class User extends BaseModelWithEPA
         $phpmailer->addAddress($c->getFirstEmail());
 
         return $phpmailer->send();
-    }
+    }*/
 
     public function resetPassword(
         string $token,
@@ -126,11 +145,7 @@ class User extends BaseModelWithEPA
         }
 
         $this->set('password', $new_password_1);
-        //allow save without logged in user
-        $this->maySave = true;
         $this->save();
-        $this->maySave = false;
-        //delete the token
         $t->delete();
     }
 

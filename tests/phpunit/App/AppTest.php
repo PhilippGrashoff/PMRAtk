@@ -54,6 +54,7 @@ class AppTest extends TestCase
         $app = new App(['nologin'], ['always_run' => false]);
         $app->db = $persistence;
         $user = new User($persistence);
+        $user->set('username', 'LALA');
         $user->save();
         $token = new Token($persistence, ['parentObject' => $user]);
         $token->save();

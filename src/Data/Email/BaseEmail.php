@@ -305,7 +305,6 @@ class BaseEmail extends BaseModel
             $email_id == null
             && method_exists($object, 'getFirstSecondaryModelRecord')
         ) {
-            echo "here";
             $emailObject = $object->getFirstSecondaryModelRecord($this->emailClassName);
             if(
                 $emailObject
