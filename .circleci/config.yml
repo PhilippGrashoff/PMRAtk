@@ -4,7 +4,7 @@ jobs:
   build:
     docker:
       # specify the version you desire here
-      - image: circleci/php:7.2-apache-browsers@sha256:309a32a043672e3ebc75b8c6defce9e3bc083d41df7e1b510be16496f0233bb5
+      - image: circleci/php:7.3-apache-browsers
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
