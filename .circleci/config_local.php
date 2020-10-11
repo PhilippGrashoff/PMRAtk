@@ -3,9 +3,9 @@
 error_reporting(E_ALL);
 
 //Database access
-define('DB_STRING',           'mysql:host=127.0.0.1;dbname=PMRAtk_test');
-define('DB_USER',             'root');
-define('DB_PASSWORD',         'test');
+define('DB_STRING',           'sqlite::memory:');
+define('DB_USER',             '');
+define('DB_PASSWORD',         '');
 
 //Subdomain + Domain
 define('URL_BASE_PATH',       'http://localhost:8080/');
