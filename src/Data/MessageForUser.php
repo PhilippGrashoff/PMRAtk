@@ -5,6 +5,7 @@ namespace PMRAtk\Data;
 use atk4\data\Exception;
 use DateTimeInterface;
 use mtomforatk\ModelWithMToMTrait;
+use atk4\data\Model;
 
 /**
  * This class represents a message for logged in users. The main concept is to display
@@ -93,17 +94,16 @@ class MessageForUser extends BaseModel
         $messages->addCondition(
             $messages->refLink('MessageForUserToUser')
                 ->addCondition('user_id', $this->app->auth->user->get('id'))
-                ->addCondition('is_read', '1')
                 ->action('count'),
             '<',
             1
         );
         if ($maxInPast) {
             $messages->addCondition(
-                [
+                Model\Scope::createOr(
                     ['created_date', '>=', $maxInPast->format('Y-m-d')],
                     ['never_invalid', 1]
-                ]
+                )
             );
         }
 
@@ -155,7 +155,6 @@ class MessageForUser extends BaseModel
         $mfutu = new MessageForUserToUser($this->persistence);
         $mfutu->addCondition('user_id', $this->app->auth->user->get('id'));
         $mfutu->addCondition('message_for_user_id', $this->get('id'));
-        $mfutu->addCondition('is_read', '1');
         if (intval($mfutu->action('count')->getOne()) > 0) {
             return true;
         }

@@ -3,17 +3,21 @@
 namespace PMRAtk\tests\TestClasses\BaseModelClasses;
 
 use PMRAtk\Data\BaseModel;
+use PMRAtk\Data\Traits\FileRelationTrait;
 
-class JustABaseModel extends BaseModel
+
+class ModelWithFileRelation extends BaseModel
 {
 
-    public $table = 'just_a_basemodel';
+    use FileRelationTrait;
+
+    public $table = 'model_with_file_relation';
 
     protected function init(): void
     {
         parent::init();
         $this->addField('name');
-        $this->addField('firstname');
-        $this->addField('lastname');
+
+        $this->addFileReferenceAndDeleteHook();
     }
 }

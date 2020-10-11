@@ -2,7 +2,6 @@
 
 namespace PMRAtk\tests\phpunit;
 
-use atk4\data\Field;
 use atk4\data\Model;
 use atk4\data\Persistence;
 use DirectoryIterator;
@@ -27,6 +26,9 @@ abstract class TestCase extends \traitsforatkdata\TestCase
         }
         return copy(
             $this->addDirectorySeperatorToPath(FILE_BASE_PATH . SAVE_FILES_IN) . 'demo-img.jpg',
+
+
+
             $this->addDirectorySeperatorToPath($path) . $filename
         );
     }
@@ -74,7 +76,7 @@ abstract class TestCase extends \traitsforatkdata\TestCase
         $this->copyFile($file->get('value'), $file->get('path'));
         $file->save();
 
-        return clone $file;
+        return $file;
     }
 
 

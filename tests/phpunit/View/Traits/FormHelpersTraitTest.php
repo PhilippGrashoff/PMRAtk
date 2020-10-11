@@ -4,9 +4,10 @@ namespace PMRAtk\tests\phpunit\View\Traits;
 
 
 use atk4\ui\Form;
+use atk4\ui\Layout\Admin;
 use atk4\ui\View;
 use PMRAtk\tests\phpunit\TestCase;
-use PMRAtk\View\App;
+use PMRAtk\App\App;
 use PMRAtk\View\Traits\FormHelpersTrait;
 
 /**
@@ -18,17 +19,11 @@ class TestViewWithForm extends View {
 }
 
 
-/**
- * Class FormHelpersTraitTest
- * @package PMRAtk\tests\phpunit\View\Traits
- */
 class FormHelpersTraitTest extends TestCase {
 
-    /*
-     *
-     */
     public function testFieldIdsAndSubmitButtonId() {
         $app = new App(['nologin'], ['always_run' => false]);
+        $app->initLayout([Admin::class]);
         $v = TestViewWithForm::addTo($app);
         $f = Form::addTo($v);
         $f->id = 'testForm';

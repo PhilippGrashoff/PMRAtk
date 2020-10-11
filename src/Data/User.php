@@ -4,7 +4,6 @@ namespace PMRAtk\Data;
 
 use atk4\data\Exception;
 use atk4\login\Field\Password;
-use PMRAtk\Data\Email\PHPMailer;
 use PMRAtk\Data\Traits\MaxFailedLoginsTrait;
 use traitsforatkdata\UniqueFieldTrait;
 use traitsforatkdata\UserException;
@@ -57,6 +56,11 @@ class User extends BaseModelWithEPA
                     'signature',
                     'type' => 'text',
                     'caption' => 'Signatur'
+                ],
+                [
+                    'role',
+                    'type' => 'string',
+                    'caption' => 'Benutzerrolle'
                 ]
             ]
         );

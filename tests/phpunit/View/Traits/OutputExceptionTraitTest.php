@@ -4,6 +4,7 @@ namespace PMRAtk\tests\phpunit\View\Traits;
 
 
 use atk4\data\ValidationException;
+use atk4\ui\Layout\Admin;
 use atk4\ui\View;
 use traitsforatkdata\UserException;
 use PMRAtk\tests\phpunit\TestCase;
@@ -31,6 +32,7 @@ class OutputExceptionTraitTest extends TestCase {
      */
     public function testOutputExceptionTraitDataException() {
         $app = new App(['nologin'], ['always_run' => false]);
+        $app->initLayout([Admin::class]);
         $v   = $app->add(new TestViewForOutputException());
         try {
             throw new \atk4\data\Exception('Some Error');
@@ -47,6 +49,7 @@ class OutputExceptionTraitTest extends TestCase {
      */
     public function testOutputExceptionTraitUserException() {
         $app = new App(['nologin'], ['always_run' => false]);
+        $app->initLayout([Admin::class]);
         $v   = $app->add(new TestViewForOutputException());
         try {
             throw new UserException('Some Error Duggu');
@@ -63,6 +66,7 @@ class OutputExceptionTraitTest extends TestCase {
      */
     public function testOutputExceptionTraitSingleValidationException() {
         $app = new App(['nologin'], ['always_run' => false]);
+        $app->initLayout([Admin::class]);
         $v   = $app->add(new TestViewForOutputException());
         try {
             throw new ValidationException(['Some Error']);
@@ -79,6 +83,7 @@ class OutputExceptionTraitTest extends TestCase {
      */
     public function testOutputExceptionTraitMultipleValidationException() {
         $app = new App(['nologin'], ['always_run' => false]);
+        $app->initLayout([Admin::class]);
         $v   = $app->add(new TestViewForOutputException());
         try {
             throw new ValidationException(['Some Error1', 'Some Error2']);
@@ -96,6 +101,7 @@ class OutputExceptionTraitTest extends TestCase {
      */
     public function testOutputExceptionTraitReturnAsNotifyException() {
         $app = new App(['nologin'], ['always_run' => false]);
+        $app->initLayout([Admin::class]);
         $v   = $app->add(new TestViewForOutputException());
         try {
             throw new ValidationException(['Some Error1', 'Some Error2']);

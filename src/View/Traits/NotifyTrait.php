@@ -2,7 +2,7 @@
 
 namespace PMRAtk\View\Traits;
 
-use atk4\ui\jsToast;
+use atk4\ui\JsToast;
 
 trait NotifyTrait {
 

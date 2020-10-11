@@ -11,7 +11,7 @@ trait FormHelpersTrait {
      * for selenium tests and custom JS
      */
     public function setHTMLIds(Form $form) {
-        foreach($form->fields as $field) {
+        foreach($form->controls as $field) {
             $field->id = $field->name = $field->short_name;
         }
 

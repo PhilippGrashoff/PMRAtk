@@ -2,13 +2,8 @@
 
 namespace PMRAtk\tests\TestClasses\BaseModelClasses;
 
-use auditforatk\ModelWithAuditTrait;
-use PMRAtk\Data\BaseModel;
-use mtomforatk\ModelWithMToMTrait;
 use PMRAtk\Data\BaseModelWithEPA;
 use PMRAtk\tests\TestClasses\AToB;
-use PMRAtk\Data\Email;
-use secondarymodelforatk\SecondaryModelRelationTrait;
 
 
 class ModelWithEPA extends BaseModelWithEPA

@@ -2,7 +2,6 @@
 
 namespace PMRAtk\Data;
 
-use atk4\core\AppScopeTrait;
 use atk4\data\Exception;
 use atk4\data\Model;
 use auditforatk\ModelWithAuditTrait;

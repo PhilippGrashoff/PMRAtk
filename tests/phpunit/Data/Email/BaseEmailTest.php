@@ -322,7 +322,8 @@ class BaseEmailTest extends TestCase
                 'firstname' => 'Vorname',
                 'lastname' => 'Nachname',
                 'username' => 'Benutzername',
-                'signature' => 'Signatur'
+                'signature' => 'Signatur',
+                'role' => 'Benutzerrolle'
             ],
             $res
         );
@@ -339,6 +340,29 @@ class BaseEmailTest extends TestCase
                 'user_lastname' => 'Nachname',
                 'user_username' => 'Benutzername',
                 'user_signature' => 'Signatur',
+                'user_role' => 'Benutzerrolle'
+            ],
+            $res
+        );
+    }
+
+    public function testgetModelVarsUsesGetFieldsForEmailTemplate()
+    {
+        $be = new BaseEmail($this->persistence);
+        $class = new class() extends User {
+            public function getFieldsForEmailTemplate(): array
+            {
+                return [
+                    'firstname',
+                    'lastname'
+                ];
+            }
+        };
+        $res = $be->getModelVars(new $class($this->persistence),);
+        self::assertEquals(
+            [
+                'firstname' => 'Vorname',
+                'lastname' => 'Nachname',
             ],
             $res
         );
@@ -357,6 +381,7 @@ class BaseEmailTest extends TestCase
                         'user_lastname' => 'Nachname',
                         'user_username' => 'Benutzername',
                         'user_signature' => 'Signatur',
+                        'user_role' => 'Benutzerrolle'
                     ]
             ],
             $be->getTemplateEditVars()

@@ -8,11 +8,8 @@ use notificationforatk\Notification;
 use PMRAtk\Data\Address;
 use PMRAtk\Data\Email;
 use PMRAtk\Data\Phone;
-use PMRAtk\tests\TestClasses\BaseModelClasses\BaseModelWithHasOneRef;
-use PMRAtk\tests\TestClasses\BaseModelClasses\JustABaseModel;
 use PMRAtk\tests\TestClasses\BaseModelClasses\ModelWithEPA;
 use traitsforatkdata\TestCase;
-use atk4\data\Exception;
 
 
 class BaseModelWithEPATest extends TestCase

@@ -4,7 +4,6 @@ namespace PMRAtk\Data;
 
 use atk4\data\Exception;
 use traitsforatkdata\CryptIdTrait;
-use PMRAtk\Data\SafeFileName;
 use atk4\data\Model;
 
 
@@ -96,12 +95,6 @@ class File extends SecondaryModel
                 }
                 $clone = clone $model;
                 $model->delete();
-
-                $model->app->addUserMessage(
-                    'Die Datei ' . $clone->get(
-                        'value'
-                    ) . ' ist nicht mehr auf dem Dateisystem vorhanden. Der Eintrag wurde gelöscht.'
-                );
                 $model->breakHook(false);
             }
         );

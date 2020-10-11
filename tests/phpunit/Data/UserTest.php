@@ -2,11 +2,9 @@
 
 namespace PMRAtk\tests\phpunit\Data;
 
-use atk4\data\ValidationException;
 use auditforatk\Audit;
 use Exception;
 use PMRAtk\App\App;
-use PMRAtk\Data\Email\EmailAccount;
 use PMRAtk\Data\Token;
 use PMRAtk\Data\User;
 use traitsforatkdata\UserException;

@@ -301,6 +301,40 @@ class AppTest extends TestCase
             ['he' => '22', 'te' => '33'],
             [$b]
         );
-        self::assertTrue(strpos($e->phpMailer->getSentMIMEMessage(), 'Hans 22 ist Super 33 Laduggu') !== false);
+        self::assertStringContainsString(
+            'Hans 22 ist Super 33 Laduggu',
+            $e->phpMailer->getSentMIMEMessage()
+        );
+    }
+
+    public function testSendErrorEmailToAdmin()
+    {
+        $persistence = $this->getSqliteTestPersistence(
+            [
+                EmailAccount::class,
+                Setting::class,
+                SettingGroup::class,
+                BaseEmail::class
+            ]
+        );
+        $this->_addStandardEmailAccount($persistence);
+        $app = new App(['nologin'], ['always_run' => false]);
+        $app->db = $persistence;
+        $persistence->app = $app;
+        $s = new Setting($app->db);
+        $s->set('ident', 'STD_EMAIL');
+        $s->set('value', 'test2@easyoutdooroffice.com');
+        $app->addSetting($s);
+        $s = new Setting($app->db);
+        $s->set('ident', 'STD_EMAIL_NAME');
+        $s->set('value', 'HANSI PETER');
+        $app->addSetting($s);
+
+        $e = new Exception('SomeErrorMessage');
+        self::assertTrue($app->sendErrorEmailToAdmin($e, 'Fehler', ['test3@easyoutdooroffice.com']));
+        self::assertStringContainsString(
+            'SomeErrorMessage',
+            $app->phpMailer->getSentMIMEMessage()
+        );
     }
 }

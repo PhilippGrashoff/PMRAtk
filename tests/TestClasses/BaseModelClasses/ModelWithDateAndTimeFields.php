@@ -2,12 +2,8 @@
 
 namespace PMRAtk\tests\TestClasses\BaseModelClasses;
 
-use auditforatk\ModelWithAuditTrait;
 use PMRAtk\Data\BaseModel;
-use mtomforatk\ModelWithMToMTrait;
 use PMRAtk\tests\TestClasses\AToB;
-use PMRAtk\Data\Email;
-use secondarymodelforatk\SecondaryModelRelationTrait;
 
 
 class ModelWithDateAndTimeFields extends BaseModel

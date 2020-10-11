@@ -3,7 +3,6 @@
 namespace PMRAtk\Data\Email;
 
 use atk4\data\Model;
-use DateTime;
 use DirectoryIterator;
 use Exception;
 use PMRAtk\Data\BaseModel;

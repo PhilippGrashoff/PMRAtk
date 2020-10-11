@@ -3,10 +3,8 @@
 namespace PMRAtk\tests\phpunit\Data;
 
 
-use atk4\data\Model;
 use atk4\data\Persistence;
 use auditforatk\Audit;
-use Exception;
 use Laminas\Diactoros\Exception\InvalidArgumentException;
 use Laminas\HttpHandlerRunner\Exception\EmitterException;
 use PMRAtk\App\App;

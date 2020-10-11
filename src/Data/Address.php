@@ -3,7 +3,6 @@
 namespace PMRAtk\Data;
 
 use notificationforatk\ModelWithNotificationTrait;
-use PMRAtk\Data\SecondaryModel;
 
 
 class Address extends SecondaryModel

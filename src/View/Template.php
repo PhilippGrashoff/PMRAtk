@@ -58,10 +58,10 @@ class Template extends \atk4\ui\Template
         }
 
         foreach ($tags as $tag) {
-            if (!$model->hasField($tag)) {
-                continue;
-            }
-            if (!$this->hasTag($prefix . $tag)) {
+            if (
+                !$model->hasField($tag)
+                || !$this->hasTag($prefix . $tag)
+            ) {
                 continue;
             }
 
@@ -70,7 +70,7 @@ class Template extends \atk4\ui\Template
                 if ($model->get($tag) instanceof DateTimeInterFace) {
                     $this->set(
                         $prefix . $tag,
-                        $this->castDateTimeToGermanString($model->get($tag), $model->getField($tag)->type, true)
+                        $this->castDateTimeToGermanString($model->getField($tag), true)
                     );
                 } else {
                     $this->set($prefix . $tag, $model->getField($tag)->toString());

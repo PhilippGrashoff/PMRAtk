@@ -40,6 +40,8 @@ class App extends \atk4\ui\App
     //atk login Auth
     public $auth;
 
+    public $phpMailer;
+
     //array of user roles which may see the requested page. Checked in __construct
     public $userRolesMaySeeThisPage = [];
 
@@ -246,12 +248,12 @@ class App extends \atk4\ui\App
         return $email;
     }
 
-    public function sendErrorEmailToAdmin(\Throwable $e, string $subject, array $additional_recipients = []) {
+    public function sendErrorEmailToAdmin(\Throwable $e, string $subject, array $additional_recipients = []): bool {
         if(
             !isset($this->phpMailer)
             || !$this->phpMailer instanceof PHPMailer
         ) {
-            $this->phpMailer = new PHPMailer($this->app);
+            $this->phpMailer = new PHPMailer($this);
         }
         //always send to tech admin
         $this->phpMailer->addAddress(TECH_ADMIN_EMAIL);
@@ -261,6 +263,7 @@ class App extends \atk4\ui\App
         $this->phpMailer->Subject = $subject;
         $this->phpMailer->setBody(
             'Folgender Fehler ist aufgetreten: <br />' . ($e instanceOf \atk4\core\Exception ? $e->getHTML() : $e->getMessage() . '<br />Line: ' . $e->getLine() . '<br />' . nl2br($e->getTraceAsString())) . '<br />Der Technische Administrator ' . TECH_ADMIN_NAME . ' wurde informiert.');
-        $this->phpMailer->send();
+
+        return $this->phpMailer->send();
     }
 }

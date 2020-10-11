@@ -4,16 +4,18 @@ declare(strict_types=1);
 
 namespace PMRAtk\Data\Traits;
 
+use atk4\data\Model;
+use atk4\data\Reference\HasMany;
 use PMRAtk\Data\File;
 use traitsforatkdata\UserException;
 
 trait FileRelationTrait
 {
 
-    protected function _addFileRef()
+    protected function addFileReferenceAndDeleteHook(bool $addDelete = true): HasMany
     {
-        $this->hasMany(
-            'File',
+        $ref = $this->hasMany(
+            File::class,
             [
                 function () {
                     return (new File($this->persistence, ['parentObject' => $this]))->addCondition(
@@ -24,6 +26,19 @@ trait FileRelationTrait
                 'their_field' => 'model_id'
             ]
         );
+
+        if ($addDelete) {
+            $this->onHook(
+                Model::HOOK_AFTER_DELETE,
+                function (self $model) {
+                    foreach ($model->ref(File::class) as $file) {
+                        $file->delete();
+                    }
+                }
+            );
+        }
+
+        return $ref;
     }
 
     /**
@@ -38,8 +53,8 @@ trait FileRelationTrait
         //if $this was never saved (no id yet), use afterSave hook
         if (!$this->loaded()) {
             $this->onHook(
-                'afterSave',
-                function ($m) use ($temp_file, $type) {
+                Model::HOOK_AFTER_SAVE,
+                function (self $model) use ($temp_file, $type) {
                     $this->_addUploadFile($temp_file, $type);
                 }
             );
@@ -52,19 +67,26 @@ trait FileRelationTrait
 
     protected function _addUploadFile(array $temp_file, string $type): ?File
     {
-        $file = $this->ref('File')->newInstance(null, ['parentObject' => $this]);
+        $file = $this->ref(File::class)->newInstance(null, ['parentObject' => $this]);
         if (!$file->uploadFile($temp_file)) {
-            $this->app->addUserMessage('Die Datei konnte nicht hochgeladen werden, bitte versuche es erneut', 'error');
+            if ($this->app) {
+                $this->app->addUserMessage(
+                    'Die Datei konnte nicht hochgeladen werden, bitte versuche es erneut',
+                    'error'
+                );
+            }
             return null;
         }
         if ($type) {
             $file->set('type', $type);
         }
         $file->save();
-        $this->app->addUserMessage(
-            'Die Datei wurde erfolgreich hochgeladen nach ' . $file->get('path') . $file->get('value'),
-            'success'
-        );
+        if ($this->app) {
+            $this->app->addUserMessage(
+                'Die Datei wurde erfolgreich hochgeladen nach ' . $file->get('path') . $file->get('value'),
+                'success'
+            );
+        }
         //add audit if model has audit, too
         if (method_exists($this, 'addAdditionalAudit')) {
             $this->addAdditionalAudit(
@@ -84,7 +106,7 @@ trait FileRelationTrait
      */
     public function removeFile($fileId)
     {
-        $file = $this->ref('File');
+        $file = $this->ref(File::class);
         $file->tryLoad($fileId);
         if (!$file->loaded()) {
             throw new UserException('Die Datei die gelöscht werden soll kann nicht gefunden werden.');
@@ -92,10 +114,14 @@ trait FileRelationTrait
 
         $cfile = clone $file;
         $file->delete();
-        $this->app->addUserMessage(
-            'Die Datei ' . $file->get('path') . $file->get('value') . 'wurde erfolgreich gelöscht.',
-            'success'
-        );
+
+        if ($this->app) {
+            $this->app->addUserMessage(
+                'Die Datei ' . $file->get('path') . $file->get('value') . 'wurde erfolgreich gelöscht.',
+                'success'
+            );
+        }
+
         if (method_exists($this, 'addAdditionalAudit')) {
             $this->addAdditionalAudit('REMOVE_FILE', ['filename' => $cfile->get('value')]);
         }

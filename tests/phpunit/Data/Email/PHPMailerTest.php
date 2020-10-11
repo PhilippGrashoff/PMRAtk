@@ -131,6 +131,7 @@ class PHPMailerTest extends TestCase
 
     public function testExceptionNoEmailAccountAvailable()
     {
+        (new EmailAccount($this->persistence))->loadAny()->delete();
         $pm = new PHPMailer($this->app);
         self::expectException(\atk4\core\Exception::class);
         $this->callProtected($pm, '_setEmailAccount');
