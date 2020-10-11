@@ -31,33 +31,12 @@ jobs:
       - run: sudo apt install -y libc-client-dev libkrb5-dev
       - run: sudo docker-php-ext-configure imap --with-kerberos --with-imap-ssl
       - run: sudo docker-php-ext-install imap
-      - run: sudo apt install -y mysql-client
-      - run: sudo docker-php-ext-install pdo_mysql
-      - run: sudo docker-php-ext-enable pdo_mysql
 
       #config apache
-      - run: sudo chmod 777 /etc/apache2/sites-enabled
-      - run: sudo cp /home/circleci/repo/.circleci/example.conf /etc/apache2/sites-available/eoo.conf
-      - run: sudo a2ensite eoo
-      - run: sudo service apache2 restart
-
-      #selenium
-      - run: mkdir test-reports
-      - run:
-          name: Download Selenium
-          command: curl -O http://selenium-release.storage.googleapis.com/3.141/selenium-server-standalone-3.141.59.jar
-      - run:
-          name: Start Selenium
-          command: java -jar selenium-server-standalone-3.141.59.jar -log stdout
-          Xvfb: 7055
-          background: true
-
-      - run:
-          name: Download and start X
-          command: |
-            sudo apt-get install -y x11vnc
-            x11vnc -forever -nopw
-          background: true
+      #- run: sudo chmod 777 /etc/apache2/sites-enabled
+      #- run: sudo cp /home/circleci/repo/.circleci/example.conf /etc/apache2/sites-available/eoo.conf
+      #- run: sudo a2ensite eoo
+      #- run: sudo service apache2 restart
 
       #install composer dependecies
       - run: composer update
