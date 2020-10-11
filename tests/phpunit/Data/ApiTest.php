@@ -5,8 +5,7 @@ namespace PMRAtk\tests\phpunit\Data;
 
 use atk4\data\Persistence;
 use auditforatk\Audit;
-use Laminas\Diactoros\Exception\InvalidArgumentException;
-use Laminas\HttpHandlerRunner\Exception\EmitterException;
+use http\Exception\InvalidArgumentException;
 use PMRAtk\App\App;
 use PMRAtk\Data\Api;
 use PMRAtk\Data\Token;
@@ -44,15 +43,27 @@ class ApiTest extends TestCase
 
     public function testApiNoTokenInRequest()
     {
-        self::expectException(EmitterException::class);
-        $api = new Api($this->app);
+        try {
+            $api = new Api($this->app);
+        }
+        catch (\Throwable $e) {
+            $exceptionFound = true;
+        }
+
+        self::assertTrue($exceptionFound);
     }
 
     public function testApiNoTokenMatch()
     {
-        self::expectException(InvalidArgumentException::class);
         $_REQUEST['token'] = '123456';
-        $api = new Api($this->app);
+        try {
+            $api = new Api($this->app);
+        }
+        catch (\Throwable $e) {
+            $exceptionFound = true;
+        }
+
+        self::assertTrue($exceptionFound);
     }
 
     public function testTokenLogin()

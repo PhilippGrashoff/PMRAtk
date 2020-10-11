@@ -60,6 +60,9 @@ jobs:
             echo "\define('IMAP_PORT',           '$TEST_IMAP_PORT');" >> config_local.php
             echo "\define('IMAP_SENT_FOLDER',    '$TEST_IMAP_SENT_FOLDER');" >> config_local.php
 
+      #create dirs for EOO Output
+      - run: sudo cp -r /home/circleci/repo/.circleci/output /home/circleci/repo/output
+      - run: sudo chmod -R 777 /home/circleci/repo/output
 
       #run tests
       - run:
