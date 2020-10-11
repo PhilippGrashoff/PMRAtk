@@ -27,9 +27,9 @@ class App extends \atk4\ui\App
     use CachedValuesTrait;
 
     //should audits be created? Disabled e.g. for speeding up tests
-    public bool $createAudit = true;
+    public $createAudit = true;
     //should notifications be created? Disabled e.g. for speeding up tests
-    public bool $createNotifications = true;
+    public $createNotifications = true;
 
     //used to determine which layout to use
     public $deviceWidth;
