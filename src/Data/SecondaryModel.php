@@ -16,8 +16,7 @@ class SecondaryModel extends \secondarymodelforatk\SecondaryModel {
 
     protected function init(): void {
         parent::init();
-        $this->addCreatedByFields();
-        $this->addCreatedByHook();
+        $this->addCreatedByFieldAndHook();
         $this->addCreatedDateAndLastUpdateFields();
         $this->addCreatedDateAndLastUpdatedHook();
     }

@@ -27,8 +27,7 @@ abstract class BaseModel extends Model
 
         $this->addCreatedDateAndLastUpdateFields();
         $this->addCreatedDateAndLastUpdatedHook();
-        $this->addCreatedByFields();
-        $this->addCreatedByHook();
+        $this->addCreatedByFieldAndHook();
         $this->addNotificationReferenceAndHooks();
         $this->addAuditRefAndAuditHooks();
     }
