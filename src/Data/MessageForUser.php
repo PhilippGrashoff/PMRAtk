@@ -92,7 +92,7 @@ class MessageForUser extends BaseModel
         $messages = new self($this->persistence);
         //make sure there is no record for the current user with is set as read
         $messages->addCondition(
-            $messages->refLink('MessageForUserToUser')
+            $messages->refLink(MessageForUserToUser::class)
                 ->addCondition('user_id', $this->app->auth->user->get('id'))
                 ->action('count'),
             '<',
