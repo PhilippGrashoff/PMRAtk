@@ -7,6 +7,7 @@ use atk4\data\Model;
 use auditforatk\ModelWithAuditTrait;
 use notificationforatk\ModelWithNotificationTrait;
 use traitsforatkdata\CreatedDateAndLastUpdatedTrait;
+use traitsforatkdata\ExtraModelFunctionsTrait;
 use traitsforatkdata\ModelWithAppTrait;
 use traitsforatkdata\CreatedByTrait;
 
@@ -19,6 +20,7 @@ abstract class BaseModel extends Model
     use ModelWithNotificationTrait;
     use ModelWithAuditTrait;
     use ModelWithAppTrait;
+    use ExtraModelFunctionsTrait;
 
 
     protected function init(): void

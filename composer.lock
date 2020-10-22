@@ -597,12 +597,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/PhilippGrashoff/auditforatk.git",
-                "reference": "971076d8d448283c11d1d7b7520e3bbc6b038435"
+                "reference": "6c2f13642811bc66079ef29e647da081498e9168"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PhilippGrashoff/auditforatk/zipball/971076d8d448283c11d1d7b7520e3bbc6b038435",
-                "reference": "971076d8d448283c11d1d7b7520e3bbc6b038435",
+                "url": "https://api.github.com/repos/PhilippGrashoff/auditforatk/zipball/6c2f13642811bc66079ef29e647da081498e9168",
+                "reference": "6c2f13642811bc66079ef29e647da081498e9168",
                 "shasum": ""
             },
             "require": {
@@ -622,7 +622,7 @@
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
-            "time": "2020-10-08T18:55:00+00:00"
+            "time": "2020-10-21T18:50:36+00:00"
         },
         {
             "name": "philippgrashoff/cachedvalueforatk",
@@ -661,12 +661,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/PhilippGrashoff/mtomforatk.git",
-                "reference": "23f16b2174049ae15f81eae95a171cc3230be3e3"
+                "reference": "d79399e3f5a96c018062f684cae90c29cf47826c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PhilippGrashoff/mtomforatk/zipball/23f16b2174049ae15f81eae95a171cc3230be3e3",
-                "reference": "23f16b2174049ae15f81eae95a171cc3230be3e3",
+                "url": "https://api.github.com/repos/PhilippGrashoff/mtomforatk/zipball/d79399e3f5a96c018062f684cae90c29cf47826c",
+                "reference": "d79399e3f5a96c018062f684cae90c29cf47826c",
                 "shasum": ""
             },
             "require": {
@@ -684,7 +684,7 @@
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
-            "time": "2020-10-08T18:53:03+00:00"
+            "time": "2020-10-15T20:42:54+00:00"
         },
         {
             "name": "philippgrashoff/notificationforatk",
@@ -756,12 +756,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/PhilippGrashoff/settingsforatk.git",
-                "reference": "da0fa6ef9e901ab1b939728f3d084025147679db"
+                "reference": "6096f8a35e29936a828ace51b1d07823d320ef0c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PhilippGrashoff/settingsforatk/zipball/da0fa6ef9e901ab1b939728f3d084025147679db",
-                "reference": "da0fa6ef9e901ab1b939728f3d084025147679db",
+                "url": "https://api.github.com/repos/PhilippGrashoff/settingsforatk/zipball/6096f8a35e29936a828ace51b1d07823d320ef0c",
+                "reference": "6096f8a35e29936a828ace51b1d07823d320ef0c",
                 "shasum": ""
             },
             "require": {
@@ -779,7 +779,7 @@
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
-            "time": "2020-10-08T18:51:38+00:00"
+            "time": "2020-10-19T21:42:57+00:00"
         },
         {
             "name": "philippgrashoff/traitsforatkdata",
@@ -787,12 +787,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/PhilippGrashoff/traitsforatkdata.git",
-                "reference": "55e269140fd8fe1c9a125bfabddd1fbbe446dc71"
+                "reference": "e721716fd886b5f6fbc80e9fa3833dc9da590b21"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PhilippGrashoff/traitsforatkdata/zipball/55e269140fd8fe1c9a125bfabddd1fbbe446dc71",
-                "reference": "55e269140fd8fe1c9a125bfabddd1fbbe446dc71",
+                "url": "https://api.github.com/repos/PhilippGrashoff/traitsforatkdata/zipball/e721716fd886b5f6fbc80e9fa3833dc9da590b21",
+                "reference": "e721716fd886b5f6fbc80e9fa3833dc9da590b21",
                 "shasum": ""
             },
             "require": {
@@ -813,7 +813,7 @@
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
-            "time": "2020-10-14T17:17:38+00:00"
+            "time": "2020-10-22T11:37:45+00:00"
         },
         {
             "name": "php-curl-class/php-curl-class",
@@ -2590,16 +2590,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "9.4.1",
+            "version": "9.4.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "1f09a12726593737e8a228ebb1c8647305d07c41"
+                "reference": "3866b2eeeed21b1b099c4bc0b7a1690ac6fd5baa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/1f09a12726593737e8a228ebb1c8647305d07c41",
-                "reference": "1f09a12726593737e8a228ebb1c8647305d07c41",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/3866b2eeeed21b1b099c4bc0b7a1690ac6fd5baa",
+                "reference": "3866b2eeeed21b1b099c4bc0b7a1690ac6fd5baa",
                 "shasum": ""
             },
             "require": {
@@ -2675,7 +2675,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2020-10-11T07:41:19+00:00"
+            "time": "2020-10-19T09:23:29+00:00"
         },
         {
             "name": "sebastian/cli-parser",
