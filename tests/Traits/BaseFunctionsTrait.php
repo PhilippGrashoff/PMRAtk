@@ -215,7 +215,7 @@ trait BaseFunctionsTrait {
 
 
     /*
-     * tries to click element
+     * tries to click element until click succeeds
      */
     public function tryClick(string $css_selector) {
         self::$webDriver->wait($this->waitTimeOut, $this->waitInterval)->until(
@@ -224,7 +224,9 @@ trait BaseFunctionsTrait {
                     $this->findByCSS($css_selector)->click();
                     return true;
                 }
-                catch(Exception $e) {}
+                catch(Exception $e) {
+                    return false;
+                }
             }
         );
     }
