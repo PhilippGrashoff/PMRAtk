@@ -1,6 +1,6 @@
 <?php
 
-require_once(__DIR__ . ' /config.php');
+require_once(__DIR__ . '/config.php');
 
 foreach (new DirectoryIterator('.') as $file) {
     if ($file->isDot()) {
