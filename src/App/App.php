@@ -218,8 +218,8 @@ class App extends \atk4\ui\App
     }
 
     /**
-     * sends an email to EOO owner. The template is not editable in this case. Meant for short Emails like notifications
-     * as Email and so on
+     * sends an email to EOO owner. The template is not editable in this case. Meant for short Emails
+     * like notifications as Email and so on
      */
     public function sendEmailToAdmin(
         string $subject,
@@ -242,7 +242,7 @@ class App extends \atk4\ui\App
         };
         $email->loadInitialTemplate();
         $email->set('subject', $subject);
-        $email->addRecipient(CUSTOMER_ADMIN_EMAIL);
+        $email->addRecipient($this->getSetting('STD_EMAIL'));
         $email->send();
 
         return $email;
