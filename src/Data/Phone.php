@@ -10,4 +10,6 @@ class Phone extends SecondaryModel
     use ModelWithNotificationTrait;
 
     public $table = 'phone';
+
+    public $caption = 'Telefonnummer';
 }

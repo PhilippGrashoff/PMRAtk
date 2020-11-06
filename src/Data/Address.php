@@ -10,4 +10,6 @@ class Address extends SecondaryModel
     use ModelWithNotificationTrait;
 
     public $table = 'address';
+
+    public $caption = 'Adresse';
 }

@@ -11,6 +11,8 @@ class Email extends SecondaryModel
 
     public $table = 'email';
 
+    public $caption = 'Email-Adresse';
+
     protected function init(): void
     {
         parent::init();
