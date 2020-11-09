@@ -2,20 +2,20 @@
 
 namespace PMRAtk\tests\phpunit\App;
 
+use atk4\data\Exception;
 use atk4\ui\Layout\Admin;
 use auditforatk\Audit;
+use PMRAtk\App\App;
 use PMRAtk\Data\Email\BaseEmail;
 use PMRAtk\Data\Email\EmailAccount;
 use PMRAtk\Data\Email\EmailTemplate;
+use PMRAtk\Data\Token;
+use PMRAtk\Data\User;
+use PMRAtk\tests\phpunit\TestCase;
 use PMRAtk\tests\TestClasses\BaseModelClasses\JustABaseModel;
 use PMRAtk\tests\TestClasses\BaseModelClasses\ModelWithEPA;
-use settingsforatk\Setting;
-use PMRAtk\Data\Token;
-use PMRAtk\App\App;
 use PMRAtk\View\Template;
-use PMRAtk\Data\User;
-use atk4\data\Exception;
-use PMRAtk\tests\phpunit\TestCase;
+use settingsforatk\Setting;
 use settingsforatk\SettingGroup;
 
 
@@ -285,14 +285,8 @@ class AppTest extends TestCase
         $app = new App(['nologin'], ['always_run' => false]);
         $app->db = $persistence;
         $persistence->app = $app;
-        $s = new Setting($app->db);
-        $s->set('ident', 'STD_EMAIL');
-        $s->set('value', 'test2@easyoutdooroffice.com');
-        $app->addSetting($s);
-        $s = new Setting($app->db);
-        $s->set('ident', 'STD_EMAIL_NAME');
-        $s->set('value', 'HANSI PETER');
-        $app->addSetting($s);
+        $app->addSetting('STD_EMAIL', 'test2@easyoutdooroffice.com');
+        $app->addSetting('STD_EMAIL_NAME', 'HANSI PETER');
         $b = new JustABaseModel($app->db);
         $b->set('name', 'Laduggu');
         $e = $app->sendEmailToAdmin(
@@ -322,13 +316,8 @@ class AppTest extends TestCase
         $app->db = $persistence;
         $persistence->app = $app;
         $s = new Setting($app->db);
-        $s->set('ident', 'STD_EMAIL');
-        $s->set('value', 'test2@easyoutdooroffice.com');
-        $app->addSetting($s);
-        $s = new Setting($app->db);
-        $s->set('ident', 'STD_EMAIL_NAME');
-        $s->set('value', 'HANSI PETER');
-        $app->addSetting($s);
+        $app->addSetting('STD_EMAIL', 'test2@easyoutdooroffice.com');
+        $app->addSetting('STD_EMAIL_NAME', 'HANSI PETER');
 
         $e = new Exception('SomeErrorMessage');
         self::assertTrue($app->sendErrorEmailToAdmin($e, 'Fehler', ['test3@easyoutdooroffice.com']));

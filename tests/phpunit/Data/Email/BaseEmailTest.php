@@ -199,11 +199,7 @@ class BaseEmailTest extends TestCase
 
     public function testloadSignatureBySetting()
     {
-        $setting = new Setting($this->persistence);
-        $setting->set('ident', 'STD_EMAIL_SIGNATURE');
-        $setting->set('value', 'TestSigSetting');
-        $setting->save();
-        $this->app->addSetting($setting);
+        $this->app->addSetting('STD_EMAIL_SIGNATURE', 'TestSigSetting');
         $base_email = new BaseEmail(
             $this->persistence,
             ['template' => '{Subject}Hellow{/Subject}Magada{Signature}{/Signature}']

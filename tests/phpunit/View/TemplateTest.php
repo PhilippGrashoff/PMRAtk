@@ -35,10 +35,7 @@ class TemplateTest extends TestCase
 
         $template = new Template();
         $template->app = $this->app;
-        $setting = new Setting($this->app->db);
-        $setting->set('ident', 'STD_DADAPRA');
-        $setting->set('value', 'LALA');
-        $this->app->addSetting($setting);
+        $this->app->addSetting('STD_DADAPRA', 'LALA');
         $template->loadTemplateFromString('Hallo {$STD_DADAPRA} Test');
         $template->setSTDValues();
         self::assertTrue(strpos($template->render(), 'LALA') !== false);
