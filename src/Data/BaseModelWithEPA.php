@@ -2,6 +2,7 @@
 
 namespace PMRAtk\Data;
 
+use atk4\data\Model;
 use secondarymodelforatk\SecondaryModelRelationTrait;
 
 
@@ -35,6 +36,9 @@ abstract class BaseModelWithEPA extends BaseModel
     }
 
     public function addEPA(string $type, string $value): SecondaryModel {
+        if(!$this->loaded()) {
+            $this->save();
+        }
         $record = $this->addSecondaryModelRecord($type, $value);
         $this->addSecondaryAudit('ADD', $record);
 
