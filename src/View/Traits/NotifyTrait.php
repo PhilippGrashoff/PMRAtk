@@ -9,8 +9,8 @@ trait NotifyTrait {
     /*
      *
      */
-    public function successNotify(string $text, int $displayTime = 3000): jsToast {
-        return new jsToast([
+    public function successNotify(string $text, int $displayTime = 3000): JsToast {
+        return new JsToast([
             'message' => $text,
             'position' => 'bottom right',
             'showProgress' => 'bottom',
@@ -22,8 +22,8 @@ trait NotifyTrait {
     /*
      *
      */
-    public function failNotify(string $text, int $displayTime = 10000): jsToast {
-        return new jsToast([
+    public function failNotify(string $text, int $displayTime = 10000): JsToast {
+        return new JsToast([
             'message' => $text,
             'position' => 'bottom right',
             'showProgress' => 'bottom',
@@ -35,8 +35,8 @@ trait NotifyTrait {
     /*
      *
      */
-    public function warningNotify(string $text, int $displayTime = 7000): jsToast {
-        return new jsToast([
+    public function warningNotify(string $text, int $displayTime = 7000): JsToast {
+        return new JsToast([
             'message' => $text,
             'position' => 'bottom right',
             'showProgress' => 'bottom',

@@ -2,7 +2,7 @@
 
 namespace PMRAtk\View\Traits;
 
-use atk4\ui\jsToast;
+use atk4\ui\JsToast;
 
 /**
  * usually added to app. Data layer can add messages to app which ui or other
@@ -56,7 +56,7 @@ trait UserMessageTrait
     {
         $return = [];
         foreach ($this->userMessages as $message) {
-            $return[] = new jsToast(
+            $return[] = new JsToast(
                 [
                     'message' => $message['message'],
                     'position' => 'bottom right',
