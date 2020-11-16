@@ -3,6 +3,7 @@
 namespace PMRAtk\Data\Email;
 
 use atk4\data\Model;
+use atk4\ui\Form\Control\Dropdown;
 use DirectoryIterator;
 use Exception;
 use PMRAtk\Data\BaseModel;
@@ -104,7 +105,7 @@ class BaseEmail extends BaseModel
             [
                 EmailAccount::class,
                 'type' => 'integer',
-                'ui' => ['form' => ['DropDown']]
+                'ui' => ['form' => [Dropdown::class]]
             ]
         );
 

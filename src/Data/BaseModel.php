@@ -2,14 +2,13 @@
 
 namespace PMRAtk\Data;
 
-use atk4\data\Exception;
 use atk4\data\Model;
 use auditforatk\ModelWithAuditTrait;
 use notificationforatk\ModelWithNotificationTrait;
+use traitsforatkdata\CreatedByTrait;
 use traitsforatkdata\CreatedDateAndLastUpdatedTrait;
 use traitsforatkdata\ExtraModelFunctionsTrait;
 use traitsforatkdata\ModelWithAppTrait;
-use traitsforatkdata\CreatedByTrait;
 
 
 abstract class BaseModel extends Model

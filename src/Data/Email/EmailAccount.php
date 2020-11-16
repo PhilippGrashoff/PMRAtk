@@ -3,6 +3,7 @@
 namespace PMRAtk\Data\Email;
 
 use atk4\data\Model;
+use atk4\ui\Form\Control\Dropdown;
 use PMRAtk\Data\BaseModel;
 use traitsforatkdata\EncryptedFieldTrait;
 
@@ -100,7 +101,7 @@ class EmailAccount extends BaseModel
                     'caption' => 'SSL: Self-signed Zertifikate erlauben',
                     'system' => true,
                     'never_persist' => true,
-                    'ui' => ['editable' => true, 'form' => ['DropDown', 'values' => [0 => 'Nein', '1' => 'Ja']]]
+                    'ui' => ['editable' => true, 'form' => [Dropdown::class, 'values' => [0 => 'Nein', '1' => 'Ja']]]
                 ],
             ]
         );
