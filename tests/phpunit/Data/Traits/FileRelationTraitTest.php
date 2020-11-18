@@ -4,12 +4,12 @@ namespace PMRAtk\tests\phpunit\Data\Traits;
 
 
 use auditforatk\Audit;
-use PMRAtk\Data\File;
 use PMRAtk\App\App;
-use PMRAtk\tests\TestClasses\BaseModelClasses\ModelWithFileRelation;
-use traitsforatkdata\UserException;
+use PMRAtk\Data\File;
 use PMRAtk\tests\phpunit\TestCase;
 use PMRAtk\tests\TestClasses\BaseModelClasses\FileMock;
+use PMRAtk\tests\TestClasses\BaseModelClasses\ModelWithFileRelation;
+use traitsforatkdata\UserException;
 
 
 class FileRelationTraitTest extends TestCase
@@ -70,7 +70,8 @@ class FileRelationTraitTest extends TestCase
         self::assertTrue(true);
     }
 
-    public function testFilesAreDeletedOnModelDelete() {
+    public function testFilesAreDeletedOnModelDelete()
+    {
         $m = new ModelWithFileRelation($this->persistence);
         $m->save();
         $this->createTestFile('somefile.jpg', $this->persistence, $m);
@@ -90,24 +91,31 @@ class FileRelationTraitTest extends TestCase
 
     public function testaddUploadFileFromAtkUi()
     {
-        $m = new ModelWithFileRelation($this->persistence);
-        $m->save();
-        $m->getRef(File::class)->model = new FileMock($this->persistence);
-        $file = $m->addUploadFileFromAtkUi(['name' => 'demo_file.txt', 'path' => 'tests/']);
+        $model = new ModelWithFileRelation($this->persistence);
+        $model->save();
+        $model->getRef(File::class)->model = new FileMock($this->persistence);
+        $file = $model->addUploadFileFromAtkUi(['name' => 'demo_file.txt', 'path' => 'tests/']);
 
         self::assertInstanceOf(File::class, $file);
-        self::assertEquals(1, $m->ref(File::class)->action('count')->getOne());
+        self::assertEquals(1, $model->ref(File::class)->action('count')->getOne());
     }
 
     public function testAddTypeToFile()
-    {;
-        $m = new ModelWithFileRelation($this->persistence);
-        $m->save();
-        $m->getRef(File::class)->model = new  FileMock($this->persistence);
-        $file = $m->addUploadFileFromAtkUi(['name' => 'demo_file.txt', 'path' => 'tests/']);
+    {
+        $model = new ModelWithFileRelation($this->persistence);
+        $model->save();
+        $model->getRef(File::class)->model = new FileMock($this->persistence);
+        $file = $model->addUploadFileFromAtkUi(['name' => 'demo_file.txt', 'path' => 'tests/']);
         self::assertEquals('', $file->get('type'));
 
-        $file = $m->addUploadFileFromAtkUi(['name' => 'demo_file.txt', 'path' => 'tests/'], 'SOMETYPE');
+        $file = $model->addUploadFileFromAtkUi(['name' => 'demo_file.txt', 'path' => 'tests/'], 'SOMETYPE');
         self::assertEquals('SOMETYPE', $file->get('type'));
+    }
+
+    public function testFileSeedIsUsed()
+    {
+        $model = new ModelWithFileRelation($this->persistence, ['fileSeed' => FileMock::class]);
+        self::assertTrue($model->hasRef(FileMock::class));
+        self::assertFalse($model->hasRef(File::class));
     }
 }

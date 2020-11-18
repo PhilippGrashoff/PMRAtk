@@ -12,10 +12,12 @@ use traitsforatkdata\UserException;
 trait FileRelationTrait
 {
 
+    protected $fileSeed = File::class;
+
     protected function addFileReferenceAndDeleteHook(bool $addDelete = true): HasMany
     {
         $ref = $this->hasMany(
-            File::class,
+            $this->fileSeed,
             [
                 function () {
                     return (new File($this->persistence, ['parentObject' => $this]))->addCondition(
@@ -31,7 +33,7 @@ trait FileRelationTrait
             $this->onHook(
                 Model::HOOK_AFTER_DELETE,
                 function (self $model) {
-                    foreach ($model->ref(File::class) as $file) {
+                    foreach ($model->ref($this->fileSeed) as $file) {
                         $file->delete();
                     }
                 }
@@ -67,7 +69,7 @@ trait FileRelationTrait
 
     protected function _addUploadFile(array $temp_file, string $type): ?File
     {
-        $file = $this->ref(File::class)->newInstance(null, ['parentObject' => $this]);
+        $file = $this->ref($this->fileSeed)->newInstance(null, ['parentObject' => $this]);
         if (!$file->uploadFile($temp_file)) {
             if ($this->app) {
                 $this->app->addUserMessage(
@@ -106,12 +108,13 @@ trait FileRelationTrait
      */
     public function removeFile($fileId)
     {
-        $file = $this->ref(File::class);
+        $file = new $this->fileSeed($this->persistence);
         $file->tryLoad($fileId);
         if (!$file->loaded()) {
             throw new UserException('Die Datei die gelöscht werden soll kann nicht gefunden werden.');
         }
 
+        //TODO: Clone needed?
         $cfile = clone $file;
         $file->delete();
 
