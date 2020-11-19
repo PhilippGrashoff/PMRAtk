@@ -6,15 +6,22 @@ use atk4\data\Model;
 use atk4\ui\Form\Control\Dropdown;
 use DirectoryIterator;
 use Exception;
-use PMRAtk\Data\BaseModel;
 use PMRAtk\Data\Email;
 use PMRAtk\Data\File;
 use PMRAtk\View\Template;
 use ReflectionClass;
 use Throwable;
+use traitsforatkdata\CreatedByTrait;
+use traitsforatkdata\CreatedDateAndLastUpdatedTrait;
+use traitsforatkdata\ExtraModelFunctionsTrait;
+use traitsforatkdata\ModelWithAppTrait;
 
-class BaseEmail extends BaseModel
+class BaseEmail extends Model
 {
+    use CreatedDateAndLastUpdatedTrait;
+    use CreatedByTrait;
+    use ModelWithAppTrait;
+    use ExtraModelFunctionsTrait;
 
     public $table = 'base_email';
 
@@ -108,6 +115,9 @@ class BaseEmail extends BaseModel
                 'ui' => ['form' => [Dropdown::class]]
             ]
         );
+        $this->addCreatedDateAndLastUpdateFields();
+        $this->addCreatedDateAndLastUpdatedHook();
+        $this->addCreatedByFieldAndHook();
 
         $this->containsMany('email_recipient', [EmailRecipient::class]);
 
@@ -173,12 +183,10 @@ class BaseEmail extends BaseModel
             $template->loadTemplateFromString(
                 (new EmailTemplate($this->persistence))->load($this->emailTemplateId)->get('value')
             );
-        }
-        else {
+        } else {
             try {
                 $template = $this->app->loadEmailTemplate($this->template, false, $this->customTemplateModels);
-            }
-            catch (Exception $e) {
+            } catch (Exception $e) {
                 $template = new Template();
                 $template->app = $this->app;
                 $template->loadTemplateFromString($this->template);
@@ -248,24 +256,22 @@ class BaseEmail extends BaseModel
         $r = null;
 
         //object passed: get Email from Email Ref
-        if ($class instanceOf Model && $class->loaded()) {
+        if ($class instanceof Model && $class->loaded()) {
             if ($email_id === null) {
                 $r = $this->_addRecipientObject($class);
             } elseif ($email_id) {
                 $r = $this->_addRecipientObject($class, $email_id);
             }
-        }
-        //id passed: ID of Email Address, load from there
+        } //id passed: ID of Email Address, load from there
         elseif (is_numeric($class)) {
             $r = $this->_addRecipientByEmailId(intval($class));
-        }
-        //else assume its email as string, not belonging to a stored model
+        } //else assume its email as string, not belonging to a stored model
         elseif (is_string($class) && filter_var($class, FILTER_VALIDATE_EMAIL)) {
             $r = $this->ref('email_recipient');
             $r->set('email', $class);
         }
 
-        if (!$r instanceOf EmailRecipient) {
+        if (!$r instanceof EmailRecipient) {
             return false;
         }
 
@@ -301,12 +307,12 @@ class BaseEmail extends BaseModel
         $r->set('model_id', $object->get($object->id_field));
 
         //go for first email if no email_id was specified
-        if(
+        if (
             $email_id == null
             && method_exists($object, 'getFirstSecondaryModelRecord')
         ) {
             $emailObject = $object->getFirstSecondaryModelRecord($this->emailClassName);
-            if(
+            if (
                 $emailObject
                 && filter_var($emailObject->get('value'), FILTER_VALIDATE_EMAIL)
             ) {
@@ -317,7 +323,7 @@ class BaseEmail extends BaseModel
         elseif ($email_id) {
             $emailObject = new $this->emailClassName($this->persistence);
             $emailObject->tryLoad($email_id);
-            if($emailObject->loaded()) {
+            if ($emailObject->loaded()) {
                 $r->set('email', $emailObject->get('value'));
                 return clone $r;
             }
@@ -413,10 +419,10 @@ class BaseEmail extends BaseModel
         //create a template from message so tags set in message like
         //{$firstname} can be filled
         $mt = new Template();
-        $mt->loadTemplateFromString((string) $this->get('message'));
+        $mt->loadTemplateFromString((string)$this->get('message'));
 
         $st = new Template();
-        $st->loadTemplateFromString((string) $this->get('subject'));
+        $st->loadTemplateFromString((string)$this->get('subject'));
 
         //add Attachments
         if ($this->get('attachments')) {

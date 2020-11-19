@@ -27,7 +27,8 @@ class User extends BaseModelWithEPA
                 [
                     'name',
                     'type' => 'string',
-                    'caption' => 'Name'
+                    'caption' => 'Name',
+                    'system' => true,
                 ],
                 [
                     'firstname',
