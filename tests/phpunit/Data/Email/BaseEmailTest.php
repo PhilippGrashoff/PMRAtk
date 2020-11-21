@@ -314,7 +314,6 @@ class BaseEmailTest extends TestCase
         $res = $be->getModelVars(new User($this->persistence));
         self::assertEquals(
             [
-                'name' => 'Name',
                 'firstname' => 'Vorname',
                 'lastname' => 'Nachname',
                 'username' => 'Benutzername',
@@ -331,7 +330,6 @@ class BaseEmailTest extends TestCase
         $res = $be->getModelVars(new User($this->persistence), 'user_');
         self::assertEquals(
             [
-                'user_name' => 'Name',
                 'user_firstname' => 'Vorname',
                 'user_lastname' => 'Nachname',
                 'user_username' => 'Benutzername',
@@ -372,7 +370,6 @@ class BaseEmailTest extends TestCase
             [
                 'Benutzer' =>
                     [
-                        'user_name' => 'Name',
                         'user_firstname' => 'Vorname',
                         'user_lastname' => 'Nachname',
                         'user_username' => 'Benutzername',
