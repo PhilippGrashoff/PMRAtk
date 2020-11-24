@@ -45,22 +45,28 @@ function insertCCCode(string $filename)
     $content = str_replace(
         '###CCSTART',
         '
-$coverage = new \SebastianBergmann\CodeCoverage\CodeCoverage();
-$coverage->setProcessUncoveredFilesFromWhitelist(true);
-$coverage->filter()->addDirectoryToWhitelist(\'' . __DIR__ . '/src/View\');
-$coverage->filter()->addDirectoryToWhitelist(\'' . __DIR__ . '/src/App\');
+$filter = new \SebastianBergmann\CodeCoverage\Filter;
+$filter->includeDirectory(__DIR__ . \'/src/View\');
+$filter->includeDirectory(__DIR__ . \'/src/App\');
+$coverage = new \SebastianBergmann\CodeCoverage\CodeCoverage(
+    (new \SebastianBergmann\CodeCoverage\Driver\Selector)->forLineCoverage($filter),
+    $filter
+);
 $coverage->start(uniqid(\'\', true));
+
 ',
         $content
     );
     $content = str_replace(
         '###CCEND',
         '
-$app->addHook(\'beforeExit\', function () use($coverage) {
-    $coverage->stop(true);
-    $writer = new \SebastianBergmann\CodeCoverage\Report\PHP();
-    $writer->process($coverage, \'' . __DIR__ . '/tests/coverage/\'.uniqid(\'\', true).\'.cov\');
-});
+$app->onHook(
+    \atk4\ui\App::HOOK_BEFORE_EXIT,
+    function () use ($coverage) {
+        $coverage->stop(true);
+        (new \SebastianBergmann\CodeCoverage\Report\PHP())->process($coverage, __DIR__ . \'/tests/coverage/\' . uniqid(\'\', true) . \'.cov\');
+    }
+);
 ',
         $content
     );

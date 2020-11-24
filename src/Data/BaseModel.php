@@ -24,6 +24,8 @@ abstract class BaseModel extends Model
 
     protected function init(): void
     {
+        $this->skipFieldsFromAudit = ['last_updated', 'created_date', 'created_by'];
+
         parent::init();
 
         $this->addCreatedDateAndLastUpdateFields();
