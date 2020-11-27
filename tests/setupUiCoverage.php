@@ -46,8 +46,8 @@ function insertCCCode(string $filename)
         '###CCSTART',
         '
 $filter = new \SebastianBergmann\CodeCoverage\Filter;
-$filter->includeDirectory(__DIR__ . \'/src/View\');
-$filter->includeDirectory(__DIR__ . \'/src/App\');
+$filter->includeDirectory(FILE_BASE_PATH . \'src/View\');
+$filter->includeDirectory(FILE_BASE_PATH . \'src/App\');
 $coverage = new \SebastianBergmann\CodeCoverage\CodeCoverage(
     (new \SebastianBergmann\CodeCoverage\Driver\Selector)->forLineCoverage($filter),
     $filter
@@ -64,7 +64,7 @@ $app->onHook(
     \atk4\ui\App::HOOK_BEFORE_EXIT,
     function () use ($coverage) {
         $coverage->stop(true);
-        (new \SebastianBergmann\CodeCoverage\Report\PHP())->process($coverage, __DIR__ . \'/tests/coverage/\' . uniqid(\'\', true) . \'.cov\');
+        (new \SebastianBergmann\CodeCoverage\Report\PHP())->process($coverage, FILE_BASE_PATH . \'tests/coverage/\' . uniqid(\'\', true) . \'.cov\');
     }
 );
 ',
