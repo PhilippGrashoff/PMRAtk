@@ -28,7 +28,6 @@
     "zendframework/zend-mail": "^2.10",
     "ext-fileinfo": "*",
     "ext-json": "*",
-    "ext-sodium": "*",
     "ext-iconv": "*",
     "ext-intl": "*",
     "ext-imap": "*"
