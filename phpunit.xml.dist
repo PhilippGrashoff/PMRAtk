@@ -14,7 +14,6 @@
   <testsuites>
     <testsuite name="tests">
       <directory>tests/phpunit</directory>
-      <directory>tests/selenium</directory>
     </testsuite>
   </testsuites>
   <logging/>
