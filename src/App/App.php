@@ -128,7 +128,7 @@ class App extends \atk4\ui\App
             if ($raw_template) {
                 return $et->get('value');
             } else {
-                $template->loadTemplateFromString($et->get('value'));
+                $template->loadTemplateFromString((string)$et->get('value'));
                 return $template;
             }
         }
