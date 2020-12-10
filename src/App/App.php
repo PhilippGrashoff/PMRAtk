@@ -119,8 +119,8 @@ class App extends \atk4\ui\App
         //else try to load from DB
         if (!$et) {
             $et = new EmailTemplate($this->db);
-            $et->addCondition('model_class', null);
-            $et->addCondition('model_id', null);
+            $et->addCondition('model_class', '=', null);
+            $et->addCondition('model_id', '=', null);
             $et->tryLoadBy('ident', $name);
         }
 

@@ -4,7 +4,7 @@ namespace PMRAtk\View\Traits;
 
 use atk4\data\ValidationException;
 use Throwable;
-use traitsforatkdata\UserException;
+use PMRAtk\Data\UserException;
 
 trait OutputExceptionTrait
 {
@@ -43,7 +43,10 @@ trait OutputExceptionTrait
                 $return[] = $text_before . ': ' . $e->getMessage();
             }
         } //other exception meant for user
-        elseif ($e instanceof UserException) {
+        elseif (
+            $e instanceof UserException
+            || $e instanceof \traitsforatkdata\UserException
+        ) {
             $return[] = $text_before . ': ' . $e->getMessage();
         } //any other Exception renders as technical error
         else {
