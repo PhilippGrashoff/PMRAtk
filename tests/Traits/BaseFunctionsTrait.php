@@ -26,8 +26,6 @@ trait BaseFunctionsTrait {
     public static $mobileWindowWidth  = 400;
     public static $mobileWindowHeight = 700;
 
-    public $initialPage  = '';
-
     public $isMobileLayout = false;
 
     public $waitTimeOut = 15;
@@ -78,7 +76,7 @@ trait BaseFunctionsTrait {
      */
     public static function setUpBeforeClass():void {
         parent::setUpBeforeClass();
-        $capabilities = array(WebDriverCapabilityType::BROWSER_NAME => 'chrome', WebDriverCapabilityType::BROWSER_NAME => 'chrome');
+        $capabilities = array(WebDriverCapabilityType::BROWSER_NAME => 'chrome');
         self::$webDriver = RemoteWebDriver::create('http://localhost:4444/wd/hub', ['browserName' => 'chrome', 'chromeOptions' => ['args' => ['--window-size='.self::getWindowWidth().','.self::getWindowHeight()]]]);
     }
 
