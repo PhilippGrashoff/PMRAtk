@@ -1,25 +1,45 @@
-<?php
+<?php declare(strict_types=1);
 
-class TestViewForOutputException extends \atk4\ui\View {
-    use \PMRAtk\View\Traits\OutputExceptionTrait;
-    use \PMRAtk\View\Traits\NotifyTrait;
+namespace PMRAtk\tests\phpunit\View\Traits;
+
+
+use atk4\data\ValidationException;
+use atk4\ui\Layout\Admin;
+use atk4\ui\View;
+use traitsforatkdata\UserException;
+use PMRAtk\tests\phpunit\TestCase;
+use PMRAtk\App\App;
+use PMRAtk\View\Traits\NotifyTrait;
+use PMRAtk\View\Traits\OutputExceptionTrait;
+
+/**
+ * Class TestViewForOutputException
+ * @package PMRAtk\tests\phpunit\View\Traits
+ */
+class TestViewForOutputException extends View {
+    use OutputExceptionTrait;
+    use NotifyTrait;
 }
 
 
-class OutputExceptionTraitTest extends \PMRAtk\tests\phpunit\TestCase {
-
+/**
+ * Class OutputExceptionTraitTest
+ * @package PMRAtk\tests\phpunit\View\Traits
+ */
+class OutputExceptionTraitTest extends TestCase {
     /*
      *
      */
     public function testOutputExceptionTraitDataException() {
-        $app = new \PMRAtk\View\App(['nologin'], ['always_run' => false]);
+        $app = new App(['nologin'], ['always_run' => false]);
+        $app->initLayout([Admin::class]);
         $v   = $app->add(new TestViewForOutputException());
         try {
             throw new \atk4\data\Exception('Some Error');
         }
         catch(\Exception $e) {
             $res = $v->outputException($e);
-            $this->assertTrue(strpos($res[0], 'Ein technischer Fehler ist aufgetreten') !== false);
+            self::assertTrue(strpos($res[0], 'Ein technischer Fehler ist aufgetreten') !== false);
         }
     }
 
@@ -28,14 +48,15 @@ class OutputExceptionTraitTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testOutputExceptionTraitUserException() {
-        $app = new \PMRAtk\View\App(['nologin'], ['always_run' => false]);
+        $app = new App(['nologin'], ['always_run' => false]);
+        $app->initLayout([Admin::class]);
         $v   = $app->add(new TestViewForOutputException());
         try {
-            throw new \PMRAtk\Data\UserException('Some Error Duggu');
+            throw new UserException('Some Error Duggu');
         }
         catch(\Exception $e) {
             $res = $v->outputException($e);
-            $this->assertTrue(strpos($res[0], 'Some Error Duggu') !== false);
+            self::assertTrue(strpos($res[0], 'Some Error Duggu') !== false);
         }
     }
 
@@ -44,14 +65,15 @@ class OutputExceptionTraitTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testOutputExceptionTraitSingleValidationException() {
-        $app = new \PMRAtk\View\App(['nologin'], ['always_run' => false]);
+        $app = new App(['nologin'], ['always_run' => false]);
+        $app->initLayout([Admin::class]);
         $v   = $app->add(new TestViewForOutputException());
         try {
-            throw new \atk4\data\ValidationException(['Some Error']);
+            throw new ValidationException(['Some Error']);
         }
         catch(\Exception $e) {
             $res = $v->outputException($e);
-            $this->assertTrue(strpos($res[0], 'Some Error') !== false);
+            self::assertTrue(strpos($res[0], 'Some Error') !== false);
         }
     }
 
@@ -60,15 +82,16 @@ class OutputExceptionTraitTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testOutputExceptionTraitMultipleValidationException() {
-        $app = new \PMRAtk\View\App(['nologin'], ['always_run' => false]);
+        $app = new App(['nologin'], ['always_run' => false]);
+        $app->initLayout([Admin::class]);
         $v   = $app->add(new TestViewForOutputException());
         try {
-            throw new \atk4\data\ValidationException(['Some Error1', 'Some Error2']);
+            throw new ValidationException(['Some Error1', 'Some Error2']);
         }
         catch(\Exception $e) {
             $res = $v->outputException($e);
-            $this->assertTrue(strpos($res[0], 'Some Error1') !== false);
-            $this->assertTrue(strpos($res[1], 'Some Error2') !== false);
+            self::assertTrue(strpos($res[0], 'Some Error1') !== false);
+            self::assertTrue(strpos($res[1], 'Some Error2') !== false);
         }
     }
 
@@ -77,14 +100,15 @@ class OutputExceptionTraitTest extends \PMRAtk\tests\phpunit\TestCase {
      *
      */
     public function testOutputExceptionTraitReturnAsNotifyException() {
-        $app = new \PMRAtk\View\App(['nologin'], ['always_run' => false]);
+        $app = new App(['nologin'], ['always_run' => false]);
+        $app->initLayout([Admin::class]);
         $v   = $app->add(new TestViewForOutputException());
         try {
-            throw new \atk4\data\ValidationException(['Some Error1', 'Some Error2']);
+            throw new ValidationException(['Some Error1', 'Some Error2']);
         }
         catch(\Exception $e) {
             $res = $v->outputExceptionAsJsNotify($e);
-            $this->assertEquals(2, count($res));
+            self::assertEquals(2, count($res));
         }
     }
 }

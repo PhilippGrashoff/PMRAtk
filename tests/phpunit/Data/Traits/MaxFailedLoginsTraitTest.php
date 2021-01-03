@@ -1,96 +1,70 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\tests\phpunit\Data\Traits;
 
+use auditforatk\Audit;
 use PMRAtk\Data\User;
 use PMRAtk\tests\phpunit\TestCase;
 
-class MaxFailedLoginsTraitTest extends TestCase {
+class MaxFailedLoginsTraitTest extends TestCase
+{
 
-    public static $userBefore;
+    protected $sqlitePersistenceModels = [
+        User::class,
+        Audit::class
+    ];
 
 
-    /**
-     *
-     */
-    public static function setUpBeforeClass(): void
+    public function testFailedLoginIncrease()
     {
-        parent::setUpBeforeClass();
-        self::$userBefore = self::$app->auth->user;
+        $persistence = $this->getSqliteTestPersistence();
+        $user = new User($persistence);
+        $user->set('username', 'DUggu');
+        $user->set('name', 'Jsdfsdf');
+        $user->save();
+        self::assertEquals(0, $user->get('failed_logins'));
+        $user->addFailedLogin();
+        self::assertEquals(1, $user->get('failed_logins'));
     }
 
-
-    /**
-     *
-     */
-    public static function tearDownAfterClass(): void
+    public function testGetRemainingLogins()
     {
-        self::$app->auth->user = self::$userBefore;
-        parent::tearDownAfterClass();
+        $persistence = $this->getSqliteTestPersistence();
+        $user = new User($persistence);
+        $user->set('username', 'DUggu');
+        $user->set('name', 'Jsdfsdf');
+        $user->save();
+        self::assertEquals(10, $user->getRemainingLogins());
+        $user->addFailedLogin();
+        self::assertEquals(9, $user->getRemainingLogins());
+        $user->maxFailedLogins = 1;
+        self::assertEquals(0, $user->getRemainingLogins());
     }
 
-
-    /**
-     *
-     */
-    public function testFailedLoginIncrease() {
-        $u = new User(self::$app->db);
-        $u->set('username', 'DUggu');
-        $u->set('name', 'Jsdfsdf');
-        $u->save();
-        self::$app->auth->user = $u;
-        self::assertEquals(0, $u->get('failed_logins'));
-        $u->addFailedLogin();
-        self::assertEquals(1, $u->get('failed_logins'));
+    public function testSetFailedLoginsToZero()
+    {
+        $persistence = $this->getSqliteTestPersistence();
+        $user = new User($persistence);
+        $user->set('username', 'DUggu');
+        $user->set('name', 'Jsdfsdf');
+        $user->save();
+        $user->addFailedLogin();
+        self::assertEquals(1, $user->get('failed_logins'));
+        $user->setFailedLoginsToZero();
+        self::assertEquals(0, $user->get('failed_logins'));
     }
 
-
-    /**
-     *
-     */
-    public function testGetRemainingLogins() {
-        $u = new User(self::$app->db);
-        $u->set('username', 'DUggu');
-        $u->set('name', 'Jsdfsdf');
-        $u->save();
-        self::$app->auth->user = $u;
-        self::assertEquals(10, $u->getRemainingLogins());
-        $u->addFailedLogin();
-        self::assertEquals(9, $u->getRemainingLogins());
-        $u->maxFailedLogins = 1;
-        self::assertEquals(0, $u->getRemainingLogins());
-    }
-
-
-    /**
-     *
-     */
-    public function testSetFailedLoginsToZero() {
-        $u = new User(self::$app->db);
-        $u->set('username', 'DUggu');
-        $u->set('name', 'Jsdfsdf');
-        $u->save();
-        self::$app->auth->user = $u;
-        $u->addFailedLogin();
-        self::assertEquals(1, $u->get('failed_logins'));
-        $u->setFailedLoginsToZero();
-        self::assertEquals(0, $u->get('failed_logins'));
-    }
-
-
-    /**
-     *
-     */
-    public function testHasTooManyFailedLogins() {
-        $u = new User(self::$app->db);
-        $u->set('username', 'DUggu');
-        $u->set('name', 'Jsdfsdf');
-        $u->save();
-        self::$app->auth->user = $u;
-        $u->addFailedLogin();
-        $u->maxFailedLogins = 1;
-        self::assertFalse($u->hasTooManyFailedLogins());
-        $u->addFailedLogin();
-        self::assertTrue($u->hasTooManyFailedLogins());
+    public function testHasTooManyFailedLogins()
+    {
+        $persistence = $this->getSqliteTestPersistence();
+        $user = new User($persistence);
+        $user->set('username', 'DUggu');
+        $user->set('name', 'Jsdfsdf');
+        $user->save();
+        $user->addFailedLogin();
+        $user->maxFailedLogins = 1;
+        self::assertFalse($user->hasTooManyFailedLogins());
+        $user->addFailedLogin();
+        self::assertTrue($user->hasTooManyFailedLogins());
     }
 }

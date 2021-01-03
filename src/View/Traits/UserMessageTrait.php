@@ -1,13 +1,15 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\View\Traits;
 
-/*
+use atk4\ui\JsToast;
+
+/**
  * usually added to app. Data layer can add messages to app which ui or other
  * can pick up and display
  */
-
-trait UserMessageTrait {
+trait UserMessageTrait
+{
 
     public $userMessages = [];
 
@@ -16,7 +18,8 @@ trait UserMessageTrait {
      * This works as message storage. Data level can add messages here as well as
      * Ui. Ui can pick these messages and display to user
      */
-    public function addUserMessage(string $message, string $class = '', int $displayTime = null) {
+    public function addUserMessage(string $message, string $class = '', int $displayTime = null)
+    {
         $this->userMessages[] = ['message' => $message, 'class' => $class, 'displayTime' => $displayTime];
     }
 
@@ -27,14 +30,16 @@ trait UserMessageTrait {
      * it will use inline styling, e.g. for an Email where FUI CSS is not
      * available.
      */
-    public function getUserMessagesAsHTML(bool $inline = false):string {
+    public function getUserMessagesAsHTML(bool $inline = false): string
+    {
         $return = '';
-        foreach($this->userMessages as $message) {
-            if($inline) {
-                $return .= '<div style="color:#'.$this->_getColorForUserMessageClass($message['class']).'">'.$message['message'].'</div>';
-            }
-            else {
-                $return .= '<div class="ui message '.$message['class'].'">'.$message['message'].'</div>';
+        foreach ($this->userMessages as $message) {
+            if ($inline) {
+                $return .= '<div style="color:#' . $this->_getColorForUserMessageClass(
+                        $message['class']
+                    ) . '">' . $message['message'] . '</div>';
+            } else {
+                $return .= '<div class="ui message ' . $message['class'] . '">' . $message['message'] . '</div>';
             }
         }
 
@@ -47,15 +52,19 @@ trait UserMessageTrait {
      * each message.
      * Usable e.g. in Form onSubmit returns
      */
-    public function getUserMessagesAsJsToast():array {
+    public function getUserMessagesAsJsToast(): array
+    {
         $return = [];
-        foreach($this->userMessages as $message) {
-            $return[] = new \atk4\ui\jsToast([
-                'message' => $message['message'],
-                'position' => 'bottom right',
-                'class' => $message['class'],
-                'showProgress' => 'bottom',
-                'displayTime' => $message['displayTime'] ?? ($message['class'] == 'success' ? 3000 : 8000)]);
+        foreach ($this->userMessages as $message) {
+            $return[] = new JsToast(
+                [
+                    'message' => $message['message'],
+                    'position' => 'bottom right',
+                    'class' => $message['class'],
+                    'showProgress' => 'bottom',
+                    'displayTime' => $message['displayTime'] ?? ($message['class'] == 'success' ? 3000 : 8000)
+                ]
+            );
         }
 
         return $return;
@@ -65,14 +74,13 @@ trait UserMessageTrait {
     /*
      * returns html color codes for different message classes for inline styling
      */
-    protected function _getColorForUserMessageClass(string $class) {
-        if($class == 'success') {
+    protected function _getColorForUserMessageClass(string $class)
+    {
+        if ($class == 'success') {
             return '005723';
-        }
-        elseif($class == 'warning') {
+        } elseif ($class == 'warning') {
             return 'ff9900';
-        }
-        elseif($class == 'error') {
+        } elseif ($class == 'error') {
             return 'dd0000';
         }
 

@@ -2,20 +2,23 @@
 
 namespace PMRAtk\tests\phpunit\View\Traits;
 
+use atk4\ui\Template;
 use atk4\ui\View;
+use PMRAtk\tests\phpunit\TestCase;
+use PMRAtk\View\Traits\SubTemplateCloneDeleteTrait;
 
-class SubTemplateCloneDeleteTraitTest extends \PMRAtk\tests\phpunit\TestCase {
+class SubTemplateCloneDeleteTraitTest extends TestCase {
 
     /**
      *
      */
     public function testtemplateCloneAndDelete() {
         $view = $this->getTCADTestClass();
-        $view->template = new \atk4\ui\Template();
+        $view->template = new Template();
         $view->template->loadTemplateFromString('Hans{Lala}test1{/Lala}{Dada}test2{/Dada}');
         $view->templateCloneAndDelete(['Lala', 'Dada']);
-        $this->assertEquals('test1', $view->_tLala->render());
-        $this->assertEquals('test2', $view->_tDada->render());
+        self::assertEquals('test1', $view->_tLala->render());
+        self::assertEquals('test2', $view->_tDada->render());
     }
 
 
@@ -24,11 +27,11 @@ class SubTemplateCloneDeleteTraitTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function testtemplateCloneAndDeleteWithoutArgs() {
         $view = $this->getTCADTestClass();
-        $view->template = new \atk4\ui\Template();
+        $view->template = new Template();
         $view->template->loadTemplateFromString('Hans{Lala}test1{/Lala}{Dada}test2{/Dada}');
         $view->templateCloneAndDelete();
-        $this->assertEquals('test1', $view->_tLala->render());
-        $this->assertEquals('test2', $view->_tDada->render());
+        self::assertEquals('test1', $view->_tLala->render());
+        self::assertEquals('test2', $view->_tDada->render());
     }
 
 
@@ -37,11 +40,11 @@ class SubTemplateCloneDeleteTraitTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     public function testwithNonExistantRegion() {
         $view = $this->getTCADTestClass();
-        $view->template = new \atk4\ui\Template();
+        $view->template = new Template();
         $view->template->loadTemplateFromString('Hans{Lala}test1{/Lala}{Dada}test2{/Dada}');
         $view->templateCloneAndDelete(['Lala', 'Dada', 'NonExistantRegion']);
-        $this->assertEquals('test1', $view->_tLala->render());
-        $this->assertEquals('test2', $view->_tDada->render());
+        self::assertEquals('test1', $view->_tLala->render());
+        self::assertEquals('test2', $view->_tDada->render());
     }
 
 
@@ -50,7 +53,7 @@ class SubTemplateCloneDeleteTraitTest extends \PMRAtk\tests\phpunit\TestCase {
      */
     protected function getTCADTestClass(): View {
         $class = new class extends View {
-            use \PMRAtk\View\Traits\SubTemplateCloneDeleteTrait;
+            use SubTemplateCloneDeleteTrait;
 
             public $_tLala;
             public $_tDada;

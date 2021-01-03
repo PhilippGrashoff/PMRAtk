@@ -1,24 +1,24 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\Data\Email;
 
-class EmailRecipient extends \atk4\data\Model {
+use secondarymodelforatk\SecondaryModel;
+
+class EmailRecipient extends SecondaryModel
+{
 
     public $table = 'email_recipient';
 
-    /*
-     *
-     */
-    public function init() {
+
+    protected function init(): void
+    {
         parent::init();
-        $this->addFields([
-            //id of model this email comes from
-            ['model_id',        'type' => 'integer'],
-            ['model_class',     'type' => 'string'],
-            //email address
-            ['email',           'type' => 'string'],
-            ['firstname',       'type' => 'string'],
-            ['lastname',        'type' => 'string'],
-        ]);
+        $this->addFields(
+            [
+                ['email', 'type' => 'string'],
+                ['firstname', 'type' => 'string'],
+                ['lastname', 'type' => 'string'],
+            ]
+        );
     }
-};
+}

@@ -1,124 +1,135 @@
-<?php
+<?php declare(strict_types=1);
 
-class NoDateTime extends \atk4\data\Model {
+namespace PMRAtk\tests\phpunit\Data;
 
-    public $table = 'SecondaryBaseModel';
 
-    public function init() {
-        parent::init();
-        $this->addField('value', ['type' => 'string']);
+use atk4\data\Persistence;
+use auditforatk\Audit;
+use http\Exception\InvalidArgumentException;
+use PMRAtk\App\App;
+use PMRAtk\Data\Api;
+use PMRAtk\Data\Token;
+use PMRAtk\Data\User;
+use PMRAtk\tests\TestClasses\BaseModelClasses\ModelWithDateAndTimeFields;
+use traitsforatkdata\TestCase;
+
+
+/**
+ * TODO: ALL THESE TESTS ARE KIND OF CRAP; REFACTOR AT SOME POINT TOGETHER WITH API CLASS
+ */
+class ApiTest extends TestCase
+{
+
+    private $app;
+
+    protected $sqlitePersistenceModels = [
+        Token::class,
+        User::class,
+        Audit::class
+    ];
+
+    public function setUp(): void
+    {
+        parent::setUp();
+        $this->app = new App(['nologin'], ['always_run' => false]);
+        $_REQUEST['token'] = null;
     }
-}
 
+    public function tearDown(): void
+    {
+        parent::tearDown();
+        $_REQUEST['token'] = null;
+    }
 
-class ApiTest extends \PMRAtk\tests\phpunit\TestCase {
-
-
-    /**
-     *
-     */
-    public function testApiNoTokenInRequest() {
-        unset($_REQUEST['token']);
-
+    public function testApiNoTokenInRequest()
+    {
         try {
-            $api = new \PMRAtk\Data\Api(self::$app);
+            $api = new Api($this->app);
         }
-        catch(\Exception $e) {}
+        catch (\Throwable $e) {
+            $exceptionFound = true;
+        }
 
-        $this->assertTrue(true);
+        self::assertTrue($exceptionFound);
     }
 
-
-    /**
-     *
-     */
-    public function testApiNoTokenMatch() {
+    public function testApiNoTokenMatch()
+    {
         $_REQUEST['token'] = '123456';
-
         try {
-            $api = new \PMRAtk\Data\Api(self::$app);
+            $api = new Api($this->app);
         }
-        catch(\Exception $e) {}
+        catch (\Throwable $e) {
+            $exceptionFound = true;
+        }
 
-        $_REQUEST['token'] = null;
-        $this->assertTrue(true);
+        self::assertTrue($exceptionFound);
     }
 
+    public function testTokenLogin()
+    {
+        $persistence = $this->getSqliteTestPersistence();
+        $user = $this->setUserAndToken($persistence);
 
-    /**
-     * test token login
-     */
-    public function testTokenLogin() {
-        //add token to logged in user
-        $token = self::$app->auth->user->setNewToken();
-        $_REQUEST['token'] = $token;
+        $this->app->db = $persistence;
+        $api = new Api($this->app);
 
-        $api = new \PMRAtk\Data\Api(self::$app);
-
-        $_REQUEST['token'] = null;
-        $this->assertTrue(true);
+        self::assertSame(
+            $user->get('id'),
+            $this->app->auth->user->get('id')
+        );
     }
 
+    public function testExportModel()
+    {
+        $persistence = $this->getSqliteTestPersistence([ModelWithDateAndTimeFields::class]);
+        $user = $this->setUserAndToken($persistence);
+        $this->app->db = $persistence;
 
-    /*
-     * test exportModel
-     */
-    public function testExportModel() {
-        //add token to logged in user
-        $token = self::$app->auth->user->setNewToken();
-        $_REQUEST['token'] = $token;
+        $api = new Api($this->app);
 
-        $api = new \PMRAtk\Data\Api(self::$app);
+        $record1 = new ModelWithDateAndTimeFields($persistence);
+        $record1->set('date', '2020-05-01');
+        $record1->set('time', '11:11:11');
+        $record1->set('datetime', '2020-05-01 11:11:11');
+        $record1->save();
 
-        $a = new \PMRAtk\tests\phpunit\Data\BaseModelB(self::$app->db);
-        $a->set('name', 'A');
-        $a->save();
+        $record2 = new ModelWithDateAndTimeFields($persistence);
+        $record2->set('date', '2020-05-12');
+        $record2->save();
 
-        $b = new \PMRAtk\tests\phpunit\Data\BaseModelB(self::$app->db);
-        $b->set('time_test', '10:00');
-        $b->set('date_test', '2005-05-05');
-        $b->set('name', 'A');
-        $b->save();
 
-        $export = $this->callProtected($api, 'exportModel', [$a]);
+        $export = $this->callProtected($api, 'exportModel', $record1);
+
         //date and time fields should been converted for export
-        $this->assertEquals($export[0]['created_date'], $a->get('created_date')->format(DATE_ATOM));
-        $this->assertEquals($export[1]['time_test'], '10:00:00');
-        $this->assertEquals($export[1]['date_test'], '2005-05-05');
+        self::assertEquals($export[0]['date'], '2020-05-01');
+        self::assertEquals($export[0]['time'], '11:11:11');
+        self::assertEquals($export[0]['datetime'], (new \DateTime('2020-05-01T11:11:11'))->format(DATE_ATOM));
+        self::assertEquals($export[1]['date'], '2020-05-12');
+        self::assertEquals($export[1]['time'], '');
     }
 
+    public function testPathURLParamsRemoved()
+    {
+        $persistence = $this->getSqliteTestPersistence();
+        $user = $this->setUserAndToken($persistence);
+        $this->app->db = $persistence;
 
-    /*
-     * test exportModel with models without and date time fields
-     */
-    public function testExportModelNoDateAndTimeFields() {
-        //add token to logged in user
-        $token = self::$app->auth->user->setNewToken();
-        $_REQUEST['token'] = $token;
-
-        $api = new \PMRAtk\Data\Api(self::$app);
-
-        $a = new NoDateTime(self::$app->db);
-
-        $a->save();
-
-        $export = $this->callProtected($api, 'exportModel', [$a]);
-
-        $this->assertTrue(isset($export[0]));
-    }
-
-
-    /*
-     * test path gets ?... removed
-     */
-    public function testPathURLParamsRemoved() {
-        //add token to logged in user
-        $token = self::$app->auth->user->setNewToken();
-        $_REQUEST['token'] = $token;
-
-        $api = new \PMRAtk\Data\Api(self::$app);
+        $api = new Api($this->app);
         $api->path = 'somepath/?token=Duggu';
         $this->callProtected($api, '_removeURLParamsFromPath');
-        $this->assertEquals($api->path, 'somepath/');
+        self::assertEquals($api->path, 'somepath/');
+    }
+
+    protected function setUserAndToken(Persistence $persistence): User {
+        $user = new User($persistence);
+        $user->set('username', 'SOMENAME');
+        $user->save();
+        $token = new Token($persistence, ['parentObject' => $user]);
+        $token->save();
+
+        $_REQUEST['token'] = $token->get('value');
+
+        return $user;
     }
 }

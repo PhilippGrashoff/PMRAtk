@@ -1,33 +1,46 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\tests\phpunit\View;
 
+use PMRAtk\App\App;
+use PMRAtk\Data\File;
+use PMRAtk\tests\phpunit\TestCase;
 use PMRAtk\View\FileDownload;
 use PMRAtk\View\FileDownloadInline;
 
-class FileDownloadTest extends \PMRAtk\tests\phpunit\TestCase
+class FileDownloadTest extends TestCase
 {
 
-    /**
-     *
-     */
+    private $app;
+    private $persistence;
+
+    protected $sqlitePersistenceModels = [
+        File::class
+    ];
+
+
+    public function setUp(): void
+    {
+        parent::setUp();
+        $this->app = new App(['nologin'], ['always_run' => false]);
+        $this->persistence = $this->getSqliteTestPersistence();
+        $this->app->db = $this->persistence;
+        $this->persistence->app = $this->app;
+    }
+
     public function testExitOnNoId()
     {
         ob_start();
-        $fd = new FileDownload(self::$app);
+        $fd = new FileDownload($this->app);
         $fd->sendFile();
         self::assertEquals('', ob_get_contents());
         ob_end_clean();
     }
 
-
-    /**
-     *
-     */
     public function testExitOnFileNotFound()
     {
         ob_start();
-        $fd = new \PMRAtk\View\FileDownload(self::$app);
+        $fd = new FileDownload($this->app);
         $_REQUEST[$fd->paramNameForCryptID] = 'Duggu';
         $fd->sendFile();
         self::assertEquals('', ob_get_contents());
@@ -42,13 +55,13 @@ class FileDownloadTest extends \PMRAtk\tests\phpunit\TestCase
      */
     public function testSendFileByCryptId()
     {
-        $file = new \PMRAtk\Data\File(self::$app->db);
+        $file = new File($this->persistence);
         $file->set('value', 'demo_file.txt');
         $file->set('path', 'tests/');
         $file->save();
 
         ob_start();
-        $fd = new FileDownLoad(self::$app);
+        $fd = new FileDownLoad($this->app);
         $_REQUEST[$fd->paramNameForCryptID] = $file->get('crypt_id');
         @$fd->sendFile();
         self::assertNotFalse(
@@ -67,13 +80,13 @@ class FileDownloadTest extends \PMRAtk\tests\phpunit\TestCase
      */
     public function testSendInlineFileByCryptId()
     {
-        $file = new \PMRAtk\Data\File(self::$app->db);
+        $file = new File($this->persistence);
         $file->set('value', 'demo_file.txt');
         $file->set('path', 'tests/');
         $file->save();
 
         ob_start();
-        $fd = new FileDownloadInline(self::$app);
+        $fd = new FileDownloadInline($this->app);
         $_REQUEST[$fd->paramNameForCryptID] = $file->get('crypt_id');
         @$fd->sendFile();
         self::assertNotFalse(

@@ -1,9 +1,27 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\Data\Email;
 
-class BaseEmail extends \atk4\data\Model
+use atk4\data\Model;
+use atk4\ui\Form\Control\Dropdown;
+use DirectoryIterator;
+use Exception;
+use PMRAtk\Data\Email;
+use PMRAtk\Data\File;
+use PMRAtk\View\Template;
+use ReflectionClass;
+use Throwable;
+use traitsforatkdata\CreatedByTrait;
+use traitsforatkdata\CreatedDateAndLastUpdatedTrait;
+use traitsforatkdata\ExtraModelFunctionsTrait;
+use traitsforatkdata\ModelWithAppTrait;
+
+class BaseEmail extends Model
 {
+    use CreatedDateAndLastUpdatedTrait;
+    use CreatedByTrait;
+    use ModelWithAppTrait;
+    use ExtraModelFunctionsTrait;
 
     public $table = 'base_email';
 
@@ -19,12 +37,10 @@ class BaseEmail extends \atk4\data\Model
     //can be filled per Implementation and used for filtering. Values like "customers", "administrators" for example
     public $recipientCategories = [];
 
+    public $emailClassName = Email::class;
+
     //usually an Email is per Model record, e.g. per Group. Save in here to make work easier
     public $model;
-
-    //in test mode, all initial recipients are removed and only the logged in user added
-    //this functionality is used for easily being able to write test emails with real life data
-    public $isTestMode = false;
 
     //You can define an ID of an EmailTemplate to use. If so, this will be taken instead of the normal one used for the implementation
     public $emailTemplateId = null;
@@ -80,15 +96,11 @@ class BaseEmail extends \atk4\data\Model
     public $customTemplateModels = [];
 
 
-    /**
-     * define fields and references
-     */
-    public function init()
+    protected function init(): void
     {
         parent::init();
         $this->addFields(
             [
-                ['created_date', 'type' => 'datetime'],
                 ['subject', 'type' => 'string'],
                 ['message', 'type' => 'text'],
                 ['attachments', 'type' => 'array', 'serialize' => 'json'],
@@ -100,26 +112,26 @@ class BaseEmail extends \atk4\data\Model
             [
                 EmailAccount::class,
                 'type' => 'integer',
-                'ui' => ['form' => ['DropDown']]
+                'ui' => ['form' => [Dropdown::class]]
             ]
         );
+        $this->addCreatedDateAndLastUpdateFields();
+        $this->addCreatedDateAndLastUpdatedHook();
+        $this->addCreatedByFieldAndHook();
 
         $this->containsMany('email_recipient', [EmailRecipient::class]);
 
-        $this->addHook(
-            'beforeSave',
-            function ($m, $is_update) {
-                if (!$is_update) {
-                    $m->set('created_date', new \DateTime());
-                }
-            }
-        );
-
         //try load default header and footer
-        if (empty($this->header)) {
+        if (
+            empty($this->header)
+            && $this->app
+        ) {
             $this->header = $this->app->loadEmailTemplate('default_header.html', true);
         }
-        if (empty($this->footer)) {
+        if (
+            empty($this->footer)
+            && $this->app
+        ) {
             $this->footer = $this->app->loadEmailTemplate('default_footer.html', true);
         }
     }
@@ -130,20 +142,7 @@ class BaseEmail extends \atk4\data\Model
      */
     public function loadInitialValues()
     {
-        if ($this->isTestMode) {
-            foreach ($this->ref('email_recipient') as $r) {
-                $r->delete();
-            }
-            if (
-                isset($this->app->auth->user)
-                && $this->app->auth->user->loaded()
-            ) {
-                $this->addRecipient($this->app->auth->user);
-            }
-        } else {
-            $this->loadInitialRecipients();
-        }
-
+        $this->loadInitialRecipients();
         $this->loadInitialAttachments();
         $this->loadInitialTemplate();
     }
@@ -179,18 +178,16 @@ class BaseEmail extends \atk4\data\Model
         }
 
         if ($this->emailTemplateId) {
-            $template = new \PMRAtk\View\Template();
+            $template = new Template();
             $template->app = $this->app;
             $template->loadTemplateFromString(
                 (new EmailTemplate($this->persistence))->load($this->emailTemplateId)->get('value')
             );
-        }
-        else {
+        } else {
             try {
                 $template = $this->app->loadEmailTemplate($this->template, false, $this->customTemplateModels);
-            }
-            catch (\Exception $e) {
-                $template = new \PMRAtk\View\Template();
+            } catch (Exception $e) {
+                $template = new Template();
                 $template->app = $this->app;
                 $template->loadTemplateFromString($this->template);
             }
@@ -231,9 +228,11 @@ class BaseEmail extends \atk4\data\Model
         if (!$template->hasTag('Signature')) {
             return;
         }
-
         //use EOOUser signature if available
-        if (!empty($this->app->auth->user->getSignature())) {
+        if (
+            isset($this->app->auth->user)
+            && !empty($this->app->auth->user->getSignature())
+        ) {
             $template->del('Signature');
             $template->appendHTML('Signature', nl2br(htmlspecialchars($this->app->auth->user->getSignature())));
         } //if not, use standard signature if set
@@ -257,24 +256,22 @@ class BaseEmail extends \atk4\data\Model
         $r = null;
 
         //object passed: get Email from Email Ref
-        if ($class instanceOf \atk4\data\Model && $class->loaded()) {
+        if ($class instanceof Model && $class->loaded()) {
             if ($email_id === null) {
                 $r = $this->_addRecipientObject($class);
             } elseif ($email_id) {
                 $r = $this->_addRecipientObject($class, $email_id);
             }
-        }
-        //id passed: ID of Email Address, load from there
+        } //id passed: ID of Email Address, load from there
         elseif (is_numeric($class)) {
             $r = $this->_addRecipientByEmailId(intval($class));
-        }
-        //else assume its email as string, not belonging to a stored model
+        } //else assume its email as string, not belonging to a stored model
         elseif (is_string($class) && filter_var($class, FILTER_VALIDATE_EMAIL)) {
             $r = $this->ref('email_recipient');
             $r->set('email', $class);
         }
 
-        if (!$r instanceOf \PMRAtk\Data\Email\EmailRecipient) {
+        if (!$r instanceof EmailRecipient) {
             return false;
         }
 
@@ -300,7 +297,7 @@ class BaseEmail extends \atk4\data\Model
      * loads model_class, model_id, firstname and lastname from a passed object
      * returns an EmailRecipient object
      */
-    protected function _addRecipientObject(\PMRAtk\Data\BaseModel $object, $email_id = null): ?EmailRecipient
+    protected function _addRecipientObject(Model $object, $email_id = null): ?EmailRecipient
     {
         $r = $this->ref('email_recipient');
         //set firstname and lastname if available
@@ -310,13 +307,26 @@ class BaseEmail extends \atk4\data\Model
         $r->set('model_id', $object->get($object->id_field));
 
         //go for first email if no email_id was specified
-        if ($email_id == null && $e = filter_var($object->getFirstEmail(), FILTER_VALIDATE_EMAIL)) {
-            $r->set('email', $e);
-            return clone $r;
+        if (
+            $email_id == null
+            && method_exists($object, 'getFirstSecondaryModelRecord')
+        ) {
+            $emailObject = $object->getFirstSecondaryModelRecord($this->emailClassName);
+            if (
+                $emailObject
+                && filter_var($emailObject->get('value'), FILTER_VALIDATE_EMAIL)
+            ) {
+                $r->set('email', $emailObject->get('value'));
+                return clone $r;
+            }
         } //else go for specified email id
-        elseif ($email_id && $e = filter_var($object->getEmailById($email_id), FILTER_VALIDATE_EMAIL)) {
-            $r->set('email', $e);
-            return clone $r;
+        elseif ($email_id) {
+            $emailObject = new $this->emailClassName($this->persistence);
+            $emailObject->tryLoad($email_id);
+            if ($emailObject->loaded()) {
+                $r->set('email', $emailObject->get('value'));
+                return clone $r;
+            }
         }
 
         return null;
@@ -328,7 +338,7 @@ class BaseEmail extends \atk4\data\Model
      */
     protected function _addRecipientByEmailId(int $id): ?EmailRecipient
     {
-        $e = new \PMRAtk\Data\Email($this->persistence);
+        $e = new Email($this->persistence);
         $e->tryLoad($id);
         if (!$e->loaded()) {
             return null;
@@ -376,7 +386,7 @@ class BaseEmail extends \atk4\data\Model
      *
      * @param int
      */
-    public function removeAttachment(int $id)
+    public function removeAttachment($id)
     {
         $a = $this->get('attachments');
         if (in_array($id, $a)) {
@@ -408,15 +418,15 @@ class BaseEmail extends \atk4\data\Model
 
         //create a template from message so tags set in message like
         //{$firstname} can be filled
-        $mt = new \PMRAtk\View\Template();
-        $mt->loadTemplateFromString($this->get('message'));
+        $mt = new Template();
+        $mt->loadTemplateFromString((string)$this->get('message'));
 
-        $st = new \PMRAtk\View\Template();
-        $st->loadTemplateFromString($this->get('subject'));
+        $st = new Template();
+        $st->loadTemplateFromString((string)$this->get('subject'));
 
         //add Attachments
         if ($this->get('attachments')) {
-            $a_files = new \PMRAtk\Data\File($this->persistence);
+            $a_files = new File($this->persistence);
             $a_files->addCondition('id', 'in', $this->get('attachments'));
             foreach ($a_files as $a) {
                 $this->phpMailer->addAttachment($a->getFullFilePath());
@@ -502,7 +512,7 @@ class BaseEmail extends \atk4\data\Model
      *     'field_name' => 'field_caption'
      * ]
      */
-    public function getModelVars(\atk4\data\Model $m, string $prefix = ''): array
+    public function getModelVars(Model $m, string $prefix = ''): array
     {
         $fields = [];
         if (method_exists($m, 'getFieldsForEmailTemplate')) {
@@ -515,7 +525,10 @@ class BaseEmail extends \atk4\data\Model
         }
 
         foreach ($m->getFields() as $field_name => $field) {
-            if (in_array($field->type, ['string', 'text', 'integer', 'float', 'date', 'time'])) {
+            if (
+                !$field->system
+                && in_array($field->type, ['string', 'text', 'integer', 'float', 'date', 'time'])
+            ) {
                 $fields[$prefix . $field_name] = $field->getCaption();
             }
         }
@@ -533,7 +546,7 @@ class BaseEmail extends \atk4\data\Model
             $this->model->getModelCaption() => $this->getModelVars(
                 $this->model,
                 strtolower(
-                    (new \ReflectionClass(
+                    (new ReflectionClass(
                         $this->model
                     ))->getShortName()
                 ) . '_'
@@ -545,7 +558,7 @@ class BaseEmail extends \atk4\data\Model
     /**
      * can be implemented in descendants. Can be used to set a standard Email Account to send from when more than one is available
      */
-    public function getDefaultEmailAccountId(): ?int
+    public function getDefaultEmailAccountId()
     {
         $ea = new EmailAccount($this->persistence);
         $ea->tryLoadAny();
@@ -565,7 +578,7 @@ class BaseEmail extends \atk4\data\Model
         $result = [];
 
         foreach ($dirs as $dir => $namespace) {
-            foreach (new \DirectoryIterator($dir) as $file) {
+            foreach (new DirectoryIterator($dir) as $file) {
                 if ($file->getExtension() !== 'php') {
                     continue;
                 }
@@ -575,7 +588,7 @@ class BaseEmail extends \atk4\data\Model
                 }
                 try {
                     $instance = new $className($this->app->db, ['process' => false]);
-                } catch (\Throwable $e) {
+                } catch (Throwable $e) {
                     continue;
                 }
                 if (

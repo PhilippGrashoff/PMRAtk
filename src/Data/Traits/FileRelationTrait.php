@@ -1,83 +1,130 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PMRAtk\Data\Traits;
 
+use atk4\data\Model;
+use atk4\data\Reference\HasMany;
+use PMRAtk\Data\File;
+use traitsforatkdata\UserException;
 
-trait FileRelationTrait {
+trait FileRelationTrait
+{
 
+    protected $fileSeed = File::class;
 
-    /*
-     *
-     */
-    protected function _addFileRef() {
-        $this->hasMany('File', [
-            function() {
-                return (new \PMRAtk\Data\File($this->persistence, ['parentObject' => $this]))->addCondition('model_class', get_class($this));
-            },
-            'their_field' => 'model_id']);
+    protected function addFileReferenceAndDeleteHook(bool $addDelete = true): HasMany
+    {
+        $ref = $this->hasMany(
+            $this->fileSeed,
+            [
+                function () {
+                    return (new File($this->persistence, ['parentObject' => $this]))->addCondition(
+                        'model_class',
+                        get_class($this)
+                    );
+                },
+                'their_field' => 'model_id'
+            ]
+        );
+
+        if ($addDelete) {
+            $this->onHook(
+                Model::HOOK_AFTER_DELETE,
+                function (self $model) {
+                    foreach ($model->ref($this->fileSeed) as $file) {
+                        $file->delete();
+                    }
+                }
+            );
+        }
+
+        return $ref;
     }
 
-
-    /*
+    /**
      * Used to map ATK ui file input to data level
      */
-    public function addUploadFileFromAtkUi($temp_file, string $type = ''):?\PMRAtk\Data\File {
-        if($temp_file === 'error') {
+    public function addUploadFileFromAtkUi($temp_file, string $type = ''): ?File
+    {
+        if ($temp_file === 'error') {
             return null;
         }
 
         //if $this was never saved (no id yet), use afterSave hook
-        if(!$this->loaded()) {
-            $this->addHook('afterSave', function($m) use ($temp_file, $type) {
-                $this->_addUploadFile($temp_file, $type);
-            });
+        if (!$this->loaded()) {
+            $this->onHook(
+                Model::HOOK_AFTER_SAVE,
+                function (self $model) use ($temp_file, $type) {
+                    $this->_addUploadFile($temp_file, $type);
+                }
+            );
             return null;
-        }
-        //if id is available, do at once
+        } //if id is available, do at once
         else {
             return $this->_addUploadFile($temp_file, $type);
         }
     }
 
-
-    /*
-     * helper for addUploadFileFromAtkUi
-     */
-    protected function _addUploadFile(array $temp_file, string $type):?\PMRAtk\Data\File {
-        $file = $this->ref('File')->newInstance(null, ['parentObject' => $this]);
-        if(!$file->uploadFile($temp_file)) {
-            $this->app->addUserMessage('Die Datei konnte nicht hochgeladen werden, bitte versuche es erneut', 'error');
+    protected function _addUploadFile(array $temp_file, string $type): ?File
+    {
+        $file = $this->ref($this->fileSeed)->newInstance(null, ['parentObject' => $this]);
+        if (!$file->uploadFile($temp_file)) {
+            if ($this->app) {
+                $this->app->addUserMessage(
+                    'Die Datei konnte nicht hochgeladen werden, bitte versuche es erneut',
+                    'error'
+                );
+            }
             return null;
         }
-        if($type) {
+        if ($type) {
             $file->set('type', $type);
         }
         $file->save();
-        $this->app->addUserMessage('Die Datei wurde erfolgreich hochgeladen nach '.$file->get('path').$file->get('value'), 'success');
+        if ($this->app) {
+            $this->app->addUserMessage(
+                'Die Datei wurde erfolgreich hochgeladen nach ' . $file->get('path') . $file->get('value'),
+                'success'
+            );
+        }
         //add audit if model has audit, too
-        if(method_exists($this, 'addAdditionalAudit')) {
-            $this->addAdditionalAudit('ADD_FILE', ['filename' => $file->get('value'), 'auto_generated' => $file->get('auto_generated')]);
+        if (method_exists($this, 'addAdditionalAudit')) {
+            $this->addAdditionalAudit(
+                'ADD_FILE',
+                [
+                    'filename' => $file->get('value'),
+                    'auto_generated' => $file->get('auto_generated')
+                ]
+            );
         }
 
         return $file;
     }
 
-
-    /*
-     * removes a file reference
-     *
-     * @param int $file_id   The id of the file reference to delete
+    /**
+     * removes a file reference. Benefit of this function is that it adds Audit
      */
-    public function removeFile(int $file_id) {
-        $file = $this->ref('File');
-        $file->tryLoad($file_id);
-        if(!$file->loaded()) {
-            throw new \PMRAtk\Data\UserException('Die Datei die gelöscht werden soll kann nicht gefunden werden.');
+    public function removeFile($fileId)
+    {
+        $file = new $this->fileSeed($this->persistence);
+        $file->tryLoad($fileId);
+        if (!$file->loaded()) {
+            throw new UserException('Die Datei die gelöscht werden soll kann nicht gefunden werden.');
         }
 
+        //TODO: Clone needed?
         $cfile = clone $file;
         $file->delete();
-        $this->app->addUserMessage('Die Datei ' . $file->get('path') . $file->get('value') . 'wurde erfolgreich gelöscht.', 'success');
+
+        if ($this->app) {
+            $this->app->addUserMessage(
+                'Die Datei ' . $file->get('path') . $file->get('value') . 'wurde erfolgreich gelöscht.',
+                'success'
+            );
+        }
+
         if (method_exists($this, 'addAdditionalAudit')) {
             $this->addAdditionalAudit('REMOVE_FILE', ['filename' => $cfile->get('value')]);
         }

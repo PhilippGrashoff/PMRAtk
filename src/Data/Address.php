@@ -1,9 +1,15 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\Data;
 
-class Address extends SecondaryBaseModel {
+use notificationforatk\ModelWithNotificationTrait;
+
+
+class Address extends SecondaryModel
+{
+    use ModelWithNotificationTrait;
 
     public $table = 'address';
 
+    public $caption = 'Adresse';
 }

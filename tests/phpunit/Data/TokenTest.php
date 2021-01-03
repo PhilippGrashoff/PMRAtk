@@ -1,46 +1,57 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\tests\phpunit\Data;
 
-class TokenTest extends \PMRAtk\tests\phpunit\TestCase {
+use DateTime;
+use PMRAtk\Data\Token;
+use traitsforatkdata\UserException;
+use traitsforatkdata\TestCase;
 
-    /*
-     * test if token length can be set
-     */
-    public function testTokenLength() {
-        //standard: 64 long
-        $t = new \PMRAtk\Data\Token(self::$app->db);
-        $t->save();
-        $this->assertEquals(64, strlen($t->get('value')));
+class TokenTest extends TestCase
+{
 
-        //try to set differently
-        $t = new \PMRAtk\Data\Token(self::$app->db, ['tokenLength' => 128]);
+    protected $sqlitePersistenceModels = [
+        Token::class
+    ];
+
+    public function testTokenLength()
+    {
+        $persistence = $this->getSqliteTestPersistence();
+        $t = new Token($persistence);
         $t->save();
-        $this->assertEquals(128, strlen($t->get('value')));
+        self::assertEquals(
+            64,
+            strlen($t->get('value'))
+        );
+
+        $t = new Token($persistence, ['tokenLength' => 128]);
+        $t->save();
+        self::assertEquals(
+            128,
+            strlen($t->get('value'))
+        );
     }
 
-
-    /*
-     * see if expires can be set
-     */
-     public function testSetExpires() {
-        //try to set to 180 minutes
-        $t = new \PMRAtk\Data\Token(self::$app->db, ['expiresInMinutes' => 180]);
+    public function testSetExpires()
+    {
+        $persistence = $this->getSqliteTestPersistence();
+        $t = new Token($persistence, ['expiresAfterInMinutes' => 180]);
         $t->save();
-        $this->assertEquals((new \DateTime())->modify('+180 Minutes')->format('Ymd Hi'), $t->get('expires')->format('Ymd Hi'));
+        self::assertEquals(
+            (new DateTime())->modify('+180 Minutes')->format('Ymd Hi'),
+            $t->get('expires')->format('Ymd Hi')
+        );
     }
 
-
-    /*
-     * see if exception is thrown when trying to load expired token
-     */
-    public function testExceptionLoadExpired() {
-        $t = new \PMRAtk\Data\Token(self::$app->db);
+    public function testExceptionLoadExpired()
+    {
+        $persistence = $this->getSqliteTestPersistence();
+        $t = new Token($persistence);
         $t->reload_after_save = false;
-        $t->set('expires', (new \DateTime())->modify('-1 Minutes'));
+        $t->set('expires', (new DateTime())->modify('-1 Minutes'));
         $t->save();
 
-        $this->expectException(\PMRAtk\Data\UserException::class);
+        self::expectException(UserException::class);
         $t->reload();
     }
 }

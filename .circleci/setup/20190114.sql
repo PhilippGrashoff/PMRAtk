@@ -3,11 +3,12 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- -----------------------------------------------------
 -- Table `SecondaryBaseModel`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `SecondaryBaseModel`
+CREATE TABLE IF NOT EXISTS `SecondaryModelA`
 (
     `id`           INT          NOT NULL AUTO_INCREMENT,
     `last_updated` DATETIME     NULL,
     `created_date` DATETIME     NULL,
+    `last_checked` DATETIME     NULL,
     `value`        TEXT         NULL,
     `model_class`  VARCHAR(255) NULL,
     `model_id`     INT          NULL,
@@ -23,6 +24,7 @@ CREATE TABLE IF NOT EXISTS `email`
     `id`           INT          NOT NULL AUTO_INCREMENT,
     `last_updated` DATETIME     NULL,
     `created_date` DATETIME     NULL,
+    `last_checked` DATETIME     NULL,
     `value`        TEXT         NULL,
     `model_class`  VARCHAR(255) NULL,
     `model_id`     INT          NULL,
@@ -71,7 +73,8 @@ CREATE TABLE IF NOT EXISTS `audit`
     `id`              INT          NOT NULL AUTO_INCREMENT,
     `last_updated`    DATETIME     NULL,
     `created_date`    DATETIME     NULL,
-    `created_by`      INT          NULL,
+    `last_checked`    DATETIME     NULL,
+    `rendered_output` TEXT         NULL,
     `created_by_name` VARCHAR(255) NULL,
     `value`           TEXT         NULL,
     `data`            TEXT         NULL,
@@ -89,6 +92,7 @@ CREATE TABLE IF NOT EXISTS `address`
     `id`           INT          NOT NULL AUTO_INCREMENT,
     `last_updated` DATETIME     NULL,
     `created_date` DATETIME     NULL,
+    `last_checked` DATETIME     NULL,
     `value`        TEXT         NULL,
     `model_class`  VARCHAR(255) NULL,
     `model_id`     INT          NULL,
@@ -104,6 +108,7 @@ CREATE TABLE IF NOT EXISTS `phone`
     `id`           INT          NOT NULL AUTO_INCREMENT,
     `last_updated` DATETIME     NULL,
     `created_date` DATETIME     NULL,
+    `last_checked` DATETIME     NULL,
     `value`        TEXT         NULL,
     `model_class`  VARCHAR(255) NULL,
     `model_id`     INT          NULL,
@@ -121,6 +126,7 @@ CREATE TABLE IF NOT EXISTS `setting`
     `name`             VARCHAR(255) NULL,
     `created_date`     DATETIME     NULL,
     `last_updated`     DATETIME     NULL,
+    `last_checked`     DATETIME     NULL,
     `description`      TEXT         NULL,
     `system`           TINYINT      NULL,
     `value`            TEXT         NULL,
@@ -153,6 +159,7 @@ CREATE TABLE IF NOT EXISTS `email_template`
     `id`           INT          NOT NULL AUTO_INCREMENT,
     `last_updated` DATETIME     NULL,
     `created_date` DATETIME     NULL,
+    `last_checked` DATETIME     NULL,
     `value`        TEXT         NULL,
     `model_class`  VARCHAR(255) NULL,
     `model_id`     INT          NULL,
@@ -182,17 +189,19 @@ CREATE TABLE IF NOT EXISTS `cached_value`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `BaseModelA`
 (
-    `name`          VARCHAR(255) NULL,
-    `id`            INT          NOT NULL AUTO_INCREMENT,
-    `created_date`  DATETIME     NULL,
-    `last_updated`  DATETIME     NULL,
-    `time`          TIME         NULL,
-    `date`          DATE         NULL,
-    `dd_test`       INT          NULL,
-    `dd_test_2`     VARCHAR(255) NULL,
-    `firstname`     VARCHAR(255) NULL,
-    `lastname`      VARCHAR(255) NULL,
-    `BaseModelB_id` INT          NULL,
+    `name`            VARCHAR(255) NULL,
+    `id`              INT          NOT NULL AUTO_INCREMENT,
+    `created_date`    DATETIME     NULL,
+    `last_updated`    DATETIME     NULL,
+    `time`            TIME         NULL,
+    `date`            DATE         NULL,
+    `dd_test`         INT          NULL,
+    `dd_test_2`       VARCHAR(255) NULL,
+    `firstname`       VARCHAR(255) NULL,
+    `lastname`        VARCHAR(255) NULL,
+    `BaseModelB_id`   INT          NULL,
+    `created_by`      INT          NULL,
+    `created_by_name` VARCHAR(255) NULl,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC)
 )
@@ -206,6 +215,24 @@ CREATE TABLE IF NOT EXISTS `BaseModelA`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `BaseModelB`
 (
+    `name`            VARCHAR(255) NULL,
+    `id`              INT          NOT NULL AUTO_INCREMENT,
+    `created_date`    DATETIME     NULL,
+    `last_updated`    DATETIME     NULL,
+    `time_test`       TIME         NULL,
+    `date_test`       DATE         NULL,
+    `created_by`      INT          NULL,
+    `created_by_name` VARCHAR(255) NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX `id_UNIQUE` (`id` ASC)
+)
+    ENGINE = InnoDB
+    DEFAULT CHARACTER SET = latin1
+    COLLATE = latin1_german1_ci;
+
+
+CREATE TABLE IF NOT EXISTS `BaseModelC`
+(
     `name`         VARCHAR(255) NULL,
     `id`           INT          NOT NULL AUTO_INCREMENT,
     `created_date` DATETIME     NULL,
@@ -218,6 +245,38 @@ CREATE TABLE IF NOT EXISTS `BaseModelB`
     ENGINE = InnoDB
     DEFAULT CHARACTER SET = latin1
     COLLATE = latin1_german1_ci;
+
+
+CREATE TABLE IF NOT EXISTS `BaseModelD`
+(
+    `name`                VARCHAR(255) NULL,
+    `id`                  INT          NOT NULL AUTO_INCREMENT,
+    `created_date`        DATETIME     NULL,
+    `last_updated`        DATETIME     NULL,
+    `time_test`           TIME         NULL,
+    `date_test`           DATE         NULL,
+    `some_other_id_field` INT          NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX `id_UNIQUE` (`id` ASC)
+)
+    ENGINE = InnoDB
+    DEFAULT CHARACTER SET = latin1
+    COLLATE = latin1_german1_ci;
+
+
+CREATE TABLE IF NOT EXISTS `BaseModelE`
+(
+    `name`         VARCHAR(255) NULL,
+    `id`           INT          NOT NULL AUTO_INCREMENT,
+    `created_date` DATETIME     NULL,
+    `last_updated` DATETIME     NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX `id_UNIQUE` (`id` ASC)
+)
+    ENGINE = InnoDB
+    DEFAULT CHARACTER SET = latin1
+    COLLATE = latin1_german1_ci;
+
 
 
 -- -----------------------------------------------------
@@ -258,6 +317,7 @@ CREATE TABLE IF NOT EXISTS `token`
     `id`           INT          NOT NULL AUTO_INCREMENT,
     `last_updated` DATETIME     NULL,
     `created_date` DATETIME     NULL,
+    `last_checked` DATETIME     NULL,
     `value`        TEXT         NULL,
     `model_class`  VARCHAR(255) NULL,
     `model_id`     INT          NULL,
@@ -269,7 +329,7 @@ CREATE TABLE IF NOT EXISTS `token`
     COLLATE = latin1_german1_ci;
 
 
-CREATE TABLE IF NOT EXISTS `User`
+CREATE TABLE IF NOT EXISTS `user`
 (
     `id`            INT          NOT NULL AUTO_INCREMENT,
     `last_updated`  DATETIME     NULL,
@@ -288,13 +348,16 @@ CREATE TABLE IF NOT EXISTS `User`
 
 CREATE TABLE IF NOT EXISTS `base_email`
 (
-    `id`               INT      NOT NULL AUTO_INCREMENT,
-    `subject`          TEXT     NULL,
-    `message`          TEXT     NULL,
-    `attachments`      JSON     NULL,
-    `email_recipient`  TEXT     NULL,
-    `created_date`     DATETIME NULL,
-    `email_account_id` INT      NULL,
+    `id`               INT          NOT NULL AUTO_INCREMENT,
+    `subject`          TEXT         NULL,
+    `message`          TEXT         NULL,
+    `attachments`      JSON         NULL,
+    `email_recipient`  TEXT         NULL,
+    `created_date`     DATETIME     NULL,
+    `last_updated`     DATETIME     NULL,
+    `created_by`       INT          NULL,
+    `created_by_name`  VARCHAR(255) NULL,
+    `email_account_id` INT          NULL,
     PRIMARY KEY (`id`)
 )
     ENGINE = InnoDB
@@ -304,13 +367,15 @@ CREATE TABLE IF NOT EXISTS `base_email`
 
 CREATE TABLE IF NOT EXISTS `email_account`
 (
-    `id`           INT          NOT NULL AUTO_INCREMENT,
-    `name`         VARCHAR(255) NULL,
-    `sender_name`  VARCHAR(255) NULL,
-    `details`      TEXT         NULL,
-    `credentials`  TEXT         NULL,
-    `last_updated` DATETIME     NULL,
-    `created_date` DATETIME     NULL,
+    `id`              INT          NOT NULL AUTO_INCREMENT,
+    `name`            VARCHAR(255) NULL,
+    `sender_name`     VARCHAR(255) NULL,
+    `details`         TEXT         NULL,
+    `credentials`     TEXT         NULL,
+    `last_updated`    DATETIME     NULL,
+    `created_date`    DATETIME     NULL,
+    `created_by`      INT          NULL,
+    `created_by_name` VARCHAR(255) NULL,
     PRIMARY KEY (`id`)
 )
     ENGINE = InnoDB
@@ -321,18 +386,21 @@ CREATE TABLE IF NOT EXISTS `email_account`
 
 CREATE TABLE IF NOT EXISTS `file`
 (
-    `id`             INT          NOT NULL AUTO_INCREMENT,
-    `crypt_id`       VARCHAR(255) NULL,
-    `sort`           VARCHAR(255) NULL,
-    `value`          TEXT         NULL,
-    `model_id`       INT          NULL,
-    `model_class`    VARCHAR(255) NULL,
-    `path`           VARCHAR(255) NULL,
-    `type`           VARCHAR(255) NULL,
-    `filetype`       VARCHAR(255) NULL,
-    `auto_generated` TINYINT      NULL,
-    `last_updated`   DATETIME     NULL,
-    `created_date`   DATETIME     NULL,
+    `id`              INT          NOT NULL AUTO_INCREMENT,
+    `crypt_id`        VARCHAR(255) NULL,
+    `sort`            VARCHAR(255) NULL,
+    `value`           TEXT         NULL,
+    `model_id`        INT          NULL,
+    `model_class`     VARCHAR(255) NULL,
+    `path`            VARCHAR(255) NULL,
+    `type`            VARCHAR(255) NULL,
+    `filetype`        VARCHAR(255) NULL,
+    `auto_generated`  TINYINT      NULL,
+    `last_updated`    DATETIME     NULL,
+    `last_checked`    DATETIME     NULL,
+    `created_date`    DATETIME     NULL,
+    `created_by`      INT          NULL,
+    `created_by_name` VARCHAR(255) NULL,
     PRIMARY KEY (`id`)
 )
     ENGINE = InnoDB
@@ -345,6 +413,7 @@ CREATE TABLE IF NOT EXISTS `cron`
     `last_updated`      DATETIME     NULL,
     `created_date`      DATETIME     NULL,
     `created_by`        INT          NULL,
+    `created_by_name`   VARCHAR(255) NULL,
     `name`              VARCHAR(255) NULL,
     `description`       TEXT         NULL,
     `defaults`          TEXT         NULL,
@@ -354,6 +423,8 @@ CREATE TABLE IF NOT EXISTS `cron`
     `time_yearly`       TIME         NULL,
     `day_monthly`       INT          NULL,
     `time_monthly`      TIME         NULL,
+    `weekday_weekly`    INT          NULL,
+    `time_weekly`       TIME         NULL,
     `execute_hourly`    INT          NULL,
     `execute_minutely`  INT          NULL,
     `time_daily`        TIME         NULL,

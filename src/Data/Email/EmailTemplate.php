@@ -1,21 +1,24 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PMRAtk\Data\Email;
 
-class EmailTemplate extends \PMRAtk\Data\SecondaryBaseModel {
+use PMRAtk\Data\SecondaryModel;
+
+class EmailTemplate extends SecondaryModel
+{
 
     public $table = 'email_template';
 
 
-    /**
-     *
-     */
-    public function init() {
+    protected function init(): void
+    {
         parent::init();
 
-        $this->addFields([
-            ['ident',        'type' => 'string', 'system' => true],
-        ]);
+        $this->addFields(
+            [
+                ['ident', 'type' => 'string', 'system' => true],
+            ]
+        );
 
         $this->setOrder('ident');
     }
