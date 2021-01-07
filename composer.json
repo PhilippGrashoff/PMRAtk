@@ -13,7 +13,7 @@
     "philippgrashoff/traitsforatkdata": "master",
     "philippgrashoff/notificationforatk": "master",
     "philippgrashoff/cachedvalueforatk": "master",
-    "philippgrashoff/settingsforatk": "1.1",
+    "philippgrashoff/settingsforatk": "dev-master",
     "philippgrashoff/auditforatk": "master",
     "atk4/ui": "2.3.0",
     "atk4/data": "2.3.0",
