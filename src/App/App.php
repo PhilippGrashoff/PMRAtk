@@ -256,7 +256,7 @@ class App extends \atk4\ui\App
             $this->phpMailer = new PHPMailer($this);
         }
         //always send to tech admin
-        $this->phpMailer->addAddress(TECH_ADMIN_EMAIL);
+        $this->phpMailer->addAddress($this->getSetting('TECH_ADMIN_EMAIL'));
         foreach ($additional_recipients as $email_address) {
             $this->phpMailer->addAddress($email_address);
         }
