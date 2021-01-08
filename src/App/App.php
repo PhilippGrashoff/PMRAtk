@@ -262,7 +262,12 @@ class App extends \atk4\ui\App
         }
         $this->phpMailer->Subject = $subject;
         $this->phpMailer->setBody(
-            'Folgender Fehler ist aufgetreten: <br />' . ($e instanceOf \atk4\core\Exception ? $e->getHTML() : $e->getMessage() . '<br />Line: ' . $e->getLine() . '<br />' . nl2br($e->getTraceAsString())) . '<br />Der Technische Administrator ' . TECH_ADMIN_NAME . ' wurde informiert.');
+            'Folgender Fehler ist aufgetreten: <br />'
+                . ($e instanceOf \atk4\core\Exception ? $e->getHTML() : $e->getMessage() . '<br />Line: '
+                . $e->getLine() . '<br />' . nl2br($e->getTraceAsString()))
+                . '<br />Der Technische Administrator '
+                . $this->getSetting('TECH_ADMIN_NAME') . ' wurde informiert.'
+        );
 
         return $this->phpMailer->send();
     }
