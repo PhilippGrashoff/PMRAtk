@@ -15,9 +15,6 @@ use PMRAtk\Data\MessageForUser;
  */
 class MessageForUserModal extends Modal
 {
-
-    public $messages = [];
-
     public $labelMessageRead = 'Benachrichtigung gelesen';
 
     //can the modal only be closed by the "Read it" button?
@@ -26,17 +23,14 @@ class MessageForUserModal extends Modal
     //if there is more than one message, show them in a "row"? Currently not implemented!
     public $showMultiple = false;
 
-
     public function renderView(): void
     {
         if (!$this->app->auth->user->loaded()) {
             throw new Exception(__CLASS__ . ' can only be used with a logged in user');
         }
-        //if messages were not set, load them here
-        $this->_loadMessages();
 
         $i = 0;
-        foreach($this->messages as $message) {
+        foreach((new MessageForUser($this->app->db))->getUnreadMessagesForLoggedInUser() as $message) {
             $i++;
             if($i > 1 && !$this->showMultiple) {
                 break;
@@ -47,10 +41,6 @@ class MessageForUserModal extends Modal
         parent::renderView();
     }
 
-
-    /**
-     *
-     */
     protected function _addMessage(MessageForUser $message) {
         $this->title = $message->get('created_date') instanceof DateTimeInterface ? $message->get('created_date')->format('d.m.Y').' ' : '';
         $this->title .= $message->get('title');
@@ -72,10 +62,6 @@ class MessageForUserModal extends Modal
 
     }
 
-
-    /**
-     *
-     */
     protected function _addMessageReadButton(MessageForUser $message) {
         $b = new Button();
         $b->set($this->labelMessageRead)->addClass('green ok');
@@ -96,17 +82,5 @@ class MessageForUserModal extends Modal
                 ]
             ]
         );
-    }
-
-
-    /**
-     *
-     */
-    protected function _loadMessages() {
-        if ($this->messages) {
-            return;
-        }
-
-        $this->messages = (new MessageForUser($this->app->db))->getUnreadMessagesForLoggedInUser()->tryLoadAny();
     }
 }
