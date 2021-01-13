@@ -7,8 +7,8 @@ use Exception;
 use PMRAtk\App\App;
 use PMRAtk\Data\Token;
 use PMRAtk\Data\User;
-use traitsforatkdata\UserException;
 use PMRAtk\tests\phpunit\TestCase;
+use traitsforatkdata\UserException;
 
 class UserTest extends TestCase
 {
@@ -44,6 +44,13 @@ class UserTest extends TestCase
         $c2->set('username', 'ABC');
         self::expectException(Exception::class);
         $c2->save();
+    }
+
+    public function testUserWithEmptyUsernameCanBeSaved() {
+        $persistence = $this->getSqliteTestPersistence();
+        $c = new User($persistence);
+        $c->save();
+        self::assertEmpty($c->get('username'));
     }
 
     public function testExceptionSetNewPasswordOtherUserLoggedIn()

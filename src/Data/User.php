@@ -71,7 +71,7 @@ class User extends BaseModelWithEPA
         $this->onHook(
             Model::HOOK_BEFORE_SAVE,
             function (self $model, $isUpdate) {
-                if(!$model->isFieldUnique('username')) {
+                if(!$model->isFieldUnique('username', true)) {
                     throw new UserException('Der Benutzername ist bereits vergeben! Bitte wähle einen anderen');
                 }
             }
@@ -83,7 +83,7 @@ class User extends BaseModelWithEPA
         string $new_password_2,
         bool $compare_old_password = false,
         string $old_password = ''
-    ) {
+    ): void {
         //other user than logged in user tries saving?
         if (
             $this->app->auth->user->loaded()
