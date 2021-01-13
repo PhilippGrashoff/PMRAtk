@@ -71,7 +71,10 @@ class User extends BaseModelWithEPA
         $this->onHook(
             Model::HOOK_BEFORE_SAVE,
             function (self $model, $isUpdate) {
-                if(!$model->isFieldUnique('username', true)) {
+                if(
+                    $model->get('username')
+                    && !$model->isFieldUnique('username')
+                ) {
                     throw new UserException('Der Benutzername ist bereits vergeben! Bitte wähle einen anderen');
                 }
             }
