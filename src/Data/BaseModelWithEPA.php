@@ -2,22 +2,40 @@
 
 namespace PMRAtk\Data;
 
-use atk4\data\Model;
 use secondarymodelforatk\SecondaryModelRelationTrait;
 
 
-abstract class BaseModelWithEPA extends BaseModel
+class BaseModelWithEPA extends BaseModel
 {
 
     use SecondaryModelRelationTrait;
+
+    public $epaRefAddDelete = true;
+    public $epaRefModelClass = '';
+    public $epaRefModelIdField;
 
     protected function init(): void
     {
         parent::init();
 
-        $this->addSecondaryModelHasMany(Email::class);
-        $this->addSecondaryModelHasMany(Address::class);
-        $this->addSecondaryModelHasMany(Phone::class);
+        $this->addSecondaryModelHasMany(
+            Email::class,
+            $this->epaRefAddDelete,
+            $this->epaRefModelClass,
+            $this->epaRefModelIdField
+        );
+        $this->addSecondaryModelHasMany(
+            Address::class,
+            $this->epaRefAddDelete,
+            $this->epaRefModelClass,
+            $this->epaRefModelIdField
+        );
+        $this->addSecondaryModelHasMany(
+            Phone::class,
+            $this->epaRefAddDelete,
+            $this->epaRefModelClass,
+            $this->epaRefModelIdField
+        );
     }
 
     public function addEmail(string $value): Email
@@ -35,8 +53,9 @@ abstract class BaseModelWithEPA extends BaseModel
         return $this->addEPA(Address::class, $value);
     }
 
-    public function addEPA(string $type, string $value): SecondaryModel {
-        if(!$this->loaded()) {
+    public function addEPA(string $type, string $value): SecondaryModel
+    {
+        if (!$this->loaded()) {
             $this->save();
         }
         $record = $this->addSecondaryModelRecord($type, $value);
@@ -48,7 +67,12 @@ abstract class BaseModelWithEPA extends BaseModel
     public function updateEPA(string $type, $id, string $value): SecondaryModel
     {
         $record = $this->updateSecondaryModelRecord($type, $id, $value);
-        $this->addSecondaryAudit('UPDATE', $record);
+        if (
+            $record->get('last_updated') instanceof \DateTimeInterface
+            && $record->get('last_updated')->getTimestamp() === (new \DateTime())->getTimestamp()
+        ) {
+            $this->addSecondaryAudit('UPDATE', $record);
+        }
 
         return $record;
     }
