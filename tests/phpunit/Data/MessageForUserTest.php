@@ -10,7 +10,6 @@ use PMRAtk\Data\MessageForUser;
 use PMRAtk\Data\MessageForUserToUser;
 use PMRAtk\Data\User;
 use PMRAtk\tests\phpunit\TestCase;
-use Throwable;
 
 class MessageForUserTest extends TestCase
 {
@@ -64,7 +63,7 @@ class MessageForUserTest extends TestCase
         $res = $message3->getUnreadMessagesForLoggedInUser(['ALL', 'admin']);
         self::assertEquals(2, $res->action('count')->getOne());
     }
-    
+
     public function testIsReadByLoggedInUser()
     {
         $message1 = new MessageForUser($this->persistence);
@@ -74,7 +73,7 @@ class MessageForUserTest extends TestCase
         $message1->addMToMRelation(new MessageForUserToUser($this->persistence), $this->app->auth->user);
         self::assertTrue($message1->isReadByLoggedInUser());
     }
-    
+
     public function testMarkMessageAsRead()
     {
         $message1 = new MessageForUser($this->persistence);
@@ -85,7 +84,7 @@ class MessageForUserTest extends TestCase
         $message1->markAsRead();
         self::assertTrue($message1->isReadByLoggedInUser());
     }
-    
+
     public function testExceptionGetUnreadMessagesUserNotLoaded()
     {
         $u = new User($this->persistence);
@@ -160,12 +159,8 @@ class MessageForUserTest extends TestCase
         $message3->set('created_date', (new DateTime())->modify('-2 Month'));
         $message3->save();
 
-        try {
-            $res = $message1->getUnreadMessagesForLoggedInUser(null, null, null, (new DateTime())->modify('-1 Month'));
-            self::assertEquals(1, $res->action('count')->getOne());
-        } catch (Throwable $e) {
-            echo $e->getColorfulText();
-        }
+        $res = $message1->getUnreadMessagesForLoggedInUser(null, null, null, (new DateTime())->modify('-1 Month'));
+        self::assertEquals(1, $res->action('count')->getOne());
 
         $message3->set('never_invalid', 1);
         $message3->save();
