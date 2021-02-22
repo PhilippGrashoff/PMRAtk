@@ -3,7 +3,6 @@
 namespace PMRAtk\tests\TestClasses\BaseModelClasses;
 
 use PMRAtk\Data\BaseModelWithEPA;
-use PMRAtk\tests\TestClasses\AToB;
 
 
 class ModelWithEPA extends BaseModelWithEPA
