@@ -149,7 +149,7 @@ class User extends BaseModelWithEPA
         $t->loadBy('value', $token);
         $this->tryLoad($t->get('model_id'));
         if (!$this->loaded()) {
-            throw new UserException('Der Eintrag konnte nicht gefunden werden');
+            throw new UserException('Das Token konnte nicht gefunden werden');
         }
 
         $this->set('password', $new_password_1);

@@ -1,13 +1,14 @@
 {
   "name": "philippgrashoff/pmratk",
+  "description": "",
   "minimum-stability": "dev",
   "prefer-stable": true,
-  "config":{
-    "platform":{
-      "php":"7.3"
+  "config": {
+    "platform": {
+      "php": "7.3"
     }
   },
-  "require":{
+  "require": {
     "philippgrashoff/mtomforatk": "master",
     "philippgrashoff/secondarymodelforatk": "master",
     "philippgrashoff/traitsforatkdata": "master",
@@ -15,12 +16,9 @@
     "philippgrashoff/cachedvalueforatk": "master",
     "philippgrashoff/settingsforatk": "dev-master",
     "philippgrashoff/auditforatk": "master",
-    "atk4/ui": "2.3.0",
-    "atk4/data": "2.3.0",
-    "atk4/dsql": "2.3.0",
-    "atk4/core": "2.3.0",
-    "atk4/login": "2.3.0",
-    "atk4/schema": "2.3.0",
+    "atk4/ui": "2.3.5",
+    "atk4/data": "2.3.6",
+    "atk4/login": "2.3.1",
     "atk4/api": "0.3",
     "php-curl-class/php-curl-class": "*",
     "phpmailer/phpmailer": ">6",
@@ -36,9 +34,9 @@
     "phpunit/phpunit": ">8",
     "php-webdriver/webdriver": "^1.8.2"
   },
-  "autoload":{
-    "psr-4":{
-      "PMRAtk\\":"src"
+  "autoload": {
+    "psr-4": {
+      "PMRAtk\\": "src"
     }
   },
   "autoload-dev": {
