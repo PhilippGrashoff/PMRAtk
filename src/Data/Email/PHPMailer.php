@@ -112,14 +112,14 @@ class PHPMailer extends \PHPMailer\PHPMailer\PHPMailer
     public function addSentEmailByIMAP(): bool
     {
         $this->_setEmailAccount();
-        if (!$this->emailAccount->get('imap_host')
-            || !$this->emailAccount->get('imap_port')) {
+        if (
+            !$this->emailAccount->get('imap_host')
+            || !$this->emailAccount->get('imap_port')
+        ) {
             $this->appendedByIMAP = false;
             return $this->appendedByIMAP;
         }
-        $imap_mailbox = '{' . $this->emailAccount->get('imap_host') . ':' . $this->emailAccount->get(
-                'imap_port'
-            ) . '/imap/ssl}' . $this->emailAccount->get('imap_sent_folder');
+        $imap_mailbox = $this->getImapPath() . $this->emailAccount->get('imap_sent_folder');
 
         try {
             $imapStream = imap_open(
@@ -139,9 +139,7 @@ class PHPMailer extends \PHPMailer\PHPMailer\PHPMailer
                 }
                 $mailboxes = imap_list(
                     $imapStream,
-                    '{' . $this->emailAccount->get('imap_host') . ':' . $this->emailAccount->get(
-                        'imap_port'
-                    ) . '/imap/ssl}',
+                    $this->getImapPath(),
                     '*'
                 );
                 if (is_array($mailboxes)) {
@@ -154,5 +152,11 @@ class PHPMailer extends \PHPMailer\PHPMailer\PHPMailer
         }
 
         return $this->appendedByIMAP;
+    }
+
+    protected function getImapPath(): string
+    {
+        return '{' . $this->emailAccount->get('imap_host') . ':' . $this->emailAccount->get('imap_port')
+            . ($this->$this->emailAccount->get('imap_port') == 993 ? '/imap/ssl}' : '}');
     }
 }
