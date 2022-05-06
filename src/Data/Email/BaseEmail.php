@@ -95,6 +95,8 @@ class BaseEmail extends Model
     //if set to a models namespace and class name and its id, a custom template for that model will be tried to be loaded.
     public $customTemplateModels = [];
 
+    public bool $enableInternalAccounts = false;
+
 
     protected function init(): void
     {
@@ -110,7 +112,7 @@ class BaseEmail extends Model
         $this->hasOne(
             'email_account_id',
             [
-                EmailAccount::class,
+                'model' => [EmailAccount::class, 'enableInternalAccounts' => $this->enableInternalAccounts],
                 'type' => 'integer',
                 'ui' => ['form' => [Dropdown::class, 'empty' => '...']]
             ]

@@ -232,7 +232,8 @@ class App extends \atk4\ui\App
             [
                 'addUserMessageOnSend' => false,
                 'template' => $message_template,
-                'emailAccountId' => -1
+                'emailAccountId' => -1,
+                'enableInternalAccounts' => true
             ]
         );
         $email->processMessageTemplate = function ($template) use ($set_to_template, $from_models) {
@@ -255,6 +256,7 @@ class App extends \atk4\ui\App
         return $email;
     }
 
+    //TODO base this on BaseEmail, too. Inconsequent design!
     public function sendErrorEmailToEooTechAdmin(\Throwable $e, string $subject, array $additional_recipients = []): bool
     {
         if (

@@ -14,6 +14,8 @@ class EmailAccount extends BaseModel
 
     public $table = 'email_account';
 
+    protected bool $enableInternalAccounts = false;
+
 
     protected function init(): void
     {
@@ -105,6 +107,10 @@ class EmailAccount extends BaseModel
                 ],
             ]
         );
+
+        if(!$this->enableInternalAccounts) {
+            $this->addCondition('id', '>', 0);
+        }
 
         $this->encryptField($this->getField('credentials'), ENCRYPTFIELD_KEY);
 
