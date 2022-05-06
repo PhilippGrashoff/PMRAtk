@@ -561,6 +561,7 @@ class BaseEmail extends Model
     public function getDefaultEmailAccountId()
     {
         $ea = new EmailAccount($this->persistence);
+        $ea->addCondition('id', '>', -1);
         $ea->tryLoadAny();
         if ($ea->loaded()) {
             return $ea->get('id');
