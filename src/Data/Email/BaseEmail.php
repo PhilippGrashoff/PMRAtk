@@ -112,7 +112,7 @@ class BaseEmail extends Model
             [
                 EmailAccount::class,
                 'type' => 'integer',
-                'ui' => ['form' => [Dropdown::class]]
+                'ui' => ['form' => [Dropdown::class, 'empty' => '...']]
             ]
         );
         $this->addCreatedDateAndLastUpdateFields();
