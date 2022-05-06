@@ -226,16 +226,16 @@ class App extends \atk4\ui\App
         string $message_template,
         array $set_to_template = [],
         array $from_models = []
-    ) {
+    ): BaseEmail {
         $email = new BaseEmail(
             $this->db,
             [
                 'addUserMessageOnSend' => false,
                 'template' => $message_template,
-                'emailAccountId' => -1,
                 'enableInternalAccounts' => true
             ]
         );
+        $email->set('email_account_id', -1);
         $email->processMessageTemplate = function ($template) use ($set_to_template, $from_models) {
             foreach ($set_to_template as $tag => $value) {
                 $template->set($tag, $value);
@@ -256,30 +256,28 @@ class App extends \atk4\ui\App
         return $email;
     }
 
-    //TODO base this on BaseEmail, too. Inconsequent design!
-    public function sendErrorEmailToEooTechAdmin(\Throwable $e, string $subject, array $additional_recipients = []): bool
+    public function sendErrorEmailToEooTechAdmin(\Throwable $e, string $subject): BaseEmail
     {
-        if (
-            !isset($this->phpMailer)
-            || !$this->phpMailer instanceof PHPMailer
-        ) {
-            $this->phpMailer = new PHPMailer($this);
-        }
-        //always send to tech admin
-        $this->phpMailer->emailAccount = -1;
-        $this->phpMailer->addAddress($this->getSetting('TECH_ADMIN_EMAIL'));
-        foreach ($additional_recipients as $email_address) {
-            $this->phpMailer->addAddress($email_address);
-        }
-        $this->phpMailer->Subject = $subject;
-        $this->phpMailer->setBody(
-            'Folgender Fehler ist aufgetreten: <br />'
+        $message = 'Folgender Fehler ist aufgetreten: <br />'
             . ($e instanceof \atk4\core\Exception ? $e->getHTML() : $e->getMessage() . '<br />Line: '
                 . $e->getLine() . '<br />' . nl2br($e->getTraceAsString()))
             . '<br />Der Technische Administrator '
-            . $this->getSetting('TECH_ADMIN_NAME') . ' wurde informiert.'
-        );
+            . $this->getSetting('TECH_ADMIN_NAME') . ' wurde informiert.';
 
-        return $this->phpMailer->send();
+        $email = new BaseEmail(
+            $this->db,
+            [
+                'addUserMessageOnSend' => false,
+                'template' => $message,
+                'enableInternalAccounts' => true
+            ]
+        );
+        $email->set('email_account_id', -1);
+        $email->loadInitialTemplate();
+        $email->set('subject', $subject);
+        $email->addRecipient($this->getSetting('TECH_ADMIN_EMAIL'));
+        $email->send();
+
+        return $email;
     }
 }

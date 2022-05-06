@@ -67,7 +67,7 @@ class PHPMailer extends \PHPMailer\PHPMailer\PHPMailer
         } //maybe just the ID of the emailaccount was passed?
         elseif (is_scalar($this->emailAccount)) {
             $val = $this->emailAccount;
-            $this->emailAccount = new EmailAccount($this->app->db);
+            $this->emailAccount = new EmailAccount($this->app->db, ['enableInternalAccounts' => true]);
             if ($val) {
                 $this->emailAccount->tryLoad($val);
                 if ($this->emailAccount->loaded()) {

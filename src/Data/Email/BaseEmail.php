@@ -51,9 +51,6 @@ class BaseEmail extends Model
     //PHPMailer instance which takes care of the actual sending
     public $phpMailer;
 
-    //The ID of the Email Account to send from
-    public $emailAccountId;
-
     //HTML header
     public $header = '';
 
@@ -416,7 +413,7 @@ class BaseEmail extends Model
             $this->phpMailer = new PHPMailer($this->app);
         }
 
-        $this->phpMailer->emailAccount = ($this->get('email_account_id') ?: $this->getDefaultEmailAccountId());
+        $this->phpMailer->emailAccount = $this->get('email_account_id') ?? $this->getDefaultEmailAccountId();
 
         //create a template from message so tags set in message like
         //{$firstname} can be filled
