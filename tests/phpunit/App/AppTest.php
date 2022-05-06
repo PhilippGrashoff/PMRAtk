@@ -289,7 +289,7 @@ class AppTest extends TestCase
         $app->addSetting('STD_EMAIL_NAME', 'HANSI PETER');
         $b = new JustABaseModel($app->db);
         $b->set('name', 'Laduggu');
-        $e = $app->sendEmailToAdmin(
+        $e = $app->sendEmailToEooCustomer(
             'Test:LALA',
             'Hans {$he} ist Super {$te} {$justabasemodel_name}',
             ['he' => '22', 'te' => '33'],
@@ -320,7 +320,7 @@ class AppTest extends TestCase
         $app->addSetting('STD_EMAIL_NAME', 'HANSI PETER');
 
         $e = new Exception('SomeErrorMessage');
-        self::assertTrue($app->sendErrorEmailToAdmin($e, 'Fehler', ['test3@easyoutdooroffice.com']));
+        self::assertTrue($app->sendErrorEmailToEooTechAdmin($e, 'Fehler', ['test3@easyoutdooroffice.com']));
         self::assertStringContainsString(
             'SomeErrorMessage',
             $app->phpMailer->getSentMIMEMessage()

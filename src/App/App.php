@@ -221,13 +221,20 @@ class App extends \atk4\ui\App
      * sends an email to EOO owner. The template is not editable in this case. Meant for short Emails
      * like notifications as Email and so on
      */
-    public function sendEmailToAdmin(
+    public function sendEmailToEooCustomer(
         string $subject,
         string $message_template,
         array $set_to_template = [],
         array $from_models = []
     ) {
-        $email = new BaseEmail($this->db, ['addUserMessageOnSend' => false, 'template' => $message_template]);
+        $email = new BaseEmail(
+            $this->db,
+            [
+                'addUserMessageOnSend' => false,
+                'template' => $message_template,
+                'emailAccountId' => -1
+            ]
+        );
         $email->processMessageTemplate = function ($template) use ($set_to_template, $from_models) {
             foreach ($set_to_template as $tag => $value) {
                 $template->set($tag, $value);
@@ -248,14 +255,16 @@ class App extends \atk4\ui\App
         return $email;
     }
 
-    public function sendErrorEmailToAdmin(\Throwable $e, string $subject, array $additional_recipients = []): bool {
-        if(
+    public function sendErrorEmailToEooTechAdmin(\Throwable $e, string $subject, array $additional_recipients = []): bool
+    {
+        if (
             !isset($this->phpMailer)
             || !$this->phpMailer instanceof PHPMailer
         ) {
             $this->phpMailer = new PHPMailer($this);
         }
         //always send to tech admin
+        $this->phpMailer->emailAccount = -1;
         $this->phpMailer->addAddress($this->getSetting('TECH_ADMIN_EMAIL'));
         foreach ($additional_recipients as $email_address) {
             $this->phpMailer->addAddress($email_address);
@@ -263,10 +272,10 @@ class App extends \atk4\ui\App
         $this->phpMailer->Subject = $subject;
         $this->phpMailer->setBody(
             'Folgender Fehler ist aufgetreten: <br />'
-                . ($e instanceOf \atk4\core\Exception ? $e->getHTML() : $e->getMessage() . '<br />Line: '
+            . ($e instanceof \atk4\core\Exception ? $e->getHTML() : $e->getMessage() . '<br />Line: '
                 . $e->getLine() . '<br />' . nl2br($e->getTraceAsString()))
-                . '<br />Der Technische Administrator '
-                . $this->getSetting('TECH_ADMIN_NAME') . ' wurde informiert.'
+            . '<br />Der Technische Administrator '
+            . $this->getSetting('TECH_ADMIN_NAME') . ' wurde informiert.'
         );
 
         return $this->phpMailer->send();
