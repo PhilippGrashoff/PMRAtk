@@ -258,20 +258,22 @@ class App extends \atk4\ui\App
 
     public function sendErrorEmailToEooTechAdmin(\Throwable $e, string $subject): BaseEmail
     {
-        $message = 'Folgender Fehler ist aufgetreten: <br />'
-            . ($e instanceof \atk4\core\Exception ? $e->getHTML() : $e->getMessage() . '<br />Line: '
-                . $e->getLine() . '<br />' . nl2br($e->getTraceAsString()))
-            . '<br />Der Technische Administrator '
-            . $this->getSetting('TECH_ADMIN_NAME') . ' wurde informiert.';
-
+        $template = 'Folgender Fehler ist aufgetreten: {$message}<br />Datei + Zeile: {$filename} {$line}<br />{$trace}';
         $email = new BaseEmail(
             $this->db,
             [
                 'addUserMessageOnSend' => false,
-                'template' => $message,
+                'template' => $template,
                 'enableInternalAccounts' => true
             ]
         );
+        $email->processMessageTemplate = function ($template) use ($e) {
+            $template->set('message', $e->getMessage());
+            $template->set('filename', $e->getFile());
+            $template->set('line', $e->getLine());
+            $template->setHtml('trace', str_replace(['{', '}'], '||', nl2br($e->getTraceAsString())));
+        };
+
         $email->set('email_account_id', -1);
         $email->loadInitialTemplate();
         $email->set('subject', $subject);
