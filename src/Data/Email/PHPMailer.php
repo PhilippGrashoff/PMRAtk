@@ -153,10 +153,10 @@ class PHPMailer extends \PHPMailer\PHPMailer\PHPMailer
 
         return $this->appendedByIMAP;
     }
-
+    
     protected function getImapPath(): string
     {
         return '{' . $this->emailAccount->get('imap_host') . ':' . $this->emailAccount->get('imap_port')
-            . ($this->emailAccount->get('imap_port') == 993 ? '/imap/ssl}' : '}');
+            . ($this->emailAccount->get('imap_port') == 993 ? '/imap/ssl}' : '/imap/notls}');
     }
 }
