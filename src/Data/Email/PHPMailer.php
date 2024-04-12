@@ -7,6 +7,10 @@ use atk4\core\DIContainerTrait;
 use atk4\core\Exception;
 use atk4\ui\App;
 use Throwable;
+use Webklex\PHPIMAP\Client;
+use Webklex\PHPIMAP\ClientManager;
+use Webklex\PHPIMAP\IMAP;
+use Webklex\PHPIMAP\Message;
 
 class PHPMailer extends \PHPMailer\PHPMailer\PHPMailer
 {
@@ -107,56 +111,58 @@ class PHPMailer extends \PHPMailer\PHPMailer\PHPMailer
 
     /**
      * add Email to IMAP if set
-     * TODO: Find some nice Lib for this
      */
     public function addSentEmailByIMAP(): bool
     {
         $this->_setEmailAccount();
-        if (
-            !$this->emailAccount->get('imap_host')
-            || !$this->emailAccount->get('imap_port')
-        ) {
-            $this->appendedByIMAP = false;
-            return $this->appendedByIMAP;
+        if (!$this->checkImapSet()) {
+            return false;
         }
-        $imap_mailbox = $this->getImapPath() . $this->emailAccount->get('imap_sent_folder');
 
         try {
-            $imapStream = imap_open(
-                $imap_mailbox,
-                $this->emailAccount->get('user'),
-                $this->emailAccount->get('password')
-            );
-            $this->appendedByIMAP = imap_append($imapStream, $imap_mailbox, $this->getSentMIMEMessage());
-            if ($this->addImapDebugInfo) {
-                $imapErrors = imap_errors();
-                $imapNotices = imap_alerts();
-                if ($imapErrors) {
-                    $this->imapErrors = $imapErrors;
-                }
-                if ($imapNotices) {
-                    $this->imapErrors = array_merge($this->imapErrors, $imapNotices);
-                }
-                $mailboxes = imap_list(
-                    $imapStream,
-                    $this->getImapPath(),
-                    '*'
-                );
-                if (is_array($mailboxes)) {
-                    $this->imapErrors[] = 'Vorhandene Mailboxen: ' . implode(', ', $mailboxes);
-                }
-            }
-            imap_close($imapStream);
+            $client = $this->createImapClient();
+            $message = new Message(IMAP::ST_UID, null, $client);
+            $message->raw_body = $this->MIMEBody;
+            $message->header = $this->MIMEHeader;
+            $message->copy($this->emailAccount->get('imap_sent_folder'));
         } catch (Throwable $e) {
             $this->appendedByIMAP = false;
+            $this->app->sendErrorEmailToEooTechAdmin($e, 'Eim IMAP-Fehler ist aufgetreten');
         }
 
         return $this->appendedByIMAP;
     }
-    
-    protected function getImapPath(): string
+
+    protected function checkImapSet(): bool
     {
-        return '{' . $this->emailAccount->get('imap_host') . ':' . $this->emailAccount->get('imap_port')
-            . ($this->emailAccount->get('imap_port') == 993 ? '/imap/ssl}' : '/imap/notls}');
+        if (
+            !$this->emailAccount->get('imap_host')
+            || !$this->emailAccount->get('imap_port')
+        ) {
+            return false;
+        }
+
+        return true;
     }
+
+    protected function createImapClient(): Client
+    {
+        $cm = new ClientManager();
+        $client = $cm->make(
+            [
+                'host' => $this->emailAccount->get('imap_host'),
+                'port' => $this->emailAccount->get('imap_port'),
+                'encryption' => $this->emailAccount->get('imap_port') == 993 ? 'ssl' : 'starttls',
+                'validate_cert' => true,
+                'username' => $this->emailAccount->get('user'),
+                'password' => $this->emailAccount->get('password'),
+                'protocol' => 'imap'
+            ]
+        );
+
+        $client->connect();
+
+        return $client;
+    }
+
 }
