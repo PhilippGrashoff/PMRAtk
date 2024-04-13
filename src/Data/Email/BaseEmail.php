@@ -109,7 +109,7 @@ class BaseEmail extends Model
         $this->hasOne(
             'email_account_id',
             [
-                'model' => [EmailAccount::class, 'enableInternalAccounts' => $this->enableInternalAccounts],
+                'model' => EmailAccount::class,// 'enableInternalAccounts' => $this->enableInternalAccounts],
                 'type' => 'integer',
                 'ui' => ['form' => [Dropdown::class, 'empty' => '...']]
             ]

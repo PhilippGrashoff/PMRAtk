@@ -117,15 +117,18 @@ class PHPMailer extends \PHPMailer\PHPMailer\PHPMailer
         $this->_setEmailAccount();
         if (!$this->checkImapSet()) {
             return false;
+            var_dump('nee');
         }
 
         try {
+            var_dump('jaa');
             $client = $this->createImapClient();
             $message = new Message(IMAP::ST_UID, null, $client);
             $message->raw_body = $this->MIMEBody;
             $message->header = $this->MIMEHeader;
             $message->copy($this->emailAccount->get('imap_sent_folder'));
         } catch (Throwable $e) {
+            var_dump($e);
             $this->appendedByIMAP = false;
             $this->app->sendErrorEmailToEooTechAdmin($e, 'Eim IMAP-Fehler ist aufgetreten');
         }
