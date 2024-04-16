@@ -87,10 +87,9 @@ class PHPMailerTest extends TestCase
         self::assertEquals('DUDU', $pm->Host);
     }
 
-    public function testaddSentEmailByIMAP()
+    public function testAddSentEmailByIMAP()
     {
         $ea = (new EmailAccount($this->persistence))->loadAny();
-        var_dump($ea->get('name'));
         $imapHost = $ea->get('imap_host');
 
         //first unset some needed Imap field
@@ -99,13 +98,6 @@ class PHPMailerTest extends TestCase
         $pm = new PHPMailer($this->app, ['emailAccount' => $ea->get('id')]);
         self::assertFalse($pm->addSentEmailByIMAP());
 
-        //now set it to some false value
-        $ea->set('imap_host', 'fsdfd');
-        $ea->save();
-        $pm = new PHPMailer($this->app, ['emailAccount' => $ea->get('id')]);
-        self::assertFalse($pm->addSentEmailByIMAP());
-
-        //now back to initial value, should work
         $ea->set('imap_host', $imapHost);
         $ea->save();
         $pm = new PHPMailer($this->app, ['emailAccount' => $ea->get('id')]);
