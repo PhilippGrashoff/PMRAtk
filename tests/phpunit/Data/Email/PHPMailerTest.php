@@ -104,7 +104,7 @@ class PHPMailerTest extends TestCase
         $pm->addAddress($ea->get('name'));
         $pm->setBody('JJAA');
         $pm->Subject = 'KKAA';
-        //self::assertTrue($pm->send());
+        self::assertTrue($pm->send());
         self::assertTrue($pm->addSentEmailByIMAP());
     }
 

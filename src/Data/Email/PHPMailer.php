@@ -9,6 +9,7 @@ use atk4\ui\App;
 use Throwable;
 use Webklex\PHPIMAP\Client;
 use Webklex\PHPIMAP\ClientManager;
+use Webklex\PHPIMAP\Connection\Protocols\ImapProtocol;
 use Webklex\PHPIMAP\IMAP;
 use Webklex\PHPIMAP\Message;
 
@@ -121,13 +122,11 @@ class PHPMailer extends \PHPMailer\PHPMailer\PHPMailer
 
         try {
             $client = $this->createImapClient();
-            $message = new Message(IMAP::ST_UID, null, $client);
-            $message->raw_body = $this->MIMEBody;
-            $message->header = $this->MIMEHeader;
-            $message->copy($this->emailAccount->get('imap_sent_folder'));
+            $this->appendedByIMAP =  $client->connection->appendMessage(
+                $this->emailAccount->get('imap_sent_folder'),
+                $this->getSentMIMEMessage()
+            );
         } catch (Throwable $e) {
-            var_dump($e->getMessage());
-            echo $e->getTraceAsString();
             $this->appendedByIMAP = false;
             $this->app->sendErrorEmailToEooTechAdmin($e, 'Eim IMAP-Fehler ist aufgetreten');
         }
@@ -163,7 +162,6 @@ class PHPMailer extends \PHPMailer\PHPMailer\PHPMailer
         );
 
         $client->connect();
-        $client->openFolder($this->emailAccount->get('imap_sent_folder'));
 
         return $client;
     }
