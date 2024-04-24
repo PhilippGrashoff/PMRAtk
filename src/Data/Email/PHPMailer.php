@@ -154,7 +154,7 @@ class PHPMailer extends \PHPMailer\PHPMailer\PHPMailer
                 'host' => $this->emailAccount->get('imap_host'),
                 'port' => $this->emailAccount->get('imap_port'),
                 'encryption' => $this->emailAccount->get('imap_port') == 993 ? 'ssl' : 'starttls',
-                'validate_cert' => true,
+                'validate_cert' => $this->emailAccount->get('allow_self_signed_ssl') ? false : true,
                 'username' => $this->emailAccount->get('user'),
                 'password' => $this->emailAccount->get('password'),
                 'protocol' => 'imap'
