@@ -9,9 +9,6 @@ use atk4\ui\App;
 use Throwable;
 use Webklex\PHPIMAP\Client;
 use Webklex\PHPIMAP\ClientManager;
-use Webklex\PHPIMAP\Connection\Protocols\ImapProtocol;
-use Webklex\PHPIMAP\IMAP;
-use Webklex\PHPIMAP\Message;
 
 class PHPMailer extends \PHPMailer\PHPMailer\PHPMailer
 {
@@ -122,7 +119,7 @@ class PHPMailer extends \PHPMailer\PHPMailer\PHPMailer
 
         try {
             $client = $this->createImapClient();
-            $this->appendedByIMAP =  $client->connection->appendMessage(
+            $this->appendedByIMAP = $client->connection->appendMessage(
                 $this->emailAccount->get('imap_sent_folder'),
                 $this->getSentMIMEMessage()
             );
@@ -149,11 +146,15 @@ class PHPMailer extends \PHPMailer\PHPMailer\PHPMailer
     protected function createImapClient(): Client
     {
         $cm = new ClientManager();
+        $encryption = $this->emailAccount->get('imap_encryption');
+        if (!$encryption) {
+            $encryption = $this->emailAccount->get('imap_port') == 993 ? 'ssl' : 'starttls';
+        }
         $client = $cm->make(
             [
                 'host' => $this->emailAccount->get('imap_host'),
                 'port' => $this->emailAccount->get('imap_port'),
-                'encryption' => $this->emailAccount->get('imap_port') == 993 ? 'ssl' : 'starttls',
+                'encryption' => $encryption,
                 'validate_cert' => $this->emailAccount->get('allow_self_signed_ssl') ? false : true,
                 'username' => $this->emailAccount->get('user'),
                 'password' => $this->emailAccount->get('password'),

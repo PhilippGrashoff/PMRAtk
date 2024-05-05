@@ -82,6 +82,15 @@ class EmailAccount extends BaseModel
                     'ui' => ['editable' => true]
                 ],
                 [
+                    'imap_encryption',
+                    'type' => 'string',
+                    'caption' => 'Verschlüsselung',
+                    'system' => true,
+                    'values' => ['ssl' => 'SSL/TLS', 'starttls' => 'STARTTLS', 'none' => 'keine'],
+                    'never_persist' => true,
+                    'ui' => ['editable' => true]
+                ],
+                [
                     'smtp_host',
                     'type' => 'string',
                     'caption' => 'SMTP Host',
@@ -137,6 +146,7 @@ class EmailAccount extends BaseModel
                     'imap_host' => $model->get('imap_host'),
                     'imap_port' => $model->get('imap_port'),
                     'imap_sent_folder' => $model->get('imap_sent_folder'),
+                    'imap_encryption' => $model->get('imap_encryption'),
                     'smtp_host' => $model->get('smtp_host'),
                     'smtp_port' => $model->get('smtp_port'),
                     'allow_self_signed_ssl' => $model->get('allow_self_signed_ssl'),
