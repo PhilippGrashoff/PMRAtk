@@ -88,7 +88,7 @@ class EmailAccount extends BaseModel
                     'system' => true,
                     'values' => ['ssl' => 'SSL/TLS', 'starttls' => 'STARTTLS', 'none' => 'keine'],
                     'never_persist' => true,
-                    'ui' => ['editable' => true]
+                    'ui' => ['editable' => true, 'form' => [Dropdown::class]]
                 ],
                 [
                     'smtp_host',
